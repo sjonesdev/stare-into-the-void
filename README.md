@@ -14,8 +14,8 @@ Alternatively, if you already cloned the parent repo and want to add the submodu
 To commit changes to the submodule, treat it normally like it's own git repository, so likely either commiting through GitHub desktop or through `git commit -a -m "Message"`, the ensure the commit is pushed to remote.
 For committing a new version of the submodule to the parent repository, you must first ensure the instance of the submodule you have is at that commit. If you made the changes to the submodule directly on your local machine, this should already done. Otherwise, either open the submodule as a repository in GitHub desktop and fetch and pull the latest changes, or from the CLI, `cd` into the directory of the submodule and run `git pull`.
 Once the submodule is at the desired commit, simply make a commit from the parent repository, which will change the commit your repo points to in the submodule. This will show through `git status` as `modified:   stare-into-the-void-functions (new commits)`, and through GitHub desktop as a modification on `stare-into-the-void-functions` looking something like:
-  `-Subproject commit 2491272e64b2e537ec94ede2381d0f4c9cbd7ad0`
-  `+Subproject commit 359c181e0ed55aa224211378cb1f4637540e7fc6`
+<pre><code>`-Subproject commit 2491272e64b2e537ec94ede2381d0f4c9cbd7ad0`
+`+Subproject commit 359c181e0ed55aa224211378cb1f4637540e7fc6`</code></pre>
 
 ## Project Setup
 
