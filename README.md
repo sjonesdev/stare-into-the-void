@@ -31,7 +31,7 @@ Now run `yarn global add firebase` to globally install the Firebase npm package 
 
 Navigate to the project directory in a terminal and run `yarn install`, then navigate to the git submodule directory and run `yarn install` again. 
 
-Now you should be good to go.
+Now you should be good to go, but you will also likely want to install the firebase tools package by running `yarn global add firebase-tools`.
 
 ### Available Scripts
 
