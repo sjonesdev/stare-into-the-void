@@ -22,8 +22,9 @@ jobs:
 
     # Runs a single command using the runners shell
     # And of course we need to goto our functions folder to deploy
-    - name: Install npm packages
+    - name: Get functions submodule, install its packages, and build it
       run: |
+        git pull --recurse-submodules
         cd stare-into-the-void-functions
         yarn install
         yarn build
