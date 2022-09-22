@@ -28,7 +28,7 @@ const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
 /* const analytics =*/ getAnalytics(app);
 
-const bigben = httpsCallable(functions, 'bigben');
+const bigben = httpsCallable(functions, 'bigben', {});
 bigben().then((res) => {
   console.log(res);
 }).catch((reason) => {
