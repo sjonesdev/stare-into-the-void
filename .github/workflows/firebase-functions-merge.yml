@@ -25,6 +25,7 @@ jobs:
     - name: Get functions submodule, install its packages, and build it
       run: |
         git pull --recurse-submodules
+        ls
         cd stare-into-the-void-functions
         yarn install
         yarn build
