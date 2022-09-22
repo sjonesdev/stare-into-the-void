@@ -22,7 +22,7 @@ exports.bigben = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
     const hours = (new Date().getHours() % 12) + 1; // London is UTC + 1hr;
     res.status(200).send({
-      text: `${"BONG ".repeat(hours)}`,
+      data: `${"BONG ".repeat(hours)}`,
     });
   });
 });
