@@ -19,9 +19,19 @@ Once the submodule is at the desired commit, simply make a commit from the paren
 
 ## Project Setup
 
-### Getting Started with Create React App
+### Getting Started
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). As such, to use this project you will need to install the current LTS version of Node.js and ensure it is added to your PATH variable.
+
+Once Node.js is installed verify this by running `node -v` in any terminal, and that the result is a version >16.
+
+After ensuring Node.js is installed, run `npm install -g yarn` to globally install the yarn package manager which exists on top of Node's package system traditionally managed by npm (Node Package Manager).
+
+Now run `yarn global add firebase` to globally install the Firebase npm package which some package we use depend on. 
+
+Navigate to the project directory in a terminal and run `yarn install`, then navigate to the git submodule directory and run `yarn install` again. 
+
+Now you should be good to go.
 
 ### Available Scripts
 
