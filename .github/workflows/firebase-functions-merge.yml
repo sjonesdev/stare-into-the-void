@@ -23,9 +23,9 @@ jobs:
     # Runs a single command using the runners shell
     # And of course we need to goto our functions folder to deploy
     - name: Get functions submodule, install its packages, and build it
+      with: 
+        submodules: recursive
       run: |
-        git pull --recurse-submodules
-        ls
         cd stare-into-the-void-functions
         yarn install
         yarn build
