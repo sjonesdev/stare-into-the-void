@@ -1,5 +1,9 @@
+// The Cloud Functions for Firebase SDK to create
+// Cloud Functions and set up triggers.
 import * as functions from "firebase-functions";
-
+// The Firebase Admin SDK to access Firestore.
+import * as admin from "firebase-admin";
+admin.initializeApp();
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //
