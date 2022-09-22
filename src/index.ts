@@ -16,6 +16,7 @@ admin.initializeApp();
 import * as cors from "cors";
 // TODO - configure CORS to have proper domain control
 // instead of allowing all origins
+// check firebase console for origins
 const handleCors = cors({origin: true});
 
 exports.bigben = functions.https.onRequest((req, res) => {
