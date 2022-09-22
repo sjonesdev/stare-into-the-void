@@ -31,6 +31,8 @@ const functions = getFunctions(app);
 const bigben = httpsCallable(functions, 'bigben');
 bigben().then((res) => {
   console.log(res);
+}).catch(() => {
+  console.log("error");
 })
 
 const root = ReactDOM.createRoot(
