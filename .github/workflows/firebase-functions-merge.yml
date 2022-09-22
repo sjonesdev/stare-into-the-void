@@ -19,12 +19,12 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
     # Runs a single command using the runners shell
     # And of course we need to goto our functions folder to deploy
     - name: Get functions submodule, install its packages, and build it
-      with: 
-        submodules: recursive
       run: |
         cd stare-into-the-void-functions
         yarn install
