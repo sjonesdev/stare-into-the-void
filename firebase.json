@@ -12,5 +12,24 @@
         "destination": "/index.html"
       }
     ]
+  },
+  "functions": {
+    "source": "stare-into-the-void-functions",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log"
+    ],
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
+  },
+  "emulators": {
+    "hosting": {
+      "host": "localhost",
+      "port": "5002"
+    }
   }
 }
