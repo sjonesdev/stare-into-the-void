@@ -52,7 +52,15 @@ export class MRPImageAsset extends ImageAsset{
     sol: number;
 
     constructor(response: ImageResponses.MRPResponse){
-        super(response.title, response.img_src, response.description, response.earth_date, SourceAPI.MarsRoverPhotos);
+        super(MRPImageAsset.getTitle(response), response.img_src, MRPImageAsset.getDescription(response), response.earth_date, SourceAPI.MarsRoverPhotos);
         this.sol = response.sol;
+    }
+
+    private static getTitle(response: ImageResponses.MRPResponse){
+        return response.rover.name + " rover image " + response.id;
+    }
+
+    private static getDescription(response: ImageResponses.MRPResponse){
+        return "This image was taken by the " + response.rover.name + " rover with its " + response.camera.name + "on Martian sol " + response.sol + ".";
     }
 }
