@@ -13,6 +13,8 @@
     "firebase": "^9.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.6.0",
+    "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
@@ -22,7 +24,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "stop-emulators": "lsof -t -i:5002 -i:5001 -i:8080 -i:9000 -i:9099 -i:9199 -i:9090 | xargs kill -9"
+    "stop-emulators": "lsof -t -i:5002 -i:5001 -i:8080 -i:9000 -i:9099 -i:9199 -i:9090 | xargs kill -9",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "eslintConfig": {
     "extends": [
@@ -41,5 +45,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.12",
+    "postcss": "^8.4.18",
+    "tailwindcss": "^3.2.1"
   }
 }
