@@ -1,6 +1,6 @@
 import React from "react";
 import "./Navbar.css";
-import { FaFilter, FaFontAwesome, FaRegEye, FaSearch } from "react-icons/fa";
+import { FaFilter, FaRegEye, FaSearch } from "react-icons/fa";
 
 function Navbar() {
     return <div className="Navbar">
