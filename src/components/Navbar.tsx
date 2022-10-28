@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 function Navbar({ active }: { active: Pages }) {
   const [mobileMenuActive, setMobileMenuActive] = React.useState(false);
+  const [mobileSearchActive, setMobileSearchActive] = React.useState(false);
 
   const activeNavLink =
     "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium";
@@ -23,7 +24,11 @@ function Navbar({ active }: { active: Pages }) {
               className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               aria-controls="mobile-menu"
               aria-expanded="false"
-              onClick={() => setMobileMenuActive(!mobileMenuActive)}
+              onClick={() => {
+                setMobileSearchActive(false);
+                console.log(!mobileMenuActive);
+                setMobileMenuActive(!mobileMenuActive);
+              }}
             >
               <span className="sr-only">Open main menu</span>
               {/* <!--
@@ -38,13 +43,13 @@ function Navbar({ active }: { active: Pages }) {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
                 aria-hidden="true"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
                 />
               </svg>
@@ -60,13 +65,13 @@ function Navbar({ active }: { active: Pages }) {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
                 aria-hidden="true"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
@@ -120,8 +125,19 @@ function Navbar({ active }: { active: Pages }) {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {/* <!-- Profile dropdown --> */}
-            <form className="flex bg-gray-700 rounded-md px-3 py-2 text-white">
+            <button
+              type="submit"
+              className="mr-2 text-gray-400 sm:hidden"
+              onClick={() => {
+                setMobileMenuActive(false);
+                console.log(!mobileSearchActive);
+                setMobileSearchActive(!mobileSearchActive);
+              }}
+            >
+              <FaSearch />
+            </button>
+
+            <form className="flex bg-gray-700 rounded-md px-3 py-2 text-white hidden sm:block">
               <button type="submit" className="mr-2 text-gray-300">
                 <FaSearch />
               </button>
@@ -164,6 +180,20 @@ function Navbar({ active }: { active: Pages }) {
             Recent
           </Link>
         </div>
+      </div>
+
+      {/* Mobile Search menu */}
+      <div className={"p-2 sm:hidden " + (mobileSearchActive ? "" : " hidden")}>
+        <form className="flex bg-gray-700 rounded-md px-3 py-2 text-white">
+          <button type="submit" className="mr-2 text-gray-300">
+            <FaSearch />
+          </button>
+          <input
+            type="text"
+            className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md front-medium flex-grow"
+            placeholder="Search"
+          />
+        </form>
       </div>
     </nav>
   );
