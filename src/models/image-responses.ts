@@ -1,4 +1,4 @@
-//Represent the data as its been retrieved from the APIs. These are to be converted to ImageAssets before using in frontend code
+// Represent the data as its been retrieved from the APIs. These are to be converted to ImageAssets before using in frontend code
 
 interface MRPCamera{
     id: number;
