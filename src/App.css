@@ -1,7 +1,9 @@
 .App {
   width: 100vw;
   height: 100vh;
-  background: url("./images/galaxy.jpg") no-repeat center center fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
   background-size: cover;
 }
 

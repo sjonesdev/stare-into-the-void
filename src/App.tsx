@@ -16,7 +16,20 @@ import Search from "./routes/browse/Browse";
 
 import { Pages } from "./lib/pages";
 
-function App() {
+const DEFAULT_BG = "./galaxy.jpg";
+
+function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
+  const [bgImg, setBgImg] = React.useState(DEFAULT_BG);
+  if (bgUrl) {
+    bgUrl.then((val) => {
+      console.log("bgurl resolved to " + val);
+      if (val) setBgImg(val);
+    });
+  }
+  const appStyle: React.CSSProperties = {
+    backgroundImage: `url(${bgImg})`,
+  };
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
@@ -68,8 +81,9 @@ function App() {
       </Route>
     )
   );
+
   return (
-    <div className="App">
+    <div className="App" style={appStyle}>
       <RouterProvider router={router} />
     </div>
   );

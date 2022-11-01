@@ -1,13 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import {
+  getFunctions,
+  connectFunctionsEmulator,
+  httpsCallable,
+} from "firebase/functions";
+
+import type { ImageAsset } from "../stare-into-the-void-functions/src/models/image-assets";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,27 +26,44 @@ const firebaseConfig = {
   storageBucket: "stare-into-the-void.appspot.com",
   messagingSenderId: "144334433499",
   appId: "1:144334433499:web:ec88283f1e623cd02c70fe",
-  measurementId: "G-2868R29G5L"
+  measurementId: "G-2868R29G5L",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  console.log("connecting to emulator");
+  connectFunctionsEmulator(functions, "localhost", 5001);
+}
 /* const analytics =*/ getAnalytics(app);
 
-const bigben = httpsCallable(functions, 'bigben', {});
-bigben().then((res) => {
-  console.log(res);
-}).catch((reason) => {
-  console.log("error: ", reason);
-})
+const bigben = httpsCallable(functions, "bigben", {});
+bigben()
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((reason) => {
+    console.log("error: ", reason);
+  });
+
+const apod = httpsCallable<undefined, ImageAsset>(functions, "apod", {});
+const apodUrl = apod()
+  .then((res) => {
+    console.log(res);
+    return res.data.url;
+  })
+  .catch((reason) => {
+    console.log("error: " + reason);
+    return null;
+  });
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <App bgUrl={apodUrl} />
   </React.StrictMode>
 );
 
