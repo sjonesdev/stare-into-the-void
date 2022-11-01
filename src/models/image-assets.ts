@@ -1,9 +1,9 @@
 import * as ImageResponses from "./image-responses";
 
 export enum SourceAPI{
-    ImageAndVideoLibrary,
-    AstronomyPictureOfTheData,
-    MarsRoverPhotos
+  ImageAndVideoLibrary="ImageAndVideoLibrary",
+  APOD="AstronomyPictureOfTheDay",
+  MarsRoverPhotos="MarsRoverPhotos"
 }
 
 /**
@@ -46,7 +46,7 @@ export class APODImageAsset extends ImageAsset {
   serviceVersion: string;
 
   constructor(response: ImageResponses.APODResponse) {
-    super(response.title, response.url, response.explanation, response.date, SourceAPI.AstronomyPictureOfTheData);
+    super(response.title, response.url, response.explanation, response.date, SourceAPI.APOD);
     this.copyright = response.copyright;
     this.serviceVersion = response.service_version;
   }
