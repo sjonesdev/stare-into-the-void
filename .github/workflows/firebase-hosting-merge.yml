@@ -34,10 +34,11 @@ jobs:
         cd stare-into-the-void-functions
         yarn install
         yarn build
+        echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
     # Deploying the functions to firebase
     - name:  Deploy to Firebase
       uses: w9jds/firebase-action@master
       with:
-          args: deploy --only functions NASA_API_KEY=${{secrets.NASA_API_KEY}}
+          args: deploy --only functions
       env:
         FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
