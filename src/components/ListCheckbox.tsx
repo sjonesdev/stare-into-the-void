@@ -75,10 +75,14 @@ export default function ListCheckbox({
   return (
     <div className="w-72">
       <button
-        className="z-30 relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+        className="z-30 max-h-min relative w-full rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm"
         onClick={() => {
           setOpen(!open);
         }}
+        onBlur={() => {
+          setOpen(false);
+        }}
+        type="button"
       >
         <span className="block truncate">{dropdownText}</span>
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
