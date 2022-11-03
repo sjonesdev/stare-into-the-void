@@ -59,6 +59,7 @@ export default function ListCheckbox({
               name={val.value}
               value={idx}
               checked={active}
+              onChange={() => changeSelected(idx)}
             />
             {active ? (
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
