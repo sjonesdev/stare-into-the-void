@@ -1,7 +1,5 @@
-import { Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
-import "./ListCheckbox.css";
 
 type ListCheckboxOption = {
   value?: string;
@@ -73,11 +71,11 @@ export default function ListCheckbox({
     }
     return opts;
   };
-
+  /* TODO - change to or wrap with fieldset */
   return (
-    <div className="fixed top-16 w-72">
+    <div className="w-72">
       <button
-        className="relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+        className="z-30 relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
         onClick={() => {
           setOpen(!open);
         }}
@@ -92,8 +90,8 @@ export default function ListCheckbox({
       </button>
       <ul
         className={
-          "relative mt-1 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ease-in-out all transition duration-200 " +
-          (open ? "" : "opacity-0 -translate-y-10 z-[-1]")
+          "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm origin-top ease-in-out all transition duration-500 " +
+          (open ? "" : " opacity-0 -translate-y-4 scale-y-0")
         }
       >
         {getOpts()}

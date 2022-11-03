@@ -1,8 +1,7 @@
 import * as React from "react";
 import ListCheckbox from "../../components/ListCheckbox";
 
-import { SourceAPI } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { ApiInfo, type ApiInfoValue } from "../../lib/apiInfo";
+import { ApiInfo } from "../../lib/apiInfo";
 
 const apis: {
   value: string;
@@ -25,9 +24,19 @@ export default function Browse() {
     <ListCheckbox dropdownText="Select Source APIs" values={apis} />
   );
 
+  const dateRangeSelector = (
+    <fieldset>
+      <label htmlFor="from">From</label>
+      <input type="date" name="from" id="from-date" />
+      <label htmlFor="to">To</label>
+      <input type="date" name="to" id="to-date" />
+    </fieldset>
+  );
+
   return (
     <>
       {apiSelector}
+      {dateRangeSelector}
       <div>Hello from Browse</div>
     </>
   );
