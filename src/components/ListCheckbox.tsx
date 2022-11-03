@@ -26,6 +26,7 @@ export default function ListCheckbox({
     if (values[idx].isDefault) defSelected.add(idx);
   }
   const [selected, setSelected] = React.useState<Set<string>>(defSelected);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const changeSelected = (idx: string) => {
     if (selected.has(idx)) {
@@ -44,7 +45,7 @@ export default function ListCheckbox({
       opts.push(
         <li
           key={idx}
-          className={`relative cursor-pointer select-none py-2 pl-10 pr-4 truncate ${
+          className={`relative cursor-pointer select-none py-2 pl-10 pr-4 truncate ease-in-out background-color duration-100 ${
             active
               ? "bg-amber-100 text-amber-900 font-medium hover:bg-yellow-300"
               : "text-gray-900 font-normal hover:bg-gray-300"
@@ -74,7 +75,12 @@ export default function ListCheckbox({
 
   return (
     <div className="fixed top-16 w-72">
-      <button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+      <button
+        className="relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
         <span className="block truncate">{dropdownText}</span>
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon
@@ -83,7 +89,12 @@ export default function ListCheckbox({
           />
         </span>
       </button>
-      <ul className="relative mt-1 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+      <ul
+        className={
+          "relative mt-1 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ease-in-out all transition duration-200 " +
+          (open ? "" : "opacity-0 -translate-y-10 z-[-1]")
+        }
+      >
         {getOpts()}
       </ul>
     </div>
