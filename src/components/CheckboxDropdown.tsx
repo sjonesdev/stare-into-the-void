@@ -1,24 +1,24 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 
-type ListCheckboxOption = {
+type CheckboxDropdownOption = {
   value?: string;
   tooltip?: string;
 };
 
-interface ListCheckboxInput extends ListCheckboxOption {
+interface CheckboxDropdownInput extends CheckboxDropdownOption {
   isDefault?: boolean;
 }
 
-type ListCheckboxProps = {
+type CheckboxDropdownProps = {
   dropdownText: string;
-  values: ListCheckboxInput[];
+  values: CheckboxDropdownInput[];
 };
 
-export default function ListCheckbox({
+export default function CheckboxDropdown({
   dropdownText,
   values,
-}: ListCheckboxProps) {
+}: CheckboxDropdownProps) {
   const defSelected = new Set<string>();
   for (const idx in values) {
     if (values[idx].isDefault) defSelected.add(idx);
@@ -43,10 +43,10 @@ export default function ListCheckbox({
       opts.push(
         <li
           key={idx}
-          className={`relative cursor-pointer select-none py-2 pl-10 pr-4 truncate ease-in-out background-color duration-100 ${
+          className={`relative cursor-pointer select-none py-2 pl-10 pr-4 truncate ease-in-out background-color duration-100 text-white ${
             active
-              ? "bg-amber-100 text-amber-900 font-medium hover:bg-yellow-300"
-              : "text-gray-900 font-normal hover:bg-gray-300"
+              ? "font-medium hover:bg-gray-500"
+              : "font-normal hover:bg-amber-600"
           }`}
           onClick={() => changeSelected(idx)}
         >
@@ -75,7 +75,7 @@ export default function ListCheckbox({
   return (
     <div className="w-72">
       <button
-        className="z-30 max-h-min relative w-full rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm"
+        className="h-10 z-30 max-h-min relative w-full rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm"
         onClick={() => {
           setOpen(!open);
         }}
@@ -94,7 +94,7 @@ export default function ListCheckbox({
       </button>
       <ul
         className={
-          "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm origin-top ease-in-out all transition duration-500 " +
+          "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm origin-top ease-in-out all transition duration-500 " +
           (open ? "" : " opacity-0 -translate-y-4 scale-y-0")
         }
       >

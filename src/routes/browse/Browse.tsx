@@ -1,5 +1,8 @@
+import { Listbox } from "@headlessui/react";
 import * as React from "react";
-import ListCheckbox from "../../components/ListCheckbox";
+import CheckboxDropdown from "../../components/CheckboxDropdown";
+import DatePicker from "../../components/DatePicker";
+import SelectDropdown from "../../components/SelectDropdown";
 
 import { ApiInfo } from "../../lib/apiInfo";
 
@@ -17,42 +20,53 @@ for (const key in ApiInfo) {
   apis.push(apiVal);
 }
 
+const sortOpts: {
+  value: string;
+  tooltip?: string;
+  isDefault?: boolean;
+}[] = [
+  {
+    value: "Recent",
+    isDefault: true,
+  },
+  {
+    value: "Relevant",
+  },
+  {
+    value: "Something else idk",
+  },
+];
+
 export default function Browse() {
   const [selectedAPIs, setSelectedAPIs] = React.useState();
   const [fromDate, setFromDate] = React.useState<Date>();
   const [toDate, setToDate] = React.useState<Date>();
+  const [sortBy, setSortBy] = React.useState(sortOpts[0]);
 
   const apiSelector = (
-    <ListCheckbox dropdownText="Select Source APIs" values={apis} />
+    <CheckboxDropdown dropdownText="Select Source APIs" values={apis} />
   );
 
   const dateRangeSelector = (
     <fieldset className="flex items-center mx-4">
-      <label htmlFor="from">From</label>
-      <input
-        type="date"
-        name="from"
-        id="from-date"
-        className="bg-gray-700 px-2 py-1 m-2"
-        onChange={(e) => setFromDate(new Date(e.target.value))}
-      />
-      <label htmlFor="to">To</label>
-      <input
-        type="date"
-        name="to"
-        id="to-date"
-        className="bg-gray-700 px-2 py-1 m-2"
-        onChange={(e) => setToDate(new Date(e.target.value))}
-      />
+      <DatePicker labelText="From" inputName="from" setDate={setFromDate} />
+      <DatePicker labelText="To" inputName="to" setDate={setToDate} />
     </fieldset>
   );
 
+  const sortBySelector = <SelectDropdown />;
+
   return (
     <>
-      <form className="flex items-center bg-gray-800 text-gray-300">
-        {apiSelector}
-        {dateRangeSelector}
-      </form>
+      <div className="bg-gray-800">
+        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <form className="relative h-16 flex items-center text-gray-300">
+            {apiSelector}
+            {dateRangeSelector}
+            {sortBySelector}
+          </form>
+        </div>
+      </div>
       <div>Hello from Browse</div>
     </>
   );
