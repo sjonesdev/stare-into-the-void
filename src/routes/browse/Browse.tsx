@@ -59,10 +59,26 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max min-h-full mx-auto my-12 ">
+      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between">
         <ImagePreview
           imgUrl="https://picsum.photos/500/500"
           dispText="Random Picture"
+        />
+        <ImagePreview
+          imgUrl="https://picsum.photos/500/500"
+          dispText="Random Picture2"
+        />
+        <ImagePreview
+          imgUrl="https://picsum.photos/500/500"
+          dispText="Random Picture3"
+        />
+        <ImagePreview
+          imgUrl="https://picsum.photos/500/500"
+          dispText="Random Picture4"
+        />
+        <ImagePreview
+          imgUrl="https://picsum.photos/500/500"
+          dispText="Random Picture5"
         />
       </div>
     </>

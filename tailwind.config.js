@@ -9,6 +9,10 @@ module.exports = {
         'charcoal': '#3A3D51',
       },
     },
+    maxWidth: {
+      '2xs': '16rem',
+      '3xs': '12rem'
+    }
   },
   plugins: [],
 }
