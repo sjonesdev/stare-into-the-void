@@ -13,11 +13,18 @@ interface CheckboxDropdownInput extends CheckboxDropdownOption {
 type CheckboxDropdownProps = {
   dropdownText: string;
   values: CheckboxDropdownInput[];
+  /**
+   * The function the UI component should call whenever the
+   * selected values are updated, passes in the newly selected
+   * values as a string Set argument
+   */
+  setValues: (newValues: Set<string>) => void;
 };
 
 export default function CheckboxDropdown({
   dropdownText,
   values,
+  setValues,
 }: CheckboxDropdownProps) {
   const defSelected = new Set<string>();
   for (const idx in values) {
@@ -32,7 +39,9 @@ export default function CheckboxDropdown({
     } else {
       selected.add(idx);
     }
-    setSelected(new Set(selected));
+    const newSelected = new Set(selected);
+    setSelected(newSelected);
+    setValues(newSelected);
   };
 
   const getOpts = () => {

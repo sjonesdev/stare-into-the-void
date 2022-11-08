@@ -23,13 +23,17 @@ for (const key in ApiInfo) {
 const sortOpts = ["Recent", "Relevant", "Something else idk"];
 
 export default function Browse() {
-  const [selectedAPIs, setSelectedAPIs] = React.useState();
+  const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
   const [fromDate, setFromDate] = React.useState<Date>();
   const [toDate, setToDate] = React.useState<Date>();
   const [sortBy, setSortBy] = React.useState(sortOpts[0]);
 
   const apiSelector = (
-    <CheckboxDropdown dropdownText="Select Source APIs" values={apis} />
+    <CheckboxDropdown
+      dropdownText="Select Source APIs"
+      values={apis}
+      setValues={setSelectedAPIs}
+    />
   );
 
   const dateRangeSelector = (
@@ -39,7 +43,9 @@ export default function Browse() {
     </fieldset>
   );
 
-  const sortBySelector = <SelectDropdown values={sortOpts} />;
+  const sortBySelector = (
+    <SelectDropdown values={sortOpts} setValue={setSortBy} />
+  );
 
   return (
     <>

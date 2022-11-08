@@ -5,6 +5,12 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 interface SelectDropdownProps {
   values: string[];
   defaultValue?: string;
+  /**
+   * The function the UI component should call whenever the
+   * selected value is updated, passes in the newly selected
+   * value as an argument
+   */
+  setValue: (newValue: string) => void;
 }
 
 const people = [
@@ -19,13 +25,18 @@ const people = [
 export default function SelectDropdown({
   values,
   defaultValue,
+  setValue,
 }: SelectDropdownProps) {
   const initVal = defaultValue ?? values[0];
   const [selected, setSelected] = useState(initVal);
+  const setSelectedAndValue = (newVal: string) => {
+    setSelected(newVal);
+    setValue(newVal);
+  };
 
   return (
     <div className="w-72">
-      <Listbox value={selected} onChange={setSelected}>
+      <Listbox value={selected} onChange={setSelectedAndValue}>
         <div className="relative">
           <Listbox.Button className="relative h-10 w-full cursor-default rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left text-white shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
             <span className="block truncate">{selected}</span>
