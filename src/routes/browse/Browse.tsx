@@ -2,6 +2,7 @@ import { Listbox } from "@headlessui/react";
 import * as React from "react";
 import CheckboxDropdown from "../../components/CheckboxDropdown";
 import DatePicker from "../../components/DatePicker";
+import ImagePreview from "../../components/ImagePreview";
 import SelectDropdown from "../../components/SelectDropdown";
 
 import { ApiInfo } from "../../lib/apiInfo";
@@ -58,7 +59,12 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div>Hello from Browse</div>
+      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max min-h-full mx-auto my-12 ">
+        <ImagePreview
+          imgUrl="https://picsum.photos/500/500"
+          dispText="Random Picture"
+        />
+      </div>
     </>
   );
 }
