@@ -79,9 +79,6 @@ export default function CheckboxDropdown({
         onClick={() => {
           setOpen(!open);
         }}
-        onBlur={() => {
-          setOpen(false);
-        }}
         type="button"
       >
         <span className="block truncate">{dropdownText}</span>
@@ -97,6 +94,9 @@ export default function CheckboxDropdown({
           "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm origin-top ease-in-out all transition duration-500 " +
           (open ? "" : " opacity-0 -translate-y-4 scale-y-0")
         }
+        onBlur={() => {
+          setOpen(false);
+        }}
       >
         {getOpts()}
       </ul>

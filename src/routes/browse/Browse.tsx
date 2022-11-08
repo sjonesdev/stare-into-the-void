@@ -20,22 +20,7 @@ for (const key in ApiInfo) {
   apis.push(apiVal);
 }
 
-const sortOpts: {
-  value: string;
-  tooltip?: string;
-  isDefault?: boolean;
-}[] = [
-  {
-    value: "Recent",
-    isDefault: true,
-  },
-  {
-    value: "Relevant",
-  },
-  {
-    value: "Something else idk",
-  },
-];
+const sortOpts = ["Recent", "Relevant", "Something else idk"];
 
 export default function Browse() {
   const [selectedAPIs, setSelectedAPIs] = React.useState();
@@ -54,7 +39,7 @@ export default function Browse() {
     </fieldset>
   );
 
-  const sortBySelector = <SelectDropdown />;
+  const sortBySelector = <SelectDropdown values={sortOpts} />;
 
   return (
     <>
