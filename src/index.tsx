@@ -58,6 +58,17 @@ const apodUrl = apod()
     return null;
   });
 
+const nivl = httpsCallable<any, ImageAsset>(functions, "nivl", {});
+const nivlUrl = nivl({"search": "earth"})
+  .then((res) => {
+    console.log(res);
+    return res.data.url;
+  })
+  .catch((reason) => {
+    console.log("error: " + reason);
+    return null;
+  });
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

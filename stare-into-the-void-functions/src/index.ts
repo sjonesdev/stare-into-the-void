@@ -5,7 +5,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { defineString } from "firebase-functions/v2/params";
 
-import { type APODResponse } from "./models/image-responses";
+import { type APODResponse, type NIVLResponse, type MRPResponse } from "./models/image-responses";
 import { ImageAsset, SourceAPI } from "./models/image-assets";
 
 import * as https from "https";
@@ -22,6 +22,8 @@ const handleCors = cors({origin: true});
 // stare-into-the-void-functions root directory 
 // like NASA_APIKEY=thisismykey
 const NASA_API_KEY = defineString("NASA_API_KEY");
+
+//Astronomy Picture of the Day
 
 exports.apod = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
@@ -53,14 +55,85 @@ exports.apod = functions.https.onRequest((req, res) => {
         }
       })
     })
-
   })
-})
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
+});
+
+//Nasa Image and Video Library
+
+exports.nivl = functions.https.onRequest((req, res) => {
+  handleCors(req, res, () => {
+    const query = req.query.search;
+    const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
+    https.get(reqUrl, (resp) => {
+      let rawData = ""  
+      resp.on("data", (chunk) => {
+        rawData += chunk
+      })
+      resp.on("end", () => {
+        const resList = JSON.parse(rawData);
+      
+        var data: ImageAsset[] = []; 
+        resList.items.array.forEach((element: NIVLResponse) => {
+          data.push({
+            title: element.data.title,
+            url: element.href,
+            description: element.data.description,
+            date: element.data.date_created,
+            sourceAPI: SourceAPI.ImageAndVideoLibrary
+          });
+        });
+        res.status(200).send({
+          data
+        })
+      })
+    }).on("error", (error) => {
+      functions.logger.log(`Error fetching NASA NIVL: ${error}`)
+      res.status(502).send({
+        data: {
+          error
+        }
+      })
+    })
+  })
+});
+
+//Mars Rover Photos
+
+exports.mrp = functions.https.onRequest((req, res) => {
+  handleCors(req, res, () => {
+    const query = req.query.search;
+    const reqUrl = ``; //TODO: Correct Endpoint
+    https.get(reqUrl, (resp) => {
+      let rawData = ""  
+      resp.on("data", (chunk) => {
+        rawData += chunk
+      })
+      resp.on("end", () => {
+        const resList = JSON.parse(rawData);
+      
+        var data: ImageAsset[] = []; 
+        resList.items.array.forEach((element: MRPResponse) => {
+          data.push({
+            title: element.rover + " " + element.camera + " " + element.sol,
+            url: element.img_src,
+            description: "",  //TODO: Construct Description
+            date: new Date, //TODO: Correct Date
+            sourceAPI: SourceAPI.MarsRoverPhotos
+          });
+        });
+        res.status(200).send({
+          data
+        })
+      })
+    }).on("error", (error) => {
+      functions.logger.log(`Error fetching NASA MRP: ${error}`)
+      res.status(502).send({
+        data: {
+          error
+        }
+      })
+    })
+  })
 });
 
 exports.bigben = functions.https.onRequest((req, res) => {
