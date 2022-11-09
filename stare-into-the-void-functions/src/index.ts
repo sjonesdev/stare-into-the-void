@@ -72,7 +72,7 @@ exports.nivl = functions.https.onRequest((req, res) => {
       resp.on("end", () => {
         const resList = JSON.parse(rawData);
       
-        var data: ImageAsset[] = []; 
+        const data: ImageAsset[] = []; 
         resList.items.array.forEach((element: NIVLResponse) => {
           data.push({
             title: element.data.title,
@@ -101,8 +101,8 @@ exports.nivl = functions.https.onRequest((req, res) => {
 
 exports.mrp = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
-    const query = req.query.search;
-    const reqUrl = ``; //TODO: Correct Endpoint
+    // const query = req.query.search;
+    const reqUrl = ""; //TODO: Correct Endpoint
     https.get(reqUrl, (resp) => {
       let rawData = ""  
       resp.on("data", (chunk) => {
@@ -111,7 +111,7 @@ exports.mrp = functions.https.onRequest((req, res) => {
       resp.on("end", () => {
         const resList = JSON.parse(rawData);
       
-        var data: ImageAsset[] = []; 
+        const data: ImageAsset[] = []; 
         resList.items.array.forEach((element: MRPResponse) => {
           data.push({
             title: element.rover + " " + element.camera + " " + element.sol,
