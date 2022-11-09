@@ -12,6 +12,9 @@ module.exports = {
     maxWidth: {
       '2xs': '16rem',
       '3xs': '12rem'
+    },
+    maxHeight: {
+      '2xs': '16rem'
     }
   },
   plugins: [],

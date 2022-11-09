@@ -23,6 +23,37 @@ for (const key in ApiInfo) {
 
 const sortOpts = ["Recent", "Relevant", "Something else idk"];
 
+const testImgInfo = [
+  {
+    imgUrl: "https://picsum.photos/500/500",
+    dispText: "Random Picture",
+  },
+  {
+    imgUrl: "https://picsum.photos/300/500",
+    dispText: "Random Picture 2",
+  },
+  {
+    imgUrl: "https://picsum.photos/500/300",
+    dispText: "Random Picture 3",
+  },
+  {
+    imgUrl: "https://picsum.photos/250/250",
+    dispText: "Random Picture 4",
+  },
+  {
+    imgUrl: "https://picsum.photos/1000/1000",
+    dispText: "Random Picture 5",
+  },
+  {
+    imgUrl: "https://picsum.photos/640/480",
+    dispText: "Random Picture 6",
+  },
+  {
+    imgUrl: "https://picsum.photos/480/640",
+    dispText: "Random Picture 6",
+  },
+];
+
 export default function Browse() {
   const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
   const [fromDate, setFromDate] = React.useState<Date>();
@@ -48,6 +79,15 @@ export default function Browse() {
     <SelectDropdown values={sortOpts} setValue={setSortBy} />
   );
 
+  const imgs = testImgInfo;
+  const getImgs = () => {
+    const res: JSX.Element[] = [];
+    for (const img of imgs) {
+      res.push(<ImagePreview key={img.dispText} {...img} />);
+    }
+    return res;
+  };
+
   return (
     <>
       <div className="bg-gray-800">
@@ -59,27 +99,8 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between">
-        <ImagePreview
-          imgUrl="https://picsum.photos/500/500"
-          dispText="Random Picture"
-        />
-        <ImagePreview
-          imgUrl="https://picsum.photos/500/500"
-          dispText="Random Picture2"
-        />
-        <ImagePreview
-          imgUrl="https://picsum.photos/500/500"
-          dispText="Random Picture3"
-        />
-        <ImagePreview
-          imgUrl="https://picsum.photos/500/500"
-          dispText="Random Picture4"
-        />
-        <ImagePreview
-          imgUrl="https://picsum.photos/500/500"
-          dispText="Random Picture5"
-        />
+      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between items-end">
+        {getImgs()}
       </div>
     </>
   );
