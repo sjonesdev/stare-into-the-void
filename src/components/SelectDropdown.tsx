@@ -13,15 +13,6 @@ interface SelectDropdownProps {
   setValue: (newValue: string) => void;
 }
 
-const people = [
-  { name: "Wade Cooper" },
-  { name: "Arlene Mccoy" },
-  { name: "Devon Webb" },
-  { name: "Tom Cook" },
-  { name: "Tanya Fox" },
-  { name: "Hellen Schmidt" },
-];
-
 export default function SelectDropdown({
   values,
   defaultValue,
