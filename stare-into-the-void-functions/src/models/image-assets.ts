@@ -1,9 +1,13 @@
 import * as ImageResponses from "./image-responses";
 
-export enum SourceAPI{
+export enum SourceAPI {
+  APOD="APOD",
+  Earth="Earth",
+  EONET="EONET",
+  EPIC="EPIC",
+  MarsRoverPhotos="MarsRoverPhotos",
   ImageAndVideoLibrary="ImageAndVideoLibrary",
-  APOD="AstronomyPictureOfTheDay",
-  MarsRoverPhotos="MarsRoverPhotos"
+  VMMTWMTS="VMMTWMTS"
 }
 
 /**
