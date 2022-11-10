@@ -99,7 +99,7 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between items-end">
+      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between items-start">
         {getImgs()}
       </div>
     </>
