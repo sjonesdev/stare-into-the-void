@@ -48,7 +48,7 @@ exports.apod = functions.https.onRequest((req, res) => {
       })
 
     }).on("error", (error) => {
-      functions.logger.log(`Error fetching NASA APOD: ${error}`)
+      functions.logger.error(`Error fetching NASA APOD: ${error}`)
       res.status(502).send({
         data: {
           error
@@ -63,6 +63,7 @@ exports.apod = functions.https.onRequest((req, res) => {
 exports.nivl = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
     const query = req.query.search;
+    functions.logger.log(`Got NIVL query ${query}`)
     const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
     https.get(reqUrl, (resp) => {
       let rawData = ""  
@@ -72,8 +73,8 @@ exports.nivl = functions.https.onRequest((req, res) => {
       resp.on("end", () => {
         const resList = JSON.parse(rawData);
       
-        var data: ImageAsset[] = []; 
-        resList.items.array.forEach((element: NIVLResponse) => {
+        const data: ImageAsset[] = []; 
+        resList.items?.array.forEach((element: NIVLResponse) => {
           data.push({
             title: element.data.title,
             url: element.href,
@@ -87,7 +88,7 @@ exports.nivl = functions.https.onRequest((req, res) => {
         })
       })
     }).on("error", (error) => {
-      functions.logger.log(`Error fetching NASA NIVL: ${error}`)
+      functions.logger.error(`Error fetching NASA NIVL: ${error}`)
       res.status(502).send({
         data: {
           error
@@ -111,7 +112,7 @@ exports.mrp = functions.https.onRequest((req, res) => {
       resp.on("end", () => {
         const resList = JSON.parse(rawData);
       
-        var data: ImageAsset[] = []; 
+        const data: ImageAsset[] = []; 
         resList.items.array.forEach((element: MRPResponse) => {
           data.push({
             title: element.id.toString(),
@@ -126,7 +127,7 @@ exports.mrp = functions.https.onRequest((req, res) => {
         })
       })
     }).on("error", (error) => {
-      functions.logger.log(`Error fetching NASA MRP: ${error}`)
+      functions.logger.error(`Error fetching NASA MRP: ${error}`)
       res.status(502).send({
         data: {
           error
