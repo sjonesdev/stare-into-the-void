@@ -62,7 +62,7 @@ export default function Navbar({ active }: { active: Pages }) {
                 </button>
                 <input
                   type="text"
-                  className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md front-medium flex-grow"
+                  className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md font-medium flex-grow"
                   placeholder="Search"
                 />
               </form>
@@ -139,7 +139,7 @@ export default function Navbar({ active }: { active: Pages }) {
                   </button>
                   <input
                     type="text"
-                    className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md front-medium flex-shrink min-w-0"
+                    className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md font-medium flex-shrink min-w-0"
                     placeholder="Search"
                   />
                 </form>

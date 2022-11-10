@@ -23,7 +23,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
   if (bgUrl) {
     bgUrl.then((val) => {
       console.log("bgurl resolved to " + val);
-      if (val) setBgImg(val);
+      if (val) setBgImg(val); // need to also validate that is image as apparently there can be youtube videos returned from the APOD API
     });
   }
   const appStyle: React.CSSProperties = {
