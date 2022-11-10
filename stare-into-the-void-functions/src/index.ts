@@ -62,6 +62,7 @@ exports.apod = functions.https.onRequest((req, res) => {
 
 exports.nivl = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
+    functions.logger.log(`reqbody: ${JSON.stringify(req.body.data)}`)
     const query = req.query.search;
     functions.logger.log(`Got NIVL query ${query}`)
     const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
