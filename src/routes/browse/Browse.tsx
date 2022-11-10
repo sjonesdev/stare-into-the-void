@@ -60,6 +60,9 @@ export default function Browse() {
   const [toDate, setToDate] = React.useState<Date>();
   const [sortBy, setSortBy] = React.useState(sortOpts[0]);
 
+  // If image drawer is not open, will be null or undefined, else will be url of selected img
+  const [openImg, setOpenImg] = React.useState<string>("");
+
   const apiSelector = (
     <CheckboxDropdown
       dropdownText="Select Source APIs"
@@ -102,6 +105,16 @@ export default function Browse() {
       <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-col sm:flex-row flex-wrap justify-between items-center sm:items-start">
         {getImgs()}
       </div>
+      {openImg && (
+        <div className="absolute right-0 bg-gray-500">
+          <img src={openImg} alt="" />
+          <span>Random Picture</span>
+          <span>Taken: </span>
+          <span>11/10/2022</span>
+          <button>Download</button>
+          <button>Edit</button>
+        </div>
+      )}
     </>
   );
 }
