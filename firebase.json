@@ -29,7 +29,11 @@
   "emulators": {
     "hosting": {
       "host": "localhost",
-      "port": "5002"
+      "port": 5002
+    },
+    "functions": {
+      "host": "localhost",
+      "port": 5001
     }
   }
 }
