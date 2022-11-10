@@ -84,13 +84,8 @@ export default function Browse() {
   );
 
   const imgs = testImgInfo;
-  const getImgs = () => {
-    const res: JSX.Element[] = [];
-    for (const img of imgs) {
-      res.push(<ImagePreview key={img.dispText} {...img} />);
-    }
-    return res;
-  };
+  const getImgs = () =>
+    imgs.map((img, idx) => <ImagePreview key={idx} {...img} />);
 
   return (
     <>
