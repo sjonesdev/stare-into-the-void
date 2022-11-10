@@ -3,7 +3,7 @@
 import * as functions from "firebase-functions";
 // The Firebase Admin SDK to access Firestore.
 import * as admin from "firebase-admin";
-import { defineString } from "firebase-functions/v2/params";
+import { defineString } from "firebase-functions/params";
 
 import { type APODResponse, type NIVLResponse, type MRPResponse } from "./models/image-responses";
 import { ImageAsset, SourceAPI } from "./models/image-assets";
