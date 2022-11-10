@@ -101,8 +101,8 @@ exports.nivl = functions.https.onRequest((req, res) => {
 
 exports.mrp = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
-    const query = req.query.search;
-    const reqUrl = ``; //TODO: Correct Endpoint
+    const rover = req.query.rover;
+    const reqUrl = `https://mars-photos.herokuapp.com/api/v1/rovers/${rover}/latest_photos`; //Using the heroku endpoint means we don't need an API key for this one
     https.get(reqUrl, (resp) => {
       let rawData = ""  
       resp.on("data", (chunk) => {
@@ -114,10 +114,10 @@ exports.mrp = functions.https.onRequest((req, res) => {
         var data: ImageAsset[] = []; 
         resList.items.array.forEach((element: MRPResponse) => {
           data.push({
-            title: element.rover + " " + element.camera + " " + element.sol,
+            title: element.id.toString(),
             url: element.img_src,
-            description: "",  //TODO: Construct Description
-            date: new Date, //TODO: Correct Date
+            description: "Photo taken by " + element.rover + "using camera" + element.camera + " on martian sol " + element.sol + ".",
+            date: element.earth_date,
             sourceAPI: SourceAPI.MarsRoverPhotos
           });
         });
