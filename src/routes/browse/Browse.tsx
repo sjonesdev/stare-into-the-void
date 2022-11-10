@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Listbox } from "@headlessui/react";
 import * as React from "react";
 import CheckboxDropdown from "../../components/CheckboxDropdown";
