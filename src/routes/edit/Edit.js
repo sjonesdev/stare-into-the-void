@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import ImageEditor from "@toast-ui/react-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
