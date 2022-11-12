@@ -1,10 +1,29 @@
 import * as React from 'react';
-// import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import ImageEditor from "@toast-ui/react-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
 
 export default function Edit() {
+  const [windowSize, setWindowSize] = useState(getWindowSize());
+
+  React.useEffect(() => {
+    function handleWindowResize() {
+      setWindowSize(getWindowSize());
+    }
+
+    window.addEventListener('resize', handleWindowResize);
+
+    return() => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
+
+  function getWindowSize() {
+    const {innerWidth, innerHeight} = window;
+    return {innerWidth, innerHeight};
+  }
+
   return (
     <ImageEditor
       includeUI={{
@@ -12,13 +31,13 @@ export default function Edit() {
           path: "img/sampleImage.jpg",
           name: "SampleImage",
         },
-        menu: ["shape", "filter"],
+        //menu: ["shape", "filter"],
         initMenu: "filter",
         uiSize: {
-          width: "1000px",
-          height: "700px",
+          width: windowSize.innerWidth,
+          height: "875px"
         },
-        menuBarPosition: "bottom",
+        menuBarPosition: "bottom"
       }}
       cssMaxHeight={500}
       cssMaxWidth={700}
