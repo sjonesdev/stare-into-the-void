@@ -4,14 +4,13 @@ import { useState } from 'react';
 import ImageEditor from "@toast-ui/react-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
 
-export default function Edit() {
+export default function Edit(props) {
   const [windowSize, setWindowSize] = useState(getWindowSize());
 
   React.useEffect(() => {
     function handleWindowResize() {
       setWindowSize(getWindowSize());
     }
-
     window.addEventListener('resize', handleWindowResize);
 
     return() => {
@@ -28,14 +27,14 @@ export default function Edit() {
     <ImageEditor
       includeUI={{
         loadImage: {
-          path: "img/sampleImage.jpg",
+          path: props.path,
           name: "SampleImage",
         },
         //menu: ["shape", "filter"],
         initMenu: "filter",
         uiSize: {
           width: windowSize.innerWidth,
-          height: "875px"
+          height: windowSize.innerHeight
         },
         menuBarPosition: "bottom"
       }}
