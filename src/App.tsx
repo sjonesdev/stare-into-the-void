@@ -65,7 +65,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
           element={
             <>
               <Navbar active={Pages.Edit} />
-              <Edit />
+              <Edit imgUrl={bgImg} />
             </>
           }
         />
