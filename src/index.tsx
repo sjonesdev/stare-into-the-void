@@ -14,6 +14,7 @@ import {
 } from "firebase/functions";
 
 import type { ImageAsset } from "../stare-into-the-void-functions/src/models/image-assets";
+import { FirebaseService } from "./lib/firebase-service";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -39,33 +40,16 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 /* const analytics =*/ getAnalytics(app);
 
 const apod = httpsCallable<undefined, ImageAsset>(functions, "apod", {});
-const apodUrl = apod()
-  .then((res) => {
-    console.log(res);
-    return res.data.url;
-  })
-  .catch((reason) => {
-    console.log("error: " + reason);
-    return null;
-  });
-
 const nivl = httpsCallable<any, ImageAsset>(functions, "nivl", {});
-const nivlUrl = nivl({ search: "earth" })
-  .then((res) => {
-    console.log(res);
-    return res.data.url;
-  })
-  .catch((reason) => {
-    console.log("error: " + reason);
-    return null;
-  });
+
+const firebaseService = new FirebaseService(apod, nivl);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App bgUrl={apodUrl} />
+    <App bgUrl={firebaseService.getPictureOfTheDay()} />
   </React.StrictMode>
 );
 
