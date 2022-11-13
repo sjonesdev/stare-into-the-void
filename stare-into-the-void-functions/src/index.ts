@@ -144,13 +144,3 @@ exports.mrp = functions.https.onRequest((req, res) => {
     })
   })
 });
-
-exports.bigben = functions.https.onRequest((req, res) => {
-  functions.logger.log("Got bigben request LOGLOGLOG", {structuredData: true})
-  handleCors(req, res, () => {
-    const hours = (new Date().getHours() % 12) + 1; // London is UTC + 1hr;
-    res.status(200).send({
-      data: `${"BONG ".repeat(hours)}`,
-    });
-  });
-});

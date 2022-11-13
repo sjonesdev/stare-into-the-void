@@ -38,15 +38,6 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 }
 /* const analytics =*/ getAnalytics(app);
 
-const bigben = httpsCallable(functions, "bigben", {});
-bigben()
-  .then((res) => {
-    console.log(res);
-  })
-  .catch((reason) => {
-    console.log("error: ", reason);
-  });
-
 const apod = httpsCallable<undefined, ImageAsset>(functions, "apod", {});
 const apodUrl = apod()
   .then((res) => {
