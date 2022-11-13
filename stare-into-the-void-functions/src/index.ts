@@ -63,7 +63,7 @@ exports.apod = functions.https.onRequest((req, res) => {
 exports.nivl = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
     functions.logger.log(`reqbody: ${JSON.stringify(req.body.data)}`)
-    const query = req.query.search;
+    const query = req.body.data.search;
     functions.logger.log(`Got NIVL query ${query}`)
     const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
     https.get(reqUrl, (resp) => {
@@ -73,16 +73,17 @@ exports.nivl = functions.https.onRequest((req, res) => {
       })
       resp.on("end", () => {
         const resList = JSON.parse(rawData);
-      
         const data: ImageAsset[] = []; 
-        resList.items?.array.forEach((element: NIVLResponse) => {
-          data.push({
-            title: element.data.title,
-            url: element.href,
-            description: element.data.description,
-            date: element.data.date_created,
-            sourceAPI: SourceAPI.ImageAndVideoLibrary
-          });
+        resList.collection.items?.forEach((element: NIVLResponse) => {
+          if(element.data[0].media_type === "image"){
+            data.push({
+              title: element.data[0].title,
+              url: getImageURL(element.href),
+              description: element.data[0].description,
+              date: element.data[0].date_created,
+              sourceAPI: SourceAPI.ImageAndVideoLibrary
+            });
+          }
         });
         res.status(200).send({
           data
@@ -98,6 +99,12 @@ exports.nivl = functions.https.onRequest((req, res) => {
     })
   })
 });
+
+function getImageURL(manifestUrl: string){
+  const baseUrl = "http://images-assets.nasa.gov/image/";
+  var strings = manifestUrl.split("/");
+  return baseUrl + strings[4] + "/" + strings[4] + "~orig.jpg";
+}
 
 //Mars Rover Photos
 

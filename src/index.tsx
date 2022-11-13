@@ -59,7 +59,7 @@ const apodUrl = apod()
   });
 
 const nivl = httpsCallable<any, ImageAsset>(functions, "nivl", {});
-const nivlUrl = nivl({ text: "earth" })
+const nivlUrl = nivl({ search: "earth" })
   .then((res) => {
     console.log(res);
     return res.data.url;
