@@ -30,6 +30,7 @@ export default function ImagePreview({
           className="rounded-md shadow-md shadow-black/40 object-cover h-56 w-56 md:h-48"
           src={url}
           alt={imgAltText ?? ""}
+          loading="lazy"
         />
       </div>
       <span className="text-md text-white text-center">{title}</span>
