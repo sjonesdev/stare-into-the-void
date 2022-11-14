@@ -30,23 +30,6 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
     backgroundImage: `url(${bgImg})`,
   };
 
-  // const activeRoute = () => {
-  //   switch (loc.pathname) {
-  //     case "/browse":
-  //       return Pages.Browse;
-  //     case "/about":
-  //       return Pages.About;
-  //     case "/edit":
-  //       return Pages.Edit;
-  //     case "/recent":
-  //       return Pages.Recent;
-  //     case "/":
-  //     default:
-  //       return Pages.Home;
-  //   }
-  // };
-  // const navbar = <Navbar active={activeRoute()} />;
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
