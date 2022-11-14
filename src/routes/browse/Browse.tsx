@@ -73,14 +73,14 @@ export default function Browse() {
   const [imgs, setImgs] = React.useState<ImageAsset[]>([]);
 
   React.useEffect(() => {
-    FunctionsService.instance.getNIVLWithQuery("earth").then((val) => {
+    FunctionsService.instance.getNIVLWithQuery(query ?? "").then((val) => {
       const processedVal = val.map((img, idx) => {
         img.date = new Date(img.date);
         return img;
       });
       setImgs(val);
     });
-  }, []);
+  }, [query]);
 
   const apiSelector = (
     <CheckboxDropdown
