@@ -4,6 +4,7 @@ import {
   RouterProvider,
   Route,
   createRoutesFromElements,
+  useLocation,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import "./App.css";
@@ -12,13 +13,16 @@ import Home from "./routes/home/Home";
 import About from "./routes/about/About";
 import Edit from "./routes/edit/Edit";
 import Recent from "./routes/recent/Recent";
-import Search from "./routes/browse/Browse";
+import Browse from "./routes/browse/Browse";
+import SearchContext from "./lib/search-context";
 
 import { Pages } from "./lib/pages";
 
 const DEFAULT_BG = "./galaxy.jpg";
 
 function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
+  const [searchStr, setSearchStr] = React.useState("");
+  // const loc = useLocation();
   const [bgImg, setBgImg] = React.useState(DEFAULT_BG);
   if (bgUrl) {
     bgUrl.then((val) => {
@@ -29,6 +33,23 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
   const appStyle: React.CSSProperties = {
     backgroundImage: `url(${bgImg})`,
   };
+
+  // const activeRoute = () => {
+  //   switch (loc.pathname) {
+  //     case "/browse":
+  //       return Pages.Browse;
+  //     case "/about":
+  //       return Pages.About;
+  //     case "/edit":
+  //       return Pages.Edit;
+  //     case "/recent":
+  //       return Pages.Recent;
+  //     case "/":
+  //     default:
+  //       return Pages.Home;
+  //   }
+  // };
+  // const navbar = <Navbar active={activeRoute()} />;
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -42,15 +63,24 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
             </>
           }
         />
-        <Route
-          path="browse"
-          element={
-            <>
-              <Navbar active={Pages.Browse} />
-              <Search />
-            </>
-          }
-        />
+        <Route path="browse">
+          <Route
+            index
+            element={
+              <>
+                <Navbar active={Pages.Browse} /> <Browse />{" "}
+              </>
+            }
+          />
+          <Route
+            path=":query"
+            element={
+              <>
+                <Navbar active={Pages.Browse} /> <Browse />{" "}
+              </>
+            }
+          />
+        </Route>
         <Route
           path="about"
           element={
@@ -84,7 +114,9 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
 
   return (
     <div className="App" style={appStyle}>
-      <RouterProvider router={router} />
+      <SearchContext.Provider value={searchStr}>
+        <RouterProvider router={router} />
+      </SearchContext.Provider>
     </div>
   );
 }

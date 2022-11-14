@@ -11,6 +11,7 @@ import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
 import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
+import { useParams } from "react-router-dom";
 
 const apis: {
   value: string;
@@ -60,6 +61,7 @@ const testImgInfo = [
 ];
 
 export default function Browse() {
+  const { query } = useParams();
   const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
   const [fromDate, setFromDate] = React.useState<Date>();
   const [toDate, setToDate] = React.useState<Date>();
@@ -118,6 +120,9 @@ export default function Browse() {
         </div>
       </div>
       <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8">
+        <h2 className="text-white text-xl text-center">
+          Results for <span className="font-bold">"{query}"</span>
+        </h2>
         <div
           className={`${
             selectedPreview ? "w-1/2" : "w-full"
