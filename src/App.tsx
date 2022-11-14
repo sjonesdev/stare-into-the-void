@@ -4,7 +4,6 @@ import {
   RouterProvider,
   Route,
   createRoutesFromElements,
-  useLocation,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import "./App.css";
@@ -14,15 +13,12 @@ import About from "./routes/about/About";
 import Edit from "./routes/edit/Edit";
 import Recent from "./routes/recent/Recent";
 import Browse from "./routes/browse/Browse";
-import SearchContext from "./lib/search-context";
 
 import { Pages } from "./lib/pages";
 
 const DEFAULT_BG = "./galaxy.jpg";
 
 function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
-  const [searchStr, setSearchStr] = React.useState("");
-  // const loc = useLocation();
   const [bgImg, setBgImg] = React.useState(DEFAULT_BG);
   if (bgUrl) {
     bgUrl.then((val) => {
@@ -95,7 +91,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
           element={
             <>
               <Navbar active={Pages.Edit} />
-              <Edit imgUrl={bgImg} />
+              <Edit />
             </>
           }
         />
@@ -114,9 +110,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
 
   return (
     <div className="App" style={appStyle}>
-      <SearchContext.Provider value={searchStr}>
-        <RouterProvider router={router} />
-      </SearchContext.Provider>
+      <RouterProvider router={router} />
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
 import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const apis: {
   value: string;
@@ -62,6 +62,7 @@ const testImgInfo = [
 
 export default function Browse() {
   const { query } = useParams();
+  const navigate = useNavigate();
   const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
   const [fromDate, setFromDate] = React.useState<Date>();
   const [toDate, setToDate] = React.useState<Date>();
@@ -177,7 +178,12 @@ export default function Browse() {
             <p className="w-10/12">{imgs[selectedPreview].description}</p>
             <div className="w-10/12 flex justify-evenly m-8">
               <Button text="Download" />
-              <Button text="Edit" />
+              <Button
+                text="Edit"
+                onClick={() =>
+                  navigate("/edit", { state: imgs[selectedPreview] })
+                }
+              />
             </div>
           </div>
         </div>
