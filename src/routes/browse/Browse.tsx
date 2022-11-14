@@ -74,6 +74,10 @@ export default function Browse() {
 
   React.useEffect(() => {
     FunctionsService.instance.getNIVLWithQuery("earth").then((val) => {
+      const processedVal = val.map((img, idx) => {
+        img.date = new Date(img.date);
+        return img;
+      });
       setImgs(val);
     });
   }, []);
@@ -97,16 +101,28 @@ export default function Browse() {
     <SelectDropdown values={sortOpts} setValue={setSortBy} />
   );
 
-  const getImgs = () =>
-    imgs.map((img, idx) => (
-      <ImagePreview
-        onClick={() => setSelectedPreview(idx)}
-        key={idx}
-        cols={selectedPreview ? 3 : 6}
-        selected={selectedPreview === idx}
-        {...img}
-      />
-    ));
+  const getImgs = () => {
+    const imgResults: JSX.Element[] = [];
+    imgs.forEach((img, idx) => {
+      if (
+        (!fromDate || img.date.valueOf() >= fromDate.valueOf()) &&
+        (!toDate || img.date.valueOf() <= toDate.valueOf()) &&
+        (!selectedAPIs || selectedAPIs.has(img.sourceAPI))
+      ) {
+        imgResults.push(
+          <ImagePreview
+            onClick={() => setSelectedPreview(idx)}
+            key={idx}
+            cols={selectedPreview ? 3 : 6}
+            selected={selectedPreview === idx}
+            {...img}
+          />
+        );
+      }
+    });
+
+    return imgResults;
+  };
 
   return (
     <>
@@ -147,24 +163,18 @@ export default function Browse() {
                 alt=""
               />
             </div>
-            <div className="w-10/12 flex justify-between mb-4">
+            <div className="w-10/12 flex justify-between mb-4 items-end">
               <span className="font-bold text-xl ">
                 {imgs[selectedPreview].title}
               </span>
               <div>
                 <span>Taken: </span>
-                <span>11/10/2022</span>
+                <span>
+                  {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
+                </span>
               </div>
             </div>
-            <p className="w-10/12">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Temporibus quas illum ipsum quibusdam, officiis non corporis
-              perferendis impedit obcaecati similique suscipit odit. Accusantium
-              minima voluptatibus totam illo nihil veniam, fugit tempora ipsa
-              recusandae aperiam? Maiores tempore, veniam sunt delectus aliquam
-              veritatis commodi earum nulla aut perferendis fuga accusantium
-              iste vero?
-            </p>
+            <p className="w-10/12">{imgs[selectedPreview].description}</p>
             <div className="w-10/12 flex justify-evenly m-8">
               <Button text="Download" />
               <Button text="Edit" />
