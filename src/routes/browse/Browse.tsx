@@ -5,8 +5,10 @@ import CheckboxDropdown from "../../components/CheckboxDropdown";
 import DatePicker from "../../components/DatePicker";
 import ImagePreview from "../../components/ImagePreview";
 import SelectDropdown from "../../components/SelectDropdown";
-
+import { FunctionsService } from "../../lib/firebase-services"
 import { ApiInfo } from "../../lib/apiInfo";
+import { title } from "process";
+import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 
 const apis: {
   value: string;
@@ -63,6 +65,13 @@ export default function Browse() {
 
   // If image drawer is not open, will be null or undefined, else will be url of selected img
   const [openImg, setOpenImg] = React.useState<string>("");
+  const [imgs, setImgs] = React.useState<ImageAsset[]>([]);
+
+  React.useEffect(() => {
+    FunctionsService.instance.getNIVLWithQuery("earth").then((val) => {
+      setImgs(val);
+    });
+  }, [])
 
   const apiSelector = (
     <CheckboxDropdown
@@ -83,14 +92,7 @@ export default function Browse() {
     <SelectDropdown values={sortOpts} setValue={setSortBy} />
   );
 
-  const imgs = testImgInfo;
-  const getImgs = () => {
-    const res: JSX.Element[] = [];
-    for (const img of imgs) {
-      res.push(<ImagePreview key={img.dispText} {...img} />);
-    }
-    return res;
-  };
+  const getImgs = () => imgs.map((img, idx) => <ImagePreview key={idx} {...img} />)
 
   return (
     <>
