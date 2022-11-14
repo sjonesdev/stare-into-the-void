@@ -92,7 +92,6 @@ export default function Browse() {
     <SelectDropdown values={sortOpts} setValue={setSortBy} />
   );
 
-  console.log(imgs);
   const getImgs = () => imgs.map((img, idx) => <ImagePreview key={idx} {...img} />)
 
   return (
