@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Listbox } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
+import Button from "../../components/Button";
 import CheckboxDropdown from "../../components/CheckboxDropdown";
 import DatePicker from "../../components/DatePicker";
 import ImagePreview from "../../components/ImagePreview";
@@ -114,22 +116,43 @@ export default function Browse() {
         </div>
       </div>
       {selectedPreview && (
-        <div className="absolute right-0 bottom-24 top-36 shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500">
-          <button onClick={() => setSelectedPreview(null)}>Close</button>
+        <div className="fixed right-0 bottom-12 top-12 shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500 text-white">
+          <button
+            className="absolute pt-4 pl-4"
+            onClick={() => setSelectedPreview(null)}
+          >
+            <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+          </button>
           <div className="flex flex-col items-center">
             <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
               <img
-                className="h-64 object-scale-down mx-auto"
+                className="h-[24rem] object-scale-down mx-auto"
                 src={imgs[selectedPreview].imgUrl}
                 alt=""
               />
             </div>
-            <span>Random Picture</span>
-            <span>Taken: </span>
-            <span>11/10/2022</span>
-            <p>{imgs[selectedPreview].dispText}</p>
-            <button>Download</button>
-            <button>Edit</button>
+            <div className="w-10/12 flex justify-between mb-4">
+              <span className="font-bold text-xl ">
+                {imgs[selectedPreview].dispText}
+              </span>
+              <div>
+                <span>Taken: </span>
+                <span>11/10/2022</span>
+              </div>
+            </div>
+            <p className="w-10/12">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Temporibus quas illum ipsum quibusdam, officiis non corporis
+              perferendis impedit obcaecati similique suscipit odit. Accusantium
+              minima voluptatibus totam illo nihil veniam, fugit tempora ipsa
+              recusandae aperiam? Maiores tempore, veniam sunt delectus aliquam
+              veritatis commodi earum nulla aut perferendis fuga accusantium
+              iste vero?
+            </p>
+            <div className="w-10/12 flex justify-evenly m-8">
+              <Button text="Download" />
+              <Button text="Edit" />
+            </div>
           </div>
         </div>
       )}
