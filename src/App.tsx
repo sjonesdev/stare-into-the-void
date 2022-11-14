@@ -47,7 +47,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
             index
             element={
               <>
-                <Navbar active={Pages.Browse} /> <Browse />{" "}
+                <Navbar active={Pages.Browse} /> <Browse />
               </>
             }
           />
@@ -55,7 +55,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
             path=":query"
             element={
               <>
-                <Navbar active={Pages.Browse} /> <Browse />{" "}
+                <Navbar active={Pages.Browse} /> <Browse />
               </>
             }
           />
