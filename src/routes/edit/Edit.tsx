@@ -83,16 +83,12 @@ const theme = {
   "colorpicker.title.color": "#fff",
 };
 
-interface EditProps {
-  imgUrl?: string;
-}
-
 const getWindowSize = () => {
   const { innerWidth, innerHeight } = window;
   return { innerWidth, innerHeight };
 };
 
-export default function Edit({ imgUrl }: EditProps) {
+export default function Edit() {
   const loc = useLocation();
   const imgPassed: ImageAsset | null = loc.state;
   console.log(`edit got imgurl ${imgPassed?.url}`);
@@ -125,7 +121,7 @@ export default function Edit({ imgUrl }: EditProps) {
     <ImageEditor
       includeUI={{
         loadImage: {
-          path: imgUrl ?? imgPassed?.url ?? "",
+          path: imgPassed?.url ?? "",
           name: "SampleImage",
         },
         theme,
