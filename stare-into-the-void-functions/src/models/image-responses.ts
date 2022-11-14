@@ -52,6 +52,7 @@ export interface NIVLLinks{
 }
 
 export interface NIVLResponse{
+    // eslint-disable-next-line
     data: any; //This is stupid, but don't worry about it for now
     href: string;
     links: NIVLLinks;
