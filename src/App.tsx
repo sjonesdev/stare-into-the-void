@@ -12,7 +12,7 @@ import Home from "./routes/home/Home";
 import About from "./routes/about/About";
 import Edit from "./routes/edit/Edit";
 import Recent from "./routes/recent/Recent";
-import Search from "./routes/browse/Browse";
+import Browse from "./routes/browse/Browse";
 
 import { Pages } from "./lib/pages";
 
@@ -42,15 +42,24 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
             </>
           }
         />
-        <Route
-          path="browse"
-          element={
-            <>
-              <Navbar active={Pages.Browse} />
-              <Search />
-            </>
-          }
-        />
+        <Route path="browse">
+          <Route
+            index
+            element={
+              <>
+                <Navbar active={Pages.Browse} /> <Browse />
+              </>
+            }
+          />
+          <Route
+            path=":query"
+            element={
+              <>
+                <Navbar active={Pages.Browse} /> <Browse />
+              </>
+            }
+          />
+        </Route>
         <Route
           path="about"
           element={
@@ -65,7 +74,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
           element={
             <>
               <Navbar active={Pages.Edit} />
-              <Edit imgUrl={bgImg} />
+              <Edit />
             </>
           }
         />

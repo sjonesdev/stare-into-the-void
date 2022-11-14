@@ -5,7 +5,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Pages } from "../lib/pages";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -18,6 +18,20 @@ enum Disclosures {
 
 export default function Navbar({ active }: { active: Pages }) {
   const [activeDisclosure, setActiveDisclosure] = React.useState<Disclosures>();
+  const { query } = useParams();
+  const [searchStr, setSearchStr] = React.useState<string>(query ?? "");
+  const navigate = useNavigate();
+
+  const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setSearchStr(e.target.value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    navigate(`/browse/${searchStr}`);
+    // navigate("/browse", { query: searchStr });
+  };
 
   const navigation = [
     { name: "Browse", to: "/browse", current: active === Pages.Browse },
@@ -56,7 +70,10 @@ export default function Navbar({ active }: { active: Pages }) {
         return (
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              <form className="flex bg-gray-700 rounded-md px-3 py-2 text-white">
+              <form
+                className="flex bg-gray-700 rounded-md px-3 py-2 text-white"
+                onSubmit={handleSearchSubmit}
+              >
                 <button type="submit" className="mr-2 text-gray-300">
                   <BsSearch />
                 </button>
@@ -64,6 +81,8 @@ export default function Navbar({ active }: { active: Pages }) {
                   type="text"
                   className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md font-medium flex-grow"
                   placeholder="Search"
+                  value={searchStr}
+                  onChange={handleChangeSearchStr}
                 />
               </form>
             </div>
@@ -133,7 +152,10 @@ export default function Navbar({ active }: { active: Pages }) {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 min-w-0">
-                <form className="bg-gray-700 rounded-md px-3 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0">
+                <form
+                  className="bg-gray-700 rounded-md px-3 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0"
+                  onSubmit={handleSearchSubmit}
+                >
                   <button type="submit" className="mr-2 text-gray-300">
                     <BsSearch />
                   </button>
@@ -141,6 +163,8 @@ export default function Navbar({ active }: { active: Pages }) {
                     type="text"
                     className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md font-medium flex-shrink min-w-0"
                     placeholder="Search"
+                    onChange={handleChangeSearchStr}
+                    value={searchStr}
                   />
                 </form>
 

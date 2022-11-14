@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import ImageEditor from "@toast-ui/react-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
+import { useLocation } from "react-router-dom";
+import { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 
 const theme = {
   "common.bi.image":
@@ -81,16 +83,15 @@ const theme = {
   "colorpicker.title.color": "#fff",
 };
 
-interface EditProps {
-  imgUrl?: string;
-}
-
 const getWindowSize = () => {
   const { innerWidth, innerHeight } = window;
   return { innerWidth, innerHeight };
 };
 
-export default function Edit({ imgUrl }: EditProps) {
+export default function Edit() {
+  const loc = useLocation();
+  const imgPassed: ImageAsset | null = loc.state;
+  console.log(`edit got imgurl ${imgPassed?.url}`);
   const [windowSize, setWindowSize] = useState(getWindowSize());
   const editorRef = React.createRef<ImageEditor>();
 
@@ -120,7 +121,7 @@ export default function Edit({ imgUrl }: EditProps) {
     <ImageEditor
       includeUI={{
         loadImage: {
-          path: imgUrl ?? "",
+          path: imgPassed?.url ?? "",
           name: "SampleImage",
         },
         theme,

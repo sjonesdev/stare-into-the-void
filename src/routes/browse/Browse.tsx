@@ -11,6 +11,7 @@ import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
 import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
+import { useNavigate, useParams } from "react-router-dom";
 
 const apis: {
   value: string;
@@ -60,6 +61,8 @@ const testImgInfo = [
 ];
 
 export default function Browse() {
+  const { query } = useParams();
+  const navigate = useNavigate();
   const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
   const [fromDate, setFromDate] = React.useState<Date>();
   const [toDate, setToDate] = React.useState<Date>();
@@ -71,10 +74,14 @@ export default function Browse() {
   const [imgs, setImgs] = React.useState<ImageAsset[]>([]);
 
   React.useEffect(() => {
-    FunctionsService.instance.getNIVLWithQuery("earth").then((val) => {
+    FunctionsService.instance.getNIVLWithQuery(query ?? "").then((val) => {
+      const processedVal = val.map((img, idx) => {
+        img.date = new Date(img.date);
+        return img;
+      });
       setImgs(val);
     });
-  }, []);
+  }, [query]);
 
   const apiSelector = (
     <CheckboxDropdown
@@ -95,16 +102,28 @@ export default function Browse() {
     <SelectDropdown values={sortOpts} setValue={setSortBy} />
   );
 
-  const getImgs = () =>
-    imgs.map((img, idx) => (
-      <ImagePreview
-        onClick={() => setSelectedPreview(idx)}
-        key={idx}
-        cols={selectedPreview ? 3 : 6}
-        selected={selectedPreview === idx}
-        {...img}
-      />
-    ));
+  const getImgs = () => {
+    const imgResults: JSX.Element[] = [];
+    imgs.forEach((img, idx) => {
+      if (
+        (!fromDate || img.date.valueOf() >= fromDate.valueOf()) &&
+        (!toDate || img.date.valueOf() <= toDate.valueOf()) &&
+        (!selectedAPIs || selectedAPIs.has(img.sourceAPI))
+      ) {
+        imgResults.push(
+          <ImagePreview
+            onClick={() => setSelectedPreview(idx)}
+            key={idx}
+            cols={selectedPreview ? 3 : 6}
+            selected={selectedPreview === idx}
+            {...img}
+          />
+        );
+      }
+    });
+
+    return imgResults;
+  };
 
   return (
     <>
@@ -118,6 +137,9 @@ export default function Browse() {
         </div>
       </div>
       <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8">
+        <h2 className="text-white text-xl text-center">
+          Results for <span className="font-bold">"{query}"</span>
+        </h2>
         <div
           className={`${
             selectedPreview ? "w-1/2" : "w-full"
@@ -142,27 +164,26 @@ export default function Browse() {
                 alt=""
               />
             </div>
-            <div className="w-10/12 flex justify-between mb-4">
+            <div className="w-10/12 flex justify-between mb-4 items-end">
               <span className="font-bold text-xl ">
                 {imgs[selectedPreview].title}
               </span>
               <div>
                 <span>Taken: </span>
-                <span>11/10/2022</span>
+                <span>
+                  {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
+                </span>
               </div>
             </div>
-            <p className="w-10/12">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Temporibus quas illum ipsum quibusdam, officiis non corporis
-              perferendis impedit obcaecati similique suscipit odit. Accusantium
-              minima voluptatibus totam illo nihil veniam, fugit tempora ipsa
-              recusandae aperiam? Maiores tempore, veniam sunt delectus aliquam
-              veritatis commodi earum nulla aut perferendis fuga accusantium
-              iste vero?
-            </p>
+            <p className="w-10/12">{imgs[selectedPreview].description}</p>
             <div className="w-10/12 flex justify-evenly m-8">
               <Button text="Download" />
-              <Button text="Edit" />
+              <Button
+                text="Edit"
+                onClick={() =>
+                  navigate("/edit", { state: imgs[selectedPreview] })
+                }
+              />
             </div>
           </div>
         </div>
