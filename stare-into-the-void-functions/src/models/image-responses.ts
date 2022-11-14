@@ -35,7 +35,7 @@ export interface APODResponse{
     url: string;
 }
 
-interface NIVLData{
+export interface NIVLData{
     center: string;
     date_created: Date;
     description: string;
@@ -45,14 +45,15 @@ interface NIVLData{
     title: string;
 }
 
-interface NIVLLinks{
+export interface NIVLLinks{
     href: string;
     rel: string;
     render: string;
 }
 
 export interface NIVLResponse{
-    data: NIVLData;
+    // eslint-disable-next-line
+    data: any; //This is stupid, but don't worry about it for now
     href: string;
     links: NIVLLinks;
 }

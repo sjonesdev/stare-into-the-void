@@ -5,7 +5,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { defineString } from "firebase-functions/params";
 
-import { type APODResponse } from "./models/image-responses";
+import { type APODResponse, type NIVLResponse, type MRPResponse } from "./models/image-responses";
 import { ImageAsset, SourceAPI } from "./models/image-assets";
 
 import * as https from "https";
@@ -22,6 +22,8 @@ const handleCors = cors({origin: true});
 // stare-into-the-void-functions root directory 
 // like NASA_APIKEY=thisismykey
 const NASA_API_KEY = defineString("NASA_API_KEY");
+
+//Astronomy Picture of the Day
 
 exports.apod = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
@@ -46,29 +48,99 @@ exports.apod = functions.https.onRequest((req, res) => {
       })
 
     }).on("error", (error) => {
-      functions.logger.log(`Error fetching NASA APOD: ${error}`)
+      functions.logger.error(`Error fetching NASA APOD: ${error}`)
       res.status(502).send({
         data: {
           error
         }
       })
     })
-
   })
-})
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
 });
 
-exports.bigben = functions.https.onRequest((req, res) => {
-  functions.logger.log("Got bigben request LOGLOGLOG", {structuredData: true})
+//Nasa Image and Video Library
+
+exports.nivl = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
-    const hours = (new Date().getHours() % 12) + 1; // London is UTC + 1hr;
-    res.status(200).send({
-      data: `${"BONG ".repeat(hours)}`,
-    });
-  });
+    functions.logger.log(`reqbody: ${JSON.stringify(req.body.data)}`)
+    const query = req.body.data.search;
+    functions.logger.log(`Got NIVL query ${query}`)
+    const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
+    https.get(reqUrl, (resp) => {
+      let rawData = ""  
+      resp.on("data", (chunk) => {
+        rawData += chunk
+      })
+      resp.on("end", () => {
+        const resList = JSON.parse(rawData);
+        const data: ImageAsset[] = []; 
+        resList.collection.items?.forEach((element: NIVLResponse) => {
+          if(element.data[0].media_type === "image"){
+            data.push({
+              title: element.data[0].title,
+              url: getImageURL(element.href),
+              description: element.data[0].description,
+              date: element.data[0].date_created,
+              sourceAPI: SourceAPI.ImageAndVideoLibrary
+            });
+          }
+        });
+        res.status(200).send({
+          data
+        })
+      })
+    }).on("error", (error) => {
+      functions.logger.error(`Error fetching NASA NIVL: ${error}`)
+      res.status(502).send({
+        data: {
+          error
+        }
+      })
+    })
+  })
+});
+
+function getImageURL(manifestUrl: string){
+  const baseUrl = "http://images-assets.nasa.gov/image/";
+  const strings = manifestUrl.split("/");
+  return baseUrl + strings[4] + "/" + strings[4] + "~orig.jpg";
+}
+
+//Mars Rover Photos
+
+exports.mrp = functions.https.onRequest((req, res) => {
+  handleCors(req, res, () => {
+    const rover = req.query.rover;
+    const reqUrl = `https://mars-photos.herokuapp.com/api/v1/rovers/${rover}/latest_photos`; //Using the heroku endpoint means we don't need an API key for this one
+    https.get(reqUrl, (resp) => {
+      let rawData = ""  
+      resp.on("data", (chunk) => {
+        rawData += chunk
+      })
+      resp.on("end", () => {
+        const resList = JSON.parse(rawData);
+      
+        const data: ImageAsset[] = []; 
+        resList.items.array.forEach((element: MRPResponse) => {
+          data.push({
+            title: element.id.toString(),
+            url: element.img_src,
+            description: "Photo taken by " + element.rover + "using camera" + element.camera + " on martian sol " + element.sol + ".",
+            date: element.earth_date,
+            sourceAPI: SourceAPI.MarsRoverPhotos
+          });
+        });
+        res.status(200).send({
+          data
+        })
+      })
+    }).on("error", (error) => {
+      functions.logger.error(`Error fetching NASA MRP: ${error}`)
+      res.status(502).send({
+        data: {
+          error
+        }
+      })
+    })
+  })
 });

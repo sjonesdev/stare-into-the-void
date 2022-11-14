@@ -7,8 +7,10 @@ import CheckboxDropdown from "../../components/CheckboxDropdown";
 import DatePicker from "../../components/DatePicker";
 import ImagePreview from "../../components/ImagePreview";
 import SelectDropdown from "../../components/SelectDropdown";
-
+import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
+import { title } from "process";
+import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 
 const apis: {
   value: string;
@@ -28,32 +30,32 @@ const sortOpts = ["Recent", "Relevant", "Something else idk"];
 
 const testImgInfo = [
   {
-    imgUrl: "https://picsum.photos/500/500",
-    dispText: "Random Picture",
+    url: "https://picsum.photos/500/500",
+    title: "Random Picture",
   },
   {
-    imgUrl: "https://picsum.photos/300/500",
-    dispText: "Random Picture 2",
+    url: "https://picsum.photos/300/500",
+    title: "Random Picture 2",
   },
   {
-    imgUrl: "https://picsum.photos/500/300",
-    dispText: "Random Picture 3",
+    url: "https://picsum.photos/500/300",
+    title: "Random Picture 3",
   },
   {
-    imgUrl: "https://picsum.photos/250/250",
-    dispText: "Random Picture 4",
+    url: "https://picsum.photos/250/250",
+    title: "Random Picture 4",
   },
   {
-    imgUrl: "https://picsum.photos/1000/1000",
-    dispText: "Random Picture 5",
+    url: "https://picsum.photos/1000/1000",
+    title: "Random Picture 5",
   },
   {
-    imgUrl: "https://picsum.photos/640/480",
-    dispText: "Random Picture 6",
+    url: "https://picsum.photos/640/480",
+    title: "Random Picture 6",
   },
   {
-    imgUrl: "https://picsum.photos/480/640",
-    dispText: "Random Picture 6",
+    url: "https://picsum.photos/480/640",
+    title: "Random Picture 6",
   },
 ];
 
@@ -63,6 +65,16 @@ export default function Browse() {
   const [toDate, setToDate] = React.useState<Date>();
   const [sortBy, setSortBy] = React.useState(sortOpts[0]);
   const [selectedPreview, setSelectedPreview] = React.useState<number | null>();
+
+  // If image drawer is not open, will be null or undefined, else will be url of selected img
+  const [openImg, setOpenImg] = React.useState<string>("");
+  const [imgs, setImgs] = React.useState<ImageAsset[]>([]);
+
+  React.useEffect(() => {
+    FunctionsService.instance.getNIVLWithQuery("earth").then((val) => {
+      setImgs(val);
+    });
+  }, []);
 
   const apiSelector = (
     <CheckboxDropdown
@@ -83,7 +95,6 @@ export default function Browse() {
     <SelectDropdown values={sortOpts} setValue={setSortBy} />
   );
 
-  const imgs = testImgInfo;
   const getImgs = () =>
     imgs.map((img, idx) => (
       <ImagePreview
@@ -127,13 +138,13 @@ export default function Browse() {
             <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
               <img
                 className="h-[24rem] object-scale-down mx-auto"
-                src={imgs[selectedPreview].imgUrl}
+                src={imgs[selectedPreview].url}
                 alt=""
               />
             </div>
             <div className="w-10/12 flex justify-between mb-4">
               <span className="font-bold text-xl ">
-                {imgs[selectedPreview].dispText}
+                {imgs[selectedPreview].title}
               </span>
               <div>
                 <span>Taken: </span>
