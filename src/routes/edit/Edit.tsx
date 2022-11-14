@@ -2,12 +2,11 @@ import * as React from "react";
 import { useState } from "react";
 
 import ImageEditor from "@toast-ui/react-image-editor";
-import ImageEditorClass from "tui-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
 
 const theme = {
   "common.bi.image":
-  "https://i.pinimg.com/originals/5e/38/39/5e3839b3a6c248f9b7d794bf1ef67cf5.jpg",
+    "https://i.pinimg.com/originals/5e/38/39/5e3839b3a6c248f9b7d794bf1ef67cf5.jpg",
   "common.bisize.width": "50px",
   "common.bisize.height": "50px",
   "common.backgroundImage": "none",
@@ -93,13 +92,13 @@ const getWindowSize = () => {
 
 export default function Edit({ imgUrl }: EditProps) {
   const [windowSize, setWindowSize] = useState(getWindowSize());
-  const editorRef = React.createRef<ImageEditorClass>();
+  const editorRef = React.createRef<ImageEditor>();
 
   React.useEffect(() => {
     const handleWindowResize = () => {
       const newWinSize = getWindowSize();
       setWindowSize((curWinSize) => ({ ...curWinSize, ...newWinSize }));
-      editorRef.current?.ui?.resizeEditor({
+      editorRef.current?.getInstance().ui.resizeEditor({
         uiSize: {
           width: `${newWinSize.innerWidth - 100}px`,
           height: `${newWinSize.innerHeight - 100}px`,

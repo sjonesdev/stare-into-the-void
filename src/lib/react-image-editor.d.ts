@@ -5,9 +5,7 @@ declare module '@toast-ui/react-image-editor' {
 
   // export default function BaseImageEditor(props: BaseProps): JSX.Element;
 
-  interface ImageEditorProps extends BaseProps {
-    ref: React.RefObject
+  export default class ImageEditorComponent extends React.Component<BaseProps> {
+    getInstance: () => ImageEditor
   }
-
-  export default function ReactImageEditor(props: ImageEditorProps): JSX.Element
 }
