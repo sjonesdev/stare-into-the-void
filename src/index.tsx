@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import type { ImageAsset } from "../stare-into-the-void-functions/src/models/image-assets";
 import { initFirebase, FunctionsService } from './lib/firebase-services'
 
 initFirebase();
