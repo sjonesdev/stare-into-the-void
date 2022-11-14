@@ -4,6 +4,7 @@ interface ImagePreviewProps {
   imgAltText?: string;
   lastOpened?: string;
   cols?: number;
+  selected?: boolean;
   onClick?: () => void;
 }
 
@@ -13,6 +14,7 @@ export default function ImagePreview({
   imgAltText,
   lastOpened,
   cols = 3,
+  selected,
   onClick,
 }: ImagePreviewProps) {
   return (
@@ -21,8 +23,11 @@ export default function ImagePreview({
       onClick={onClick}
     >
       <div className="m-2 w-full h-full">
+        {selected && (
+          <div className="absolute -translate-x-2 -translate-y-2 h-[15rem] w-[15rem] md:h-[13rem] rounded-md bg-indigo-300/25 border-indigo-300 border-solid border-2" />
+        )}
         <img
-          className="rounded-md shadow-md shadow-black/40 object-cover h-56 w-56 md:h-32 md:h-48"
+          className="rounded-md shadow-md shadow-black/40 object-cover h-56 w-56 md:h-48"
           src={imgUrl}
           alt={imgAltText ?? ""}
         />

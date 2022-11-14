@@ -88,6 +88,7 @@ export default function Browse() {
         onClick={() => setSelectedPreview(idx)}
         key={idx}
         cols={selectedPreview ? 3 : 6}
+        selected={selectedPreview === idx}
         {...img}
       />
     ));
@@ -113,15 +114,23 @@ export default function Browse() {
         </div>
       </div>
       {selectedPreview && (
-        <div className="absolute right-0 bottom-24 top-36 rounded-l-xl w-1/2 bg-gray-500">
+        <div className="absolute right-0 bottom-24 top-36 shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500">
           <button onClick={() => setSelectedPreview(null)}>Close</button>
-          <img src={imgs[selectedPreview].imgUrl} alt="" />
-          <span>Random Picture</span>
-          <span>Taken: </span>
-          <span>11/10/2022</span>
-          <p>{imgs[selectedPreview].dispText}</p>
-          <button>Download</button>
-          <button>Edit</button>
+          <div className="flex flex-col items-center">
+            <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
+              <img
+                className="h-64 object-scale-down mx-auto"
+                src={imgs[selectedPreview].imgUrl}
+                alt=""
+              />
+            </div>
+            <span>Random Picture</span>
+            <span>Taken: </span>
+            <span>11/10/2022</span>
+            <p>{imgs[selectedPreview].dispText}</p>
+            <button>Download</button>
+            <button>Edit</button>
+          </div>
         </div>
       )}
     </>
