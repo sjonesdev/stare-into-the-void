@@ -60,9 +60,7 @@ export default function Browse() {
   const [fromDate, setFromDate] = React.useState<Date>();
   const [toDate, setToDate] = React.useState<Date>();
   const [sortBy, setSortBy] = React.useState(sortOpts[0]);
-
-  // If image drawer is not open, will be null or undefined, else will be url of selected img
-  const [openImg, setOpenImg] = React.useState<string>("");
+  const [selectedPreview, setSelectedPreview] = React.useState<number | null>();
 
   const apiSelector = (
     <CheckboxDropdown
@@ -85,7 +83,14 @@ export default function Browse() {
 
   const imgs = testImgInfo;
   const getImgs = () =>
-    imgs.map((img, idx) => <ImagePreview key={idx} {...img} />);
+    imgs.map((img, idx) => (
+      <ImagePreview
+        onClick={() => setSelectedPreview(idx)}
+        key={idx}
+        cols={selectedPreview ? 3 : 6}
+        {...img}
+      />
+    ));
 
   return (
     <>
@@ -98,15 +103,23 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-col sm:flex-row flex-wrap justify-between items-center sm:items-start">
-        {getImgs()}
+      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8">
+        <div
+          className={`${
+            selectedPreview ? "w-1/2" : "w-full"
+          } flex flex-col md:flex-row flex-wrap justify-around items-center md:items-start`}
+        >
+          {getImgs()}
+        </div>
       </div>
-      {openImg && (
-        <div className="absolute right-0 bg-gray-500">
-          <img src={openImg} alt="" />
+      {selectedPreview && (
+        <div className="absolute right-0 bottom-24 top-36 rounded-l-xl w-1/2 bg-gray-500">
+          <button onClick={() => setSelectedPreview(null)}>Close</button>
+          <img src={imgs[selectedPreview].imgUrl} alt="" />
           <span>Random Picture</span>
           <span>Taken: </span>
           <span>11/10/2022</span>
+          <p>{imgs[selectedPreview].dispText}</p>
           <button>Download</button>
           <button>Edit</button>
         </div>
