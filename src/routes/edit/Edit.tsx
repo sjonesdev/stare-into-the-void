@@ -91,7 +91,7 @@ const getWindowSize = () => {
 export default function Edit() {
   const loc = useLocation();
   const imgPassed: ImageAsset | null = loc.state;
-  console.log(`edit got imgurl ${imgPassed?.url}`);
+  console.log(`edit got imgurl ${imgPassed?.urls.orig}`);
   const [windowSize, setWindowSize] = useState(getWindowSize());
   const editorRef = React.createRef<ImageEditor>();
 
@@ -121,7 +121,7 @@ export default function Edit() {
     <ImageEditor
       includeUI={{
         loadImage: {
-          path: imgPassed?.url ?? "",
+          path: imgPassed?.urls.orig ?? "",
           name: "SampleImage",
         },
         theme,

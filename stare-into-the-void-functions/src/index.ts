@@ -37,7 +37,10 @@ exports.apod = functions.https.onRequest((req, res) => {
         const apodData: APODResponse = JSON.parse(rawData)
         const data: ImageAsset = {
           title: apodData.title,
-          url: apodData.url,
+          urls: {
+            orig: apodData.url,
+            thumb: ""
+          },
           description: apodData.explanation,
           date: apodData.date,
           sourceAPI: SourceAPI.APOD
@@ -62,7 +65,7 @@ exports.apod = functions.https.onRequest((req, res) => {
 
 exports.nivl = functions.https.onRequest((req, res) => {
   handleCors(req, res, () => {
-    functions.logger.log(`reqbody: ${JSON.stringify(req.body.data)}`)
+    functions.logger.log(`reqbody: ${JSON.stringify(req.body.data, null, 2)}`)
     const query = req.body.data.search;
     functions.logger.log(`Got NIVL query ${query}`)
     const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
@@ -78,7 +81,7 @@ exports.nivl = functions.https.onRequest((req, res) => {
           if(element.data[0].media_type === "image"){
             data.push({
               title: element.data[0].title,
-              url: getImageURL(element.href),
+              urls: getImageURLs(element.href),
               description: element.data[0].description,
               date: element.data[0].date_created,
               sourceAPI: SourceAPI.ImageAndVideoLibrary
@@ -100,10 +103,17 @@ exports.nivl = functions.https.onRequest((req, res) => {
   })
 });
 
-function getImageURL(manifestUrl: string){
+function getImageURLs(manifestUrl: string){
   const baseUrl = "http://images-assets.nasa.gov/image/";
   const strings = manifestUrl.split("/");
-  return baseUrl + strings[4] + "/" + strings[4] + "~orig.jpg";
+  const urls = {
+    orig: baseUrl + strings[4] + "/" + strings[4] + "~orig.jpg",
+    thumb: baseUrl + strings[4] + "/" + strings[4] + "~thumb.jpg"
+  }
+  // return baseUrl + strings[4] + "/" + strings[4] + "~orig.jpg";
+  return urls;
+  // TODO - also probably need to handle other types of images other than jpg, as that's
+  // likely where the errors are coming from client side
 }
 
 //Mars Rover Photos
@@ -124,7 +134,10 @@ exports.mrp = functions.https.onRequest((req, res) => {
         resList.items.array.forEach((element: MRPResponse) => {
           data.push({
             title: element.id.toString(),
-            url: element.img_src,
+            urls: {
+              orig: element.img_src,
+              thumb: ""
+            },
             description: "Photo taken by " + element.rover + "using camera" + element.camera + " on martian sol " + element.sol + ".",
             date: element.earth_date,
             sourceAPI: SourceAPI.MarsRoverPhotos

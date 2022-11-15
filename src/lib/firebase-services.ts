@@ -60,7 +60,7 @@ export default class CloudFunctionsService{
         var apodUrl = this.apod()
         .then((res) => {
             console.log(res);
-            return res.data.url;
+            return res.data.urls.orig;
         })
         .catch((reason) => {
             console.log("error: " + reason);
