@@ -117,6 +117,7 @@ export default function Browse() {
             cols={selectedPreview ? 3 : 6}
             selected={selectedPreview === idx}
             {...img}
+            url={img.urls.thumb}
           />
         );
       }
@@ -160,7 +161,7 @@ export default function Browse() {
             <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
               <img
                 className="h-[24rem] object-scale-down mx-auto"
-                src={imgs[selectedPreview].url}
+                src={imgs[selectedPreview].urls.orig}
                 alt=""
               />
             </div>
