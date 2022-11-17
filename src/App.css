@@ -6,4 +6,5 @@
   background-attachment: fixed;
   background-size: cover;
   transition: background 500ms ease-in-out;
+  background-image: url('../public/galaxy.jpg');
 }

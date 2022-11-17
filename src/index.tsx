@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import { initFirebase, FunctionsService } from './lib/firebase-services'
+import { initFirebase, FunctionsService } from "./lib/firebase-services";
 
 initFirebase();
 
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App bgUrl={FunctionsService.instance.getPictureOfTheDay()}  />
+    <App />
   </React.StrictMode>
 );
 

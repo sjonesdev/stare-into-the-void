@@ -16,20 +16,7 @@ import Browse from "./routes/browse/Browse";
 
 import { Pages } from "./lib/pages";
 
-const DEFAULT_BG = "./galaxy.jpg";
-
-function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
-  const [bgImg, setBgImg] = React.useState(DEFAULT_BG);
-  if (bgUrl) {
-    bgUrl.then((val) => {
-      console.log("bgurl resolved to " + val);
-      if (val) setBgImg(val); // need to also validate that is image as apparently there can be youtube videos returned from the APOD API
-    });
-  }
-  const appStyle: React.CSSProperties = {
-    backgroundImage: `url(${bgImg})`,
-  };
-
+function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
@@ -92,7 +79,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
   );
 
   return (
-    <div className="App" style={appStyle}>
+    <div className="App">
       <RouterProvider router={router} />
     </div>
   );
