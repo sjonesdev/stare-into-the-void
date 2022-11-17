@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import { initFirebase, FunctionsService } from "./lib/firebase-services";
+import { initFirebase } from "./lib/firebase-services";
 
 initFirebase();
 

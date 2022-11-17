@@ -150,7 +150,7 @@ export default function Browse() {
         </div>
       </div>
       {selectedPreview && (
-        <div className="fixed right-0 bottom-12 top-12 shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500 text-white">
+        <div className="fixed right-0 bottom-12 top-12 overflow-y-scroll shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500 text-white">
           <button
             className="absolute pt-4 pl-4"
             onClick={() => setSelectedPreview(null)}
