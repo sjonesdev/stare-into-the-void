@@ -119,14 +119,13 @@ export default function Browse() {
       ) {
         imgResults.push(
           <ImagePreview
+            img={img}
             onClick={(e) => {
               setSelectedPreview(idx);
               setTopElement(e.currentTarget);
             }}
             key={idx}
             selected={selectedPreview === idx}
-            {...img}
-            url={img.urls.thumb}
           />
         );
       }
