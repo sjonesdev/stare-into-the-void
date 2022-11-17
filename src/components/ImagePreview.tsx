@@ -3,6 +3,7 @@ import { RiImageEditLine } from "react-icons/ri";
 import { FaDownload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
+import Download from "./Download";
 
 interface ImagePreviewProps {
   img: ImageAsset;
@@ -36,16 +37,13 @@ export default function ImagePreview({
           >
             <RiImageEditLine aria-hidden={true} className="h-7 w-7" />
           </button>
-          <a
+          <Download
             href={img.urls.orig}
             className="block m-2"
-            aria-label="Download image"
-            target="_blank"
-            rel="noreferrer noopener"
-            download
+            imgTitle={img.title}
           >
             <FaDownload aria-hidden={true} className=" w-5 h-5" />
-          </a>
+          </Download>
         </div>
         <img
           className="rounded-md shadow-md shadow-black/40 object-cover h-56 w-56 md:h-48"
