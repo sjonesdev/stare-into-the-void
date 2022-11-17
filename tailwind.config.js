@@ -10,9 +10,11 @@ module.exports = {
       },
     },
     maxWidth: {
+      'xs': '20rem',
       '2xs': '16rem',
       '3xs': '12rem',
-      'min': 'min-content'
+      'min': 'min-content',
+      'fit': 'fit-content'
     },
     maxHeight: {
       '2xs': '16rem',

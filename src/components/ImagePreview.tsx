@@ -13,13 +13,12 @@ export default function ImagePreview({
   url,
   imgAltText,
   lastOpened,
-  cols = 3,
   selected,
   onClick,
 }: ImagePreviewProps) {
   return (
     <div
-      className={`flex flex-col items-center w-${cols}/12 p-4 h-fit xl:max-w-2xs`}
+      className={`flex flex-col items-center p-4 h-fit max-w-2xs`}
       onClick={onClick}
     >
       <div className="m-2 w-full h-full">

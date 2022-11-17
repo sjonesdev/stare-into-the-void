@@ -114,7 +114,6 @@ export default function Browse() {
           <ImagePreview
             onClick={() => setSelectedPreview(idx)}
             key={idx}
-            cols={selectedPreview ? 3 : 6}
             selected={selectedPreview === idx}
             {...img}
             url={img.urls.thumb}
@@ -143,14 +142,14 @@ export default function Browse() {
         </h2>
         <div
           className={`${
-            selectedPreview ? "w-1/2" : "w-full"
+            selectedPreview ? "w-7/12" : "w-full"
           } flex flex-col md:flex-row flex-wrap justify-around items-center md:items-start`}
         >
           {getImgs()}
         </div>
       </div>
       {selectedPreview && (
-        <div className="fixed right-0 bottom-12 top-12 overflow-y-scroll shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500 text-white">
+        <div className="fixed right-0 bottom-12 top-12 overflow-y-scroll shadow-lg shadow-black/40 rounded-l-xl w-5/12 bg-gray-500 text-white">
           <button
             className="absolute pt-4 pl-4"
             onClick={() => setSelectedPreview(null)}
