@@ -59,7 +59,6 @@ export default class CloudFunctionsService{
     getPictureOfTheDay(){
         var apodUrl = this.apod()
         .then((res) => {
-            console.log(res);
             return res.data.urls.orig;
         })
         .catch((reason) => {
@@ -73,7 +72,6 @@ export default class CloudFunctionsService{
         var nivlUrls: ImageAsset[] = [];
         await this.nivl({ search: query })
         .then((res) => {
-            console.log(res);
             nivlUrls = res.data;
             return res.data;
         })
