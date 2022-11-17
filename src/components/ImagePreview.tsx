@@ -1,3 +1,5 @@
+import React from "react";
+
 interface ImagePreviewProps {
   title: string;
   url: string;
@@ -5,7 +7,7 @@ interface ImagePreviewProps {
   lastOpened?: string;
   cols?: number;
   selected?: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export default function ImagePreview({

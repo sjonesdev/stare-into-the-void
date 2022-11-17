@@ -68,6 +68,7 @@ export default function Browse() {
   const [toDate, setToDate] = React.useState<Date>();
   const [sortBy, setSortBy] = React.useState(sortOpts[0]);
   const [selectedPreview, setSelectedPreview] = React.useState<number | null>();
+  const [topElement, setTopElement] = React.useState<HTMLElement>();
 
   // If image drawer is not open, will be null or undefined, else will be url of selected img
   const [openImg, setOpenImg] = React.useState<string>("");
@@ -82,6 +83,12 @@ export default function Browse() {
       setImgs(val);
     });
   }, [query]);
+
+  React.useEffect(() => {
+    topElement?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [selectedPreview, topElement]);
 
   const apiSelector = (
     <CheckboxDropdown
@@ -112,7 +119,10 @@ export default function Browse() {
       ) {
         imgResults.push(
           <ImagePreview
-            onClick={() => setSelectedPreview(idx)}
+            onClick={(e) => {
+              setSelectedPreview(idx);
+              setTopElement(e.currentTarget);
+            }}
             key={idx}
             selected={selectedPreview === idx}
             {...img}
@@ -136,16 +146,18 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8">
-        <h2 className="text-white text-xl text-center">
-          Results for <span className="font-bold">"{query}"</span>
-        </h2>
-        <div
-          className={`${
-            selectedPreview ? "w-7/12" : "w-full"
-          } flex flex-col md:flex-row flex-wrap justify-around items-center md:items-start`}
-        >
-          {getImgs()}
+      <div className="py-12 mx-auto">
+        <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto p-8">
+          <h2 className="text-white text-xl text-center">
+            Results for <span className="font-bold">"{query}"</span>
+          </h2>
+          <div
+            className={`${
+              selectedPreview ? "w-7/12" : "w-full"
+            } flex flex-col md:flex-row flex-wrap justify-around items-center md:items-start`}
+          >
+            {getImgs()}
+          </div>
         </div>
       </div>
       {selectedPreview && (
