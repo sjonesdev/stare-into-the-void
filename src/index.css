@@ -20,3 +20,13 @@ code {
 .scheme-dark {
   color-scheme: dark;
 }
+
+/* 
+This is a hack to fix a bug in the react-image-editor package 
+where the svg it adds containing its icon library or whatever 
+doesn't have it's CSS configured correctly causing it to add 
+vertical space to the document
+*/
+body > svg {
+  display: none;
+}
