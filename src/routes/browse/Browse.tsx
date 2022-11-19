@@ -12,6 +12,9 @@ import { ApiInfo } from "../../lib/apiInfo";
 import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import { useNavigate, useParams } from "react-router-dom";
+import { RiImageEditLine } from "react-icons/ri";
+import Download from "../../components/Download";
+import { FaDownload } from "react-icons/fa";
 
 const apis: {
   value: string;
@@ -161,12 +164,26 @@ export default function Browse() {
       </div>
       {selectedPreview && (
         <div className="fixed right-0 bottom-12 top-12 overflow-y-scroll shadow-lg shadow-black/40 rounded-l-xl w-5/12 bg-gray-500 text-white">
-          <button
-            className="absolute pt-4 pl-4"
-            onClick={() => setSelectedPreview(null)}
-          >
-            <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-          </button>
+          <div className="absolute flex flex-col gap-1 ml-1 mt-1">
+            <button onClick={() => setSelectedPreview(null)}>
+              <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+            </button>
+            <button
+              aria-label="Open image in editor"
+              onClick={() =>
+                navigate("/edit", { state: imgs[selectedPreview] })
+              }
+            >
+              <RiImageEditLine aria-hidden={true} className="h-6 w-6" />
+            </button>
+            <Download
+              className="relative left-[0.125rem] py-[0.125rem]"
+              href={imgs[selectedPreview].urls.orig}
+              imgTitle={imgs[selectedPreview].title}
+            >
+              <FaDownload aria-hidden={true} className="w-5 h-5" />
+            </Download>
+          </div>
           <div className="flex flex-col items-center">
             <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
               <img
@@ -187,15 +204,6 @@ export default function Browse() {
               </div>
             </div>
             <p className="w-10/12">{imgs[selectedPreview].description}</p>
-            <div className="w-10/12 flex justify-evenly m-8">
-              <Button text="Download" />
-              <Button
-                text="Edit"
-                onClick={() =>
-                  navigate("/edit", { state: imgs[selectedPreview] })
-                }
-              />
-            </div>
           </div>
         </div>
       )}
