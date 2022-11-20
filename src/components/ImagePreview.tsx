@@ -22,12 +22,12 @@ export default function ImagePreview({
 
   return (
     <div
-      className={`flex flex-col items-center p-4 h-fit max-w-2xs text-white`}
+      className={`flex flex-col items-center p-2 lg:p-4 md:max-w-3xs lg:max-w-2xs text-white`}
       onClick={onClick}
     >
       <div className="m-2 w-full h-full">
         {selected && (
-          <div className="absolute -translate-x-2 -translate-y-2 h-[15rem] w-[15rem] md:h-[13rem] rounded-md bg-indigo-300/25 border-indigo-300 border-solid border-2" />
+          <div className="absolute -translate-x-2 -translate-y-2 h-[15rem] lg:w-[15rem] lg:h-[13rem] rounded-md bg-indigo-300/25 border-indigo-300 border-solid border-2" />
         )}
         <div className="absolute bg-black/50 rounded-tl-md rounded-br-md">
           <button
@@ -46,7 +46,7 @@ export default function ImagePreview({
           </Download>
         </div>
         <img
-          className="rounded-md shadow-md shadow-black/40 object-cover h-56 w-56 md:h-48"
+          className="rounded-md shadow-md shadow-black/40 object-cove md:w-48 md:h-40 lg:w-56 lg:h-48"
           src={img.urls.thumb}
           alt={img.title}
           loading="lazy"

@@ -148,8 +148,8 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="py-12 mx-auto">
-        <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto p-8">
+      <div className="xl:py-12 mx-auto">
+        <div className="w-full xl:w-10/12 bg-charcoal bg-opacity-80 xl:rounded-xl max-h-max mx-auto p-4 xl:p-8">
           <h2 className="text-white text-xl text-center">
             Results for <span className="font-bold">"{query}"</span>
           </h2>
@@ -164,7 +164,7 @@ export default function Browse() {
       </div>
       {selectedPreview && (
         <div className="fixed right-0 bottom-12 top-12 overflow-y-scroll shadow-lg shadow-black/40 rounded-l-xl w-5/12 bg-gray-500 text-white">
-          <div className="absolute flex flex-col gap-1 ml-1 mt-1">
+          <div className="absolute flex flex gap-1 ml-1 mt-1">
             <button onClick={() => setSelectedPreview(null)}>
               <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
             </button>
@@ -185,10 +185,10 @@ export default function Browse() {
             </Download>
           </div>
           <div className="flex flex-col items-center">
-            <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
+            <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
               <img
-                className="h-[24rem] object-scale-down mx-auto"
-                src={imgs[selectedPreview].urls.orig}
+                className="rounded-lg object-scale-down"
+                src={imgs[selectedPreview].urls.thumb}
                 alt=""
               />
             </div>
@@ -196,14 +196,13 @@ export default function Browse() {
               <span className="font-bold text-xl ">
                 {imgs[selectedPreview].title}
               </span>
-              <div>
-                <span>Taken: </span>
-                <span>
-                  {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
-                </span>
-              </div>
+              <span>
+                {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
+              </span>
             </div>
-            <p className="w-10/12">{imgs[selectedPreview].description}</p>
+            <p className="w-10/12 break-words leading-relaxed">
+              {imgs[selectedPreview].description}
+            </p>
           </div>
         </div>
       )}

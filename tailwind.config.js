@@ -14,7 +14,9 @@ module.exports = {
       '2xs': '16rem',
       '3xs': '12rem',
       'min': 'min-content',
-      'fit': 'fit-content'
+      'fit': 'fit-content',
+      '1/4': '25%',
+      '1/2': '50%',
     },
     maxHeight: {
       '2xs': '16rem',
