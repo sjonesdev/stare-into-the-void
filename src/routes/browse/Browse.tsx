@@ -163,7 +163,7 @@ export default function Browse() {
           <div
             className={`${
               selectedPreview ? "w-7/12" : "w-full"
-            } hidden md:block flex flex-row flex-wrap justify-around items-center md:items-start`}
+            } hidden md:flex flex-row flex-wrap justify-around items-center md:items-start`}
           >
             {imgElems}
           </div>

@@ -46,13 +46,15 @@ export default function ImagePreview({
           </Download>
         </div>
         <img
-          className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48"
+          className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 2xl:w-64 2xl:h-72"
           src={img.urls.thumb}
           alt={img.title}
           loading="lazy"
         />
       </div>
-      <span className="hidden md:block text-md text-center">{img.title}</span>
+      <span className="hidden md:block text-md 2xl:text-xl text-center">
+        {img.title}
+      </span>
       <span className="text-sm text-center">{lastOpened ?? ""}</span>
     </div>
   );
