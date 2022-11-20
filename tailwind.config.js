@@ -13,6 +13,7 @@ module.exports = {
       'xs': '20rem',
       '2xs': '16rem',
       '3xs': '12rem',
+      '4xs': '8rem',
       'min': 'min-content',
       'fit': 'fit-content',
       '1/4': '25%',

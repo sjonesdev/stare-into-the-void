@@ -137,6 +137,13 @@ export default function Browse() {
     return imgResults;
   };
 
+  const imgElems = getImgs();
+  const mobileElemsLeft: JSX.Element[] = [];
+  const mobileElemsRight: JSX.Element[] = [];
+  imgElems.forEach((val, idx) => {
+    idx % 2 ? mobileElemsRight.push(val) : mobileElemsLeft.push(val);
+  });
+
   return (
     <>
       <div className="bg-gray-800">
@@ -156,14 +163,18 @@ export default function Browse() {
           <div
             className={`${
               selectedPreview ? "w-7/12" : "w-full"
-            } flex flex-col md:flex-row flex-wrap justify-around items-center md:items-start`}
+            } hidden md:block flex flex-row flex-wrap justify-around items-center md:items-start`}
           >
-            {getImgs()}
+            {imgElems}
+          </div>
+          <div className="md:hidden flex">
+            <div className="flex flex-col">{mobileElemsLeft}</div>
+            <div className="flex flex-col">{mobileElemsRight}</div>
           </div>
         </div>
       </div>
       {selectedPreview && (
-        <div className="fixed right-0 bottom-12 top-12 overflow-y-scroll shadow-lg shadow-black/40 rounded-l-xl w-5/12 bg-gray-500 text-white">
+        <div className="fixed right-0 bottom-0 md:bottom-12 top-0 md:top-12 overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl w-full md:w-5/12 bg-gray-500 text-white">
           <div className="absolute flex flex gap-1 ml-1 mt-1">
             <button onClick={() => setSelectedPreview(null)}>
               <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
