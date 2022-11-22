@@ -31,18 +31,24 @@ export default function ImagePreview({
         )}
         <div className="absolute bg-black/50 rounded-tl-md rounded-br-md">
           <button
-            className="block m-1"
+            className="block m-1 3xl:m-2"
             aria-label="Open image in editor"
             onClick={() => navigate("/edit", { state: img })}
           >
-            <RiImageEditLine aria-hidden={true} className="h-7 w-7" />
+            <RiImageEditLine
+              aria-hidden={true}
+              className="h-7 w-7 3xl:h-10 3xl:w-10"
+            />
           </button>
           <Download
             href={img.urls.orig}
-            className="block m-2"
+            className="block m-2 3xl:m-3"
             imgTitle={img.title}
           >
-            <FaDownload aria-hidden={true} className=" w-5 h-5" />
+            <FaDownload
+              aria-hidden={true}
+              className=" w-5 h-5 3xl:h-8 3xl:w-8"
+            />
           </Download>
         </div>
         <img
