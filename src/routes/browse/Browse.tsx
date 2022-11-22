@@ -157,7 +157,7 @@ export default function Browse() {
       </div>
       <div className="xl:py-12 mx-auto">
         <div className="w-full xl:w-10/12 bg-charcoal bg-opacity-80 xl:rounded-xl max-h-max mx-auto p-4 xl:p-8">
-          <h2 className="text-white text-xl text-center">
+          <h2 className="text-white text-xl 2xl:text-3xl 2xl:p-4 text-center">
             Results for <span className="font-bold">"{query}"</span>
           </h2>
           <div

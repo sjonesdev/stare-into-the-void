@@ -10,6 +10,11 @@ module.exports = {
       },
     },
     maxWidth: {
+      '2xl': '40rem',
+      'xl': '36rem',
+      'lg': '32rem',
+      'md': '28rem',
+      'sm': '24rem',
       'xs': '20rem',
       '2xs': '16rem',
       '3xs': '12rem',
@@ -20,6 +25,12 @@ module.exports = {
       '1/2': '50%',
     },
     maxHeight: {
+      '2xl': '40rem',
+      'xl': '36rem',
+      'lg': '32rem',
+      'md': '28rem',
+      'sm': '24rem',
+      'xs': '20rem',
       '2xs': '16rem',
       '3xs': '12rem'
     }

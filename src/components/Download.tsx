@@ -19,6 +19,8 @@ interface DownloadProps
 }
 
 export default function Download(props: DownloadProps) {
+  const { imgTitle, downloadTargetDesc, ...defaultProps } = props;
+
   // const fileName =
   //   (props.imgTitle?.replace(/\s/g, "_").replace("orig", "") ??
   //     props.href?.split("\\").pop()?.split("/").pop() ??
@@ -33,7 +35,7 @@ export default function Download(props: DownloadProps) {
 
   return (
     <a
-      {...props}
+      {...defaultProps}
       aria-label={`download ${props.downloadTargetDesc ?? ""}`}
       download
       rel="noreferrer noopener"
