@@ -14,7 +14,7 @@ export default function DatePicker({
         type="date"
         name={inputName}
         id={inputName}
-        className="scheme-dark h-10 bg-gray-700 px-3 py-2 mx-2 sm:text-sm rounded-md text-white"
+        className="scheme-dark h-10 bg-gray-700 px-3 py-2 mx-2 sm:text-sm 3xl:text-lg rounded-md text-white"
         onChange={(e) => setDate(new Date(e.target.value))}
       />
     </>

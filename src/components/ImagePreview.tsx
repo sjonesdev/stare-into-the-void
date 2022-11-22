@@ -22,12 +22,12 @@ export default function ImagePreview({
 
   return (
     <div
-      className={`flex flex-col items-center p-2 lg:p-4 md:max-w-3xs lg:max-w-2xs 2xl:max-w-sm text-white`}
+      className={`flex flex-col items-center p-2 lg:p-4 md:max-w-3xs lg:max-w-2xs 3xl:max-w-sm text-white`}
       onClick={onClick}
     >
       <div className="m-2 w-full h-full">
         {selected && (
-          <div className="absolute -translate-x-2 -translate-y-2 h-[15rem] lg:w-[15rem] lg:h-[13rem] rounded-md bg-indigo-300/25 border-indigo-300 border-solid border-2" />
+          <div className="absolute -translate-x-2 -translate-y-2 h-[15rem] lg:w-[15rem] lg:h-[13rem] 3xl:w-[23rem] 3xl:h-[21rem] rounded-md bg-indigo-300/25 border-indigo-300 border-solid border-2" />
         )}
         <div className="absolute bg-black/50 rounded-tl-md rounded-br-md">
           <button
@@ -46,16 +46,16 @@ export default function ImagePreview({
           </Download>
         </div>
         <img
-          className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 2xl:w-[24rem] 2xl:h-80"
+          className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"
           src={img.urls.thumb}
           alt={img.title}
           loading="lazy"
         />
       </div>
-      <span className="hidden md:block text-md 2xl:text-xl text-center">
+      <span className="hidden md:block text-md 3xl:text-xl text-center">
         {img.title}
       </span>
-      <span className="text-sm 2xl:text-xl text-center">
+      <span className="text-sm 3xl:text-xl text-center">
         {lastOpened ?? ""}
       </span>
     </div>

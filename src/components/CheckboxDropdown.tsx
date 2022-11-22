@@ -84,7 +84,7 @@ export default function CheckboxDropdown({
   return (
     <div className="w-72">
       <button
-        className="h-10 z-30 max-h-min relative w-full rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm"
+        className="h-10 z-30 max-h-min relative w-full rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm 3xl:text-lg"
         onClick={() => {
           setOpen(!open);
         }}
@@ -100,7 +100,7 @@ export default function CheckboxDropdown({
       </button>
       <ul
         className={
-          "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm origin-top ease-in-out all transition duration-500 " +
+          "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm 3xl:text-lg origin-top ease-in-out all transition duration-500 " +
           (open ? "" : " opacity-0 -translate-y-4 scale-y-0")
         }
         onBlur={() => {

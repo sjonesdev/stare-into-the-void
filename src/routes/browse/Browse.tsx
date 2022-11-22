@@ -148,7 +148,7 @@ export default function Browse() {
     <>
       <div className="bg-gray-800">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <form className="relative h-16 flex items-center text-gray-300">
+          <form className="relative h-16 flex items-center text-gray-300 3xl:text-xl">
             {apiSelector}
             {dateRangeSelector}
             {sortBySelector}
@@ -157,7 +157,7 @@ export default function Browse() {
       </div>
       <div className="xl:py-12 mx-auto">
         <div className="w-full xl:w-10/12 bg-charcoal bg-opacity-80 xl:rounded-xl max-h-max mx-auto p-4 xl:p-8">
-          <h2 className="text-white text-xl 2xl:text-3xl 2xl:p-4 text-center">
+          <h2 className="text-white text-xl 3xl:text-3xl 3xl:p-4 text-center">
             Results for <span className="font-bold">"{query}"</span>
           </h2>
           <div

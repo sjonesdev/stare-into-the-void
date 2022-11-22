@@ -141,7 +141,7 @@ export default function Navbar({ active }: { active: Pages }) {
                           item.current
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "px-3 py-2 rounded-md text-sm 2xl:text-xl font-medium"
+                          "px-3 py-2 rounded-md text-sm 3xl:text-xl font-medium"
                         )}
                         aria-current={item.current ? "page" : undefined}
                       >
@@ -161,7 +161,7 @@ export default function Navbar({ active }: { active: Pages }) {
                   </button>
                   <input
                     type="text"
-                    className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md 2xl:text-xl font-medium flex-shrink min-w-0"
+                    className="border-none outline-none bg-gray-700 placeholder-gray-300 text-md 3xl:text-xl font-medium flex-shrink min-w-0"
                     placeholder="Search"
                     onChange={handleChangeSearchStr}
                     value={searchStr}

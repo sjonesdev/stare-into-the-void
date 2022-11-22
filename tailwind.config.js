@@ -9,6 +9,14 @@ module.exports = {
         'charcoal': '#3A3D51',
       },
     },
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+      '3xl': '1792px',
+    },
     maxWidth: {
       '2xl': '40rem',
       'xl': '36rem',
