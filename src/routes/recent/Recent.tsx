@@ -1,4 +1,5 @@
 import * as React from "react";
+import { type SourceAPI } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import ImagePreview from "../../components/ImagePreview";
 // import { useState, useEffect } from 'react';
 
@@ -7,16 +8,33 @@ export default function Recent() {
     <>
       <div className="w-10/12 bg-charcoal bg-opacity-90 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between">
         <ImagePreview
-          url="http://www.nasa.gov/sites/default/files/thumbnails/image/pia01492-main.jpg"
-          title="Neptune"
+          img={{
+            title: "Neptune",
+            urls: {
+              orig: "http://www.nasa.gov/sites/default/files/thumbnails/image/pia01492-main.jpg",
+              thumb:
+                "http://www.nasa.gov/sites/default/files/thumbnails/image/pia01492-main.jpg",
+            },
+            description: "Neptune",
+            date: new Date(),
+            sourceAPI: "APOD" as SourceAPI,
+          }}
           lastOpened="1 day ago"
         />
         <ImagePreview
-          url="https://solarsystem.nasa.gov/internal_resources/4909"
-          title="Jupiter"
+          img={{
+            title: "Jupiter",
+            urls: {
+              orig: "https://solarsystem.nasa.gov/internal_resources/4909",
+              thumb: "https://solarsystem.nasa.gov/internal_resources/4909",
+            },
+            description: "Jupiter",
+            date: new Date(),
+            sourceAPI: "APOD" as SourceAPI,
+          }}
           lastOpened="6 days ago"
         />
-        <ImagePreview
+        {/* <ImagePreview
           url="https://cdn.britannica.com/70/94870-050-2ECAB6AD/Cats-Eye-nebula.jpg"
           title="Nebulae"
           lastOpened="2 weeks ago"
@@ -40,7 +58,7 @@ export default function Recent() {
           url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/STS41B-35-1613_-_Bruce_McCandless_II_during_EVA_%28Retouched%29.jpg/1200px-STS41B-35-1613_-_Bruce_McCandless_II_during_EVA_%28Retouched%29.jpg"
           title="Astronaut"
           lastOpened="6 months ago"
-        />
+        /> */}
       </div>
     </>
   );

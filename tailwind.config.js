@@ -10,9 +10,14 @@ module.exports = {
       },
     },
     maxWidth: {
+      'xs': '20rem',
       '2xs': '16rem',
       '3xs': '12rem',
-      'min': 'min-content'
+      '4xs': '8rem',
+      'min': 'min-content',
+      'fit': 'fit-content',
+      '1/4': '25%',
+      '1/2': '50%',
     },
     maxHeight: {
       '2xs': '16rem',

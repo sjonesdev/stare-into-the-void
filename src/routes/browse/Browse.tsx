@@ -12,6 +12,9 @@ import { ApiInfo } from "../../lib/apiInfo";
 import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import { useNavigate, useParams } from "react-router-dom";
+import { RiImageEditLine } from "react-icons/ri";
+import Download from "../../components/Download";
+import { FaDownload } from "react-icons/fa";
 
 const apis: {
   value: string;
@@ -68,6 +71,7 @@ export default function Browse() {
   const [toDate, setToDate] = React.useState<Date>();
   const [sortBy, setSortBy] = React.useState(sortOpts[0]);
   const [selectedPreview, setSelectedPreview] = React.useState<number | null>();
+  const [topElement, setTopElement] = React.useState<HTMLElement>();
 
   // If image drawer is not open, will be null or undefined, else will be url of selected img
   const [openImg, setOpenImg] = React.useState<string>("");
@@ -82,6 +86,12 @@ export default function Browse() {
       setImgs(val);
     });
   }, [query]);
+
+  React.useEffect(() => {
+    topElement?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [selectedPreview, topElement]);
 
   const apiSelector = (
     <CheckboxDropdown
@@ -112,12 +122,13 @@ export default function Browse() {
       ) {
         imgResults.push(
           <ImagePreview
-            onClick={() => setSelectedPreview(idx)}
+            img={img}
+            onClick={(e) => {
+              setSelectedPreview(idx);
+              setTopElement(e.currentTarget);
+            }}
             key={idx}
-            cols={selectedPreview ? 3 : 6}
             selected={selectedPreview === idx}
-            {...img}
-            url={img.urls.thumb}
           />
         );
       }
@@ -125,6 +136,13 @@ export default function Browse() {
 
     return imgResults;
   };
+
+  const imgElems = getImgs();
+  const mobileElemsLeft: JSX.Element[] = [];
+  const mobileElemsRight: JSX.Element[] = [];
+  imgElems.forEach((val, idx) => {
+    idx % 2 ? mobileElemsRight.push(val) : mobileElemsLeft.push(val);
+  });
 
   return (
     <>
@@ -137,31 +155,51 @@ export default function Browse() {
           </form>
         </div>
       </div>
-      <div className="w-10/12 bg-charcoal bg-opacity-80 rounded-xl max-h-max mx-auto my-12 p-8">
-        <h2 className="text-white text-xl text-center">
-          Results for <span className="font-bold">"{query}"</span>
-        </h2>
-        <div
-          className={`${
-            selectedPreview ? "w-1/2" : "w-full"
-          } flex flex-col md:flex-row flex-wrap justify-around items-center md:items-start`}
-        >
-          {getImgs()}
+      <div className="xl:py-12 mx-auto">
+        <div className="w-full xl:w-10/12 bg-charcoal bg-opacity-80 xl:rounded-xl max-h-max mx-auto p-4 xl:p-8">
+          <h2 className="text-white text-xl text-center">
+            Results for <span className="font-bold">"{query}"</span>
+          </h2>
+          <div
+            className={`${
+              selectedPreview ? "w-7/12" : "w-full"
+            } hidden md:flex flex-row flex-wrap justify-around items-center md:items-start`}
+          >
+            {imgElems}
+          </div>
+          <div className="md:hidden flex">
+            <div className="flex flex-col">{mobileElemsLeft}</div>
+            <div className="flex flex-col">{mobileElemsRight}</div>
+          </div>
         </div>
       </div>
       {selectedPreview && (
-        <div className="fixed right-0 bottom-12 top-12 shadow-lg shadow-black/40 rounded-l-xl w-1/2 bg-gray-500 text-white">
-          <button
-            className="absolute pt-4 pl-4"
-            onClick={() => setSelectedPreview(null)}
-          >
-            <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-          </button>
+        <div className="fixed right-0 bottom-0 md:bottom-12 top-0 md:top-12 overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl w-full md:w-5/12 bg-gray-500 text-white">
+          <div className="absolute flex flex gap-1 ml-1 mt-1">
+            <button onClick={() => setSelectedPreview(null)}>
+              <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+            </button>
+            <button
+              aria-label="Open image in editor"
+              onClick={() =>
+                navigate("/edit", { state: imgs[selectedPreview] })
+              }
+            >
+              <RiImageEditLine aria-hidden={true} className="h-6 w-6" />
+            </button>
+            <Download
+              className="relative left-[0.125rem] py-[0.125rem]"
+              href={imgs[selectedPreview].urls.orig}
+              imgTitle={imgs[selectedPreview].title}
+            >
+              <FaDownload aria-hidden={true} className="w-5 h-5" />
+            </Download>
+          </div>
           <div className="flex flex-col items-center">
-            <div className="my-7 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
+            <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
               <img
-                className="h-[24rem] object-scale-down mx-auto"
-                src={imgs[selectedPreview].urls.orig}
+                className="rounded-lg object-scale-down"
+                src={imgs[selectedPreview].urls.thumb}
                 alt=""
               />
             </div>
@@ -169,23 +207,13 @@ export default function Browse() {
               <span className="font-bold text-xl ">
                 {imgs[selectedPreview].title}
               </span>
-              <div>
-                <span>Taken: </span>
-                <span>
-                  {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
-                </span>
-              </div>
+              <span>
+                {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
+              </span>
             </div>
-            <p className="w-10/12">{imgs[selectedPreview].description}</p>
-            <div className="w-10/12 flex justify-evenly m-8">
-              <Button text="Download" />
-              <Button
-                text="Edit"
-                onClick={() =>
-                  navigate("/edit", { state: imgs[selectedPreview] })
-                }
-              />
-            </div>
+            <p className="w-10/12 break-words leading-relaxed">
+              {imgs[selectedPreview].description}
+            </p>
           </div>
         </div>
       )}

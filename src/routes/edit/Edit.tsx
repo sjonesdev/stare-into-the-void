@@ -92,7 +92,6 @@ const getWindowSize = () => {
 export default function Edit() {
   const loc = useLocation();
   const imgPassed: ImageAsset | null = loc.state;
-  console.log(`edit got imgurl ${imgPassed?.urls.orig}`);
   const [windowSize, setWindowSize] = useState(getWindowSize());
   const editorRef = React.createRef<ImageEditor>();
 
