@@ -35,9 +35,9 @@ export default function Home() {
         />
       </form>
       <div className="bg-gray-500 bg-opacity-80 rounded-xl h-5/6 w-2/3 3xl:w-1/2 my-5 flex-col justify-center">
-        <h1 className="text-white font-medium text-center mt-5 3xl:text-3xl">
+        <h2 className="text-white font-medium text-center mt-5 3xl:text-3xl">
           Astronomy Picture of the Day
-        </h1>
+        </h2>
         <Apod
           imgUrl="https://apod.nasa.gov/apod/image/2211/LunarEclipseRyanHan1024.jpg"
           date="11 November 2022"
