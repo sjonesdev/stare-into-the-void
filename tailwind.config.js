@@ -40,7 +40,7 @@ module.exports = {
       'sm': '24rem',
       'xs': '20rem',
       '2xs': '16rem',
-      '3xs': '12rem'
+      '3xs': '12rem',
     }
   },
   plugins: [],
