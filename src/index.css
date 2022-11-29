@@ -20,7 +20,3 @@ code {
 .scheme-dark {
   color-scheme: dark;
 }
-
-.homepage-height {
-  height: calc(100vh - 4rem); /* 4 rem is height of navbar */
-}

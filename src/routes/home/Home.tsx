@@ -15,8 +15,8 @@ export default function Home() {
   };
 
   return (
-    <div className="homepage-height w-3/4 mx-auto flex flex-col items-center justify-center">
-      <FaRegEye className="h-full w-1/2 text-white" />
+    <div className="h-2/3 w-3/4 mx-auto mt-20 flex flex-col items-center justify-center">
+      <FaRegEye className="h-1/2 w-1/2 text-white" />
       <h1 className="text-white text-3xl mb-5 font-medium">
         Stare Into The Void
       </h1>
@@ -34,10 +34,10 @@ export default function Home() {
           onChange={(e) => setSearchStr(e.target.value)}
         />
       </form>
-      <div className="bg-gray-500 bg-opacity-80 rounded-xl p-8 w-2/3 my-5 flex-col justify-center">
-        <h2 className="text-white font-medium text-center">
+      <div className="bg-gray-500 bg-opacity-80 rounded-xl h-5/6 w-2/3 my-5 flex-col justify-center">
+        <h1 className="text-white font-medium text-center mt-5">
           Astronomy Picture of the Day
-        </h2>
+        </h1>
         <Apod
           imgUrl="https://apod.nasa.gov/apod/image/2211/LunarEclipseRyanHan1024.jpg"
           date="11 November 2022"
