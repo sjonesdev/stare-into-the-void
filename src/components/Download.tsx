@@ -1,5 +1,5 @@
 import React from "react";
-// import { saveAs } from "file-saver";
+import { saveAs } from "file-saver";
 
 interface DownloadProps
   extends React.DetailedHTMLProps<
@@ -19,17 +19,17 @@ interface DownloadProps
 }
 
 export default function Download(props: DownloadProps) {
-  // const fileName =
-  //   (props.imgTitle?.replace(/\s/g, "_").replace("orig", "") ??
-  //     props.href?.split("\\").pop()?.split("/").pop() ??
-  //     "download") + ".jpg";
-  // const handleDownloadClick = (e: React.MouseEvent) => {
-  //   e.preventDefault();
-  //   const url = props.href ?? "";
-  //   console.log(`dlurl: ${url}`);
-  //   saveAs(url, fileName);
-  // };
-  // const onClick = props.href ? handleDownloadClick : undefined;
+  const fileName =
+    (props.imgTitle?.replace(/\s/g, "_").replace("orig", "") ??
+      props.href?.split("\\").pop()?.split("/").pop() ??
+      "download") + ".jpg";
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const url = props.href ?? "";
+    console.log(`dlurl: ${url}`);
+    saveAs(url, fileName);
+  };
+  const onClick = props.href ? handleDownloadClick : undefined;
 
   return (
     <a
