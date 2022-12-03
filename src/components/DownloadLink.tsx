@@ -25,10 +25,9 @@ export default function Download(props: DownloadProps) {
       "download") + ".jpg";
   const handleDownloadClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const dataURL = props.href ?? ""; //this.toDataURL();
+    const dataURL = props.href ?? "";
     saveAs(dataURL, fileName);
   };
-  // const onClick = props.href ? handleDownloadClick : undefined; // eslint-disable-line @typescript-eslint/no-unused-vars
   const { imgTitle, downloadTargetDesc, ...anchorProps } = props;
   return (
     <a

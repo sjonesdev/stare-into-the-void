@@ -31,3 +31,7 @@ vertical space to the document
 body > svg {
   display: none;
 }
+
+.max-h-screenminusnav {
+  max-height: calc(100vh - 4rem);
+}
