@@ -13,7 +13,7 @@ import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import { useNavigate, useParams } from "react-router-dom";
 import { RiImageEditLine } from "react-icons/ri";
-import Download from "../../components/Download";
+import DownloadLink from "../../components/DownloadLink";
 import { FaDownload } from "react-icons/fa";
 
 const apis: {
@@ -187,13 +187,13 @@ export default function Browse() {
             >
               <RiImageEditLine aria-hidden={true} className="h-6 w-6" />
             </button>
-            <Download
+            <DownloadLink
               className="relative left-[0.125rem] py-[0.125rem]"
               href={imgs[selectedPreview].urls.orig}
               imgTitle={imgs[selectedPreview].title}
             >
               <FaDownload aria-hidden={true} className="w-5 h-5" />
-            </Download>
+            </DownloadLink>
           </div>
           <div className="flex flex-col items-center">
             <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
