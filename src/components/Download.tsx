@@ -29,7 +29,7 @@ export default function Download(props: DownloadProps) {
     console.log(`dlurl: ${url}`);
     saveAs(url, fileName);
   };
-  const onClick = props.href ? handleDownloadClick : undefined;
+  const onClick = props.href ? handleDownloadClick : undefined; // eslint-disable-line @typescript-eslint/no-unused-vars
 
   return (
     <a
