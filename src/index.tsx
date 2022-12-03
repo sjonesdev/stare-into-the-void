@@ -6,6 +6,22 @@ import reportWebVitals from "./reportWebVitals";
 
 import { initFirebase } from "./lib/firebase-services";
 
+/**
+ * We do this to ensure file-saver is included in the bundle even
+ * if we don't use it elsewhere in the code, as we want
+ * react-image-editor to use the file-saver functionality instead
+ * of opening the image in a new window.
+ *
+ * React-image-editor checks for whether saveAs part of FileApi is
+ * implemented before saving, so by doing this we ensure saveAs is
+ * implemented for react-image-editor.
+ */
+import { saveAs } from "file-saver";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const fileSaverInitialization = () => {
+  saveAs("");
+};
+
 initFirebase();
 
 const root = ReactDOM.createRoot(

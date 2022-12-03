@@ -3,7 +3,7 @@ import { RiImageEditLine } from "react-icons/ri";
 import { FaDownload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
-import Download from "./Download";
+import DownloadLink from "./DownloadLink";
 
 interface ImagePreviewProps {
   img: ImageAsset;
@@ -40,7 +40,7 @@ export default function ImagePreview({
               className="h-7 w-7 3xl:h-10 3xl:w-10"
             />
           </button>
-          <Download
+          <DownloadLink
             href={img.urls.orig}
             className="block m-2 3xl:m-3"
             imgTitle={img.title}
@@ -49,7 +49,7 @@ export default function ImagePreview({
               aria-hidden={true}
               className=" w-5 h-5 3xl:h-8 3xl:w-8"
             />
-          </Download>
+          </DownloadLink>
         </div>
         <img
           className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"

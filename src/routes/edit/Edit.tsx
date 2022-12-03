@@ -116,7 +116,7 @@ export default function Edit() {
       window.removeEventListener("resize", handleWindowResize);
     };
   }, [windowSize, editorRef]);
-
+  console.log(`path: ${imgPassed?.urls.orig}`);
   return (
     <div className="max-w-min mx-auto my-4">
       <ImageEditor
