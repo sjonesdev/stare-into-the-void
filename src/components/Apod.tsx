@@ -2,7 +2,7 @@ const MAX_LENGTH = 260;
 
 interface ApodProps {
   imgUrl: string;
-  date: string;
+  date: Date;
   title: string;
   description: string;
 }
@@ -13,6 +13,10 @@ export default function Apod({
   title,
   description, //260 max char
 }: ApodProps) {
+  
+  var date = new Date(date);
+  var dateString = date?.toUTCString().substring(0, 16);
+
   return (
     <div className="flex flex-wrap justify-evenly mt-5">
       <div>
@@ -20,8 +24,8 @@ export default function Apod({
         <p className="text-white font-medium">{title}</p>
       </div>
       <div className="text-white w-64">
-        <p className="font-medium pl-12">{date}</p>
-        {description.length > MAX_LENGTH ? (
+        <p className="font-medium pl-12">{ dateString }</p>
+        {description?.length > MAX_LENGTH ? (
           <div className="font-normal text-sm text-clip">
             {`${description.substring(0, MAX_LENGTH)}...`}
             <a href="/">Read more</a>

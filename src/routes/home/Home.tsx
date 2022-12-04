@@ -3,6 +3,8 @@ import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import Apod from "../../components/Apod";
 import { useNavigate } from "react-router-dom";
+import { FunctionsService } from "../../lib/firebase-services";
+import { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 // import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -13,6 +15,14 @@ export default function Home() {
     e.preventDefault();
     navigate(`/browse/${searchStr}`);
   };
+
+  const[apodImg, setApodImg] = React.useState<ImageAsset>();
+
+  React.useEffect(() => {
+    FunctionsService.instance.getPictureOfTheDay().then(res => {
+      setApodImg(res ?? "");
+    });
+  }, []);
 
   return (
     <div className="h-2/3 w-3/4 mx-auto mt-20 flex flex-col items-center justify-center">
@@ -39,17 +49,10 @@ export default function Home() {
           Astronomy Picture of the Day
         </h1>
         <Apod
-          imgUrl="https://apod.nasa.gov/apod/image/2211/LunarEclipseRyanHan1024.jpg"
-          date="11 November 2022"
-          title="Blood Moon, Ice Giant"
-          description="On November 8 the Full Moon turned blood red as it slid through Earth's shadow in a beautiful total lunar eclipse.
-          During totality it also passed in front of, or occulted, outer planet Uranus for eclipse viewers located in parts of northern America 
-          and Asia. For a close-up and wider view these two images were taken just before the occultation began, captured with different 
-          telescopes and cameras from the same roof top in Shanghai, China. Normally very faint compared to a Full Moon, the tiny, pale, greenish 
-          disk of the distant ice giant is just to the left of the Moon's edge and about to disappear behind the darkened, red lunar limb. Though 
-          only visible from certain locations across planet Earth, lunar occultations of planets are fairly common. But for this rare lunar 
-          eclipse occultation to take place, at the time of the total eclipse the outer planet had to be both at opposition and very near the 
-          ecliptic plane to fall in line with Sun, Earth, and Moon."
+          imgUrl= { apodImg?.urls.orig! }
+          date= { apodImg?.date! }
+          title= { apodImg?.title! }
+          description= { apodImg?.description! }
         />
       </div>
     </div>

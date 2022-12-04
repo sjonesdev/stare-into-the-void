@@ -14,9 +14,11 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App bgUrl={FunctionsService.instance.getPictureOfTheDay()}  />
+    <App />
   </React.StrictMode>
 );
+
+//<App bgUrl={FunctionsService.instance.getPictureOfTheDay()}  />
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

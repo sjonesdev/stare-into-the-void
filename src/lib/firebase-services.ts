@@ -56,15 +56,15 @@ export default class CloudFunctionsService{
         this.nivl = nivl;
     }
 
-    getPictureOfTheDay(){
-        var apodUrl = this.apod()
-        .then((res) => {
+    async getPictureOfTheDay(): Promise<ImageAsset>{
+        var apodUrl! : ImageAsset;
+        await this.apod().then((res) => {
             console.log(res);
-            return res.data.urls.orig;
+            apodUrl = res.data;
+            return res.data;
         })
         .catch((reason) => {
             console.log("error: " + reason);
-            return null;
         });
         return apodUrl;
     }
