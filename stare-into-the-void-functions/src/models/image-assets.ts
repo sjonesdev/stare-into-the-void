@@ -51,11 +51,13 @@ export class IVLImageAsset extends ImageAsset {
 export class APODImageAsset extends ImageAsset {
   copyright: string;
   serviceVersion: string;
+  mediaType: string;
 
   constructor(response: ImageResponses.APODResponse) {
     super(response.title, {orig: response.url, thumb: ""}, response.explanation, response.date, SourceAPI.APOD);
     this.copyright = response.copyright;
     this.serviceVersion = response.service_version;
+    this.mediaType = response.media_type;
   }
 }
 

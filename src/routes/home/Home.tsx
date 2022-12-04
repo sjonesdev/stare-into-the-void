@@ -4,7 +4,7 @@ import { BsSearch } from "react-icons/bs";
 import Apod from "../../components/Apod";
 import { useNavigate } from "react-router-dom";
 import { FunctionsService } from "../../lib/firebase-services";
-import { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
+import { APODImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 // import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
     navigate(`/browse/${searchStr}`);
   };
 
-  const[apodImg, setApodImg] = React.useState<ImageAsset>();
+  const[apodImg, setApodImg] = React.useState<APODImageAsset>();
 
   React.useEffect(() => {
     FunctionsService.instance.getPictureOfTheDay().then(res => {
@@ -53,6 +53,7 @@ export default function Home() {
           date= { apodImg?.date! }
           title= { apodImg?.title! }
           description= { apodImg?.description! }
+          mediaType = { apodImg?.mediaType! }
         />
       </div>
     </div>

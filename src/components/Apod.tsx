@@ -5,6 +5,7 @@ interface ApodProps {
   date: Date;
   title: string;
   description: string;
+  mediaType?: string;
 }
 
 export default function Apod({
@@ -12,15 +13,19 @@ export default function Apod({
   date,
   title,
   description, //260 max char
+  mediaType,
 }: ApodProps) {
   
-  var date = new Date(date);
-  var dateString = date?.toUTCString().substring(0, 16);
+  var dateString = new Date(date)?.toUTCString().substring(0, 16);
 
   return (
     <div className="flex flex-wrap justify-evenly mt-5">
       <div>
-        <img className="h-36 w-40 rounded-lg" alt={title} src={imgUrl}></img>
+        {mediaType === 'video' ? (
+          <iframe className="h-36 w-40 rounded-lg" src={imgUrl}></iframe>
+        ) : (
+          <img className="h-36 w-40 rounded-lg" alt={title} src={imgUrl}></img>
+        )}
         <p className="text-white font-medium">{title}</p>
       </div>
       <div className="text-white w-64">

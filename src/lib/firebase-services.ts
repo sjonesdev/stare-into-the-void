@@ -7,7 +7,7 @@ import {
     HttpsCallable,
     httpsCallable,
   } from "firebase/functions";
-import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
+import { APODImageAsset, ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -35,29 +35,29 @@ function initFirebase() {
     }
     /* const analytics =*/ getAnalytics(app);
 
-    const apod = httpsCallable<undefined, ImageAsset>(functions, "apod", {});
+    const apod = httpsCallable<undefined, APODImageAsset>(functions, "apod", {});
     const nivl = httpsCallable<any, ImageAsset[]>(functions, "nivl", {});
 
     CloudFunctionsService.initialize(apod, nivl);
 }
 
 export default class CloudFunctionsService{
-    private apod: HttpsCallable<undefined, ImageAsset>;
+    private apod: HttpsCallable<undefined, APODImageAsset>;
     private nivl: HttpsCallable<any, ImageAsset[]>;
     static instance: CloudFunctionsService;
 
-    static initialize = (apod: HttpsCallable<undefined, ImageAsset>, nivl: HttpsCallable<any, ImageAsset[]>) => {
+    static initialize = (apod: HttpsCallable<undefined, APODImageAsset>, nivl: HttpsCallable<any, ImageAsset[]>) => {
         CloudFunctionsService.instance = new CloudFunctionsService(apod, nivl);
         return CloudFunctionsService.instance;
     }
 
-    private constructor(apod: HttpsCallable<undefined, ImageAsset>, nivl: HttpsCallable<any, ImageAsset[]>){
+    private constructor(apod: HttpsCallable<undefined, APODImageAsset>, nivl: HttpsCallable<any, ImageAsset[]>){
         this.apod = apod;
         this.nivl = nivl;
     }
 
-    async getPictureOfTheDay(): Promise<ImageAsset>{
-        var apodUrl! : ImageAsset;
+    async getPictureOfTheDay(): Promise<APODImageAsset>{
+        var apodUrl! : APODImageAsset;
         await this.apod().then((res) => {
             console.log(res);
             apodUrl = res.data;

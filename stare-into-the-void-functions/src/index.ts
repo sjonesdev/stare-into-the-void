@@ -6,7 +6,7 @@ import * as admin from "firebase-admin";
 import { defineString } from "firebase-functions/params";
 
 import { type APODResponse, type NIVLResponse, type MRPResponse } from "./models/image-responses";
-import { ImageAsset, SourceAPI } from "./models/image-assets";
+import { APODImageAsset, ImageAsset, SourceAPI } from "./models/image-assets";
 
 import * as https from "https";
 
@@ -35,7 +35,7 @@ exports.apod = functions.https.onRequest((req, res) => {
       })
       resp.on("end", () => {
         const apodData: APODResponse = JSON.parse(rawData)
-        const data: ImageAsset = {
+        const data: APODImageAsset = {
           title: apodData.title,
           urls: {
             orig: apodData.url,
@@ -43,7 +43,10 @@ exports.apod = functions.https.onRequest((req, res) => {
           },
           description: apodData.explanation,
           date: apodData.date,
-          sourceAPI: SourceAPI.APOD
+          sourceAPI: SourceAPI.APOD,
+          copyright: apodData.copyright,
+          serviceVersion: apodData.service_version,
+          mediaType: apodData.media_type
         }
         res.status(200).send({
           data
