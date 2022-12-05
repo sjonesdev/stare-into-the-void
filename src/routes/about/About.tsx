@@ -24,7 +24,7 @@ export default function About() {
           <div className="p-6 flex flex-col justify-start">
             <h5 className="text-xl font-medium mb-2">Search</h5>
             <p className="text-base mb-4">
-              This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
+              Quick and easy keyword searches to help you find the exact images you need.
             </p>
           </div>
         </div>
