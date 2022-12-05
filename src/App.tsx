@@ -15,10 +15,12 @@ import Recent from "./routes/recent/Recent";
 import Browse from "./routes/browse/Browse";
 
 import { Pages } from "./lib/pages";
+import { ImageAsset } from "../stare-into-the-void-functions/src/models/image-assets";
 
 const DEFAULT_BG = "./galaxy.jpg";
 
 function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
+  const [recentImgs, setRecentImgs] = React.useState<ImageAsset[]>();
   const [bgImg, setBgImg] = React.useState(DEFAULT_BG);
   if (bgUrl) {
     bgUrl.then((val) => {
@@ -47,7 +49,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
             index
             element={
               <>
-                <Navbar active={Pages.Browse} /> <Browse />
+                <Navbar active={Pages.Browse} /> <Browse recentImgs={recentImgs!} setRecentImgs={setRecentImgs}/>
               </>
             }
           />
@@ -55,7 +57,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
             path=":query"
             element={
               <>
-                <Navbar active={Pages.Browse} /> <Browse />
+                <Navbar active={Pages.Browse} /> <Browse recentImgs={recentImgs!} setRecentImgs={setRecentImgs}/>
               </>
             }
           />
@@ -83,7 +85,7 @@ function App({ bgUrl }: { bgUrl?: Promise<string | null> }) {
           element={
             <>
               <Navbar active={Pages.Recent} />
-              <Recent />
+              <Recent recentImgs={recentImgs!}/>
             </>
           }
         />

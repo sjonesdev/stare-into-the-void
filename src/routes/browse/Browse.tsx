@@ -11,7 +11,9 @@ import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
 import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import Recent from "../../components/Recents";
+import Recents from "../../components/Recents";
 
 const apis: {
   value: string;
@@ -60,7 +62,7 @@ const testImgInfo = [
   },
 ];
 
-export default function Browse() {
+export default function Browse({ recentImgs, setRecentImgs}: {recentImgs: ImageAsset[], setRecentImgs: any}) {
   const { query } = useParams();
   const navigate = useNavigate();
   const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
@@ -126,6 +128,9 @@ export default function Browse() {
     return imgResults;
   };
 
+  if(recentImgs === undefined){
+    recentImgs = [];
+  }
   return (
     <>
       <div className="bg-gray-800">
@@ -181,8 +186,14 @@ export default function Browse() {
               <Button text="Download" />
               <Button
                 text="Edit"
-                onClick={() =>
-                  navigate("/edit", { state: imgs[selectedPreview] })
+                onClick={() => {
+                  // make sure image is not already in recents
+                  if(!recentImgs.some(recentImg => recentImg.title === imgs[selectedPreview].title)){
+                    recentImgs.push(imgs[selectedPreview]);
+                    setRecentImgs(recentImgs);
+                    <Recents imgs={recentImgs} />
+                  }
+                  navigate("/edit", { state: imgs[selectedPreview] })}
                 }
               />
             </div>
