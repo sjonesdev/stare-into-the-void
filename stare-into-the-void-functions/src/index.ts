@@ -104,7 +104,7 @@ exports.nivl = functions.https.onRequest((req, res) => {
 });
 
 function getImageURLs(manifestUrl: string){
-  const baseUrl = "http://images-assets.nasa.gov/image/";
+  const baseUrl = "https://images-assets.nasa.gov/image/";
   const strings = manifestUrl.split("/");
   const urls = {
     orig: baseUrl + strings[4] + "/" + strings[4] + "~orig.jpg",

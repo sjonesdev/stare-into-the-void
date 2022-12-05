@@ -17,6 +17,7 @@ import Browse from "./routes/browse/Browse";
 import { Pages } from "./lib/pages";
 
 function App() {
+  document.title = "Stare Into the Void";
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
