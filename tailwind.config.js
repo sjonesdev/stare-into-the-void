@@ -16,6 +16,7 @@ module.exports = {
       'xl': '1280px',
       '2xl': '1536px',
       '3xl': '1792px',
+      'h3xl': {'raw': 'min-height: 800'}
     },
     maxWidth: {
       '2xl': '40rem',

@@ -174,7 +174,7 @@ export default function Browse() {
         </div>
       </div>
       {selectedPreview && (
-        <div className="fixed right-0 bottom-0 md:bottom-12 3xl:bottom-auto top-0 md:top-12 3xl:top-72 3xl:min-h-[75rem] overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl w-full md:w-5/12 3xl:w-3/12 bg-gray-500 text-white">
+        <div className="fixed right-0 bottom-0 md:bottom-12 h3xl:bottom-auto top-0 md:top-12 h3xl:top-72 h3xl:min-h-[75rem] overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl w-full md:w-5/12 3xl:w-3/12 bg-gray-500 text-white">
           <div className="absolute flex flex gap-1 ml-1 mt-1 3xl:mt-4 3xl:ml-4 3xl:gap-4">
             <button onClick={() => setSelectedPreview(null)}>
               <XMarkIcon
@@ -220,7 +220,7 @@ export default function Browse() {
                 {imgs[selectedPreview].date.toUTCString().slice(0, 16)}
               </span>
             </div>
-            <p className="w-10/12 break-words leading-relaxed 3xl:text-2xl">
+            <p className="w-10/12 break-words leading-relaxed 3xl:text-2xl mb-8">
               {imgs[selectedPreview].description}
             </p>
           </div>
