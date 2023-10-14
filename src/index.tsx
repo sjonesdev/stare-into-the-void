@@ -1,10 +1,9 @@
+import "./lib/firebase-services";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-
-import { initFirebase } from "./lib/firebase-services";
 
 /**
  * We do this to ensure file-saver is included in the bundle even
@@ -21,8 +20,6 @@ import { saveAs } from "file-saver";
 const fileSaverInitialization = () => {
   saveAs("");
 };
-
-initFirebase();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

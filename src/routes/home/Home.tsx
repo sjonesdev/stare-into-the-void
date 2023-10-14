@@ -3,7 +3,6 @@ import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import Apod from "../../components/Apod";
 import { useNavigate } from "react-router-dom";
-// import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [searchStr, setSearchStr] = React.useState<string>();

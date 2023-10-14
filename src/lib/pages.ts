@@ -3,6 +3,7 @@ enum Pages {
   Browse,
   About,
   Edit,
-  Recent
+  Recent,
+  SignIn,
 }
-export { Pages}
+export { Pages };

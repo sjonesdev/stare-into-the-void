@@ -7,6 +7,9 @@ interface ApodProps {
   description: string;
 }
 
+/**
+ * Astronomy Picture of the Day
+ */
 export default function Apod({
   imgUrl,
   date,

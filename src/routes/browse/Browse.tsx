@@ -9,7 +9,6 @@ import ImagePreview from "../../components/ImagePreview";
 import SelectDropdown from "../../components/SelectDropdown";
 import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
-import { title } from "process";
 import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import { useNavigate, useParams } from "react-router-dom";
 import { RiImageEditLine } from "react-icons/ri";
