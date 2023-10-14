@@ -4,6 +4,8 @@ enum Pages {
   About,
   Edit,
   Recent,
+  Saved,
   SignIn,
+  Profile,
 }
 export { Pages };

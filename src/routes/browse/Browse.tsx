@@ -13,7 +13,7 @@ import { type ImageAsset } from "../../../stare-into-the-void-functions/src/mode
 import { useNavigate, useParams } from "react-router-dom";
 import { RiImageEditLine } from "react-icons/ri";
 import DownloadLink from "../../components/DownloadLink";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaSave } from "react-icons/fa";
 
 const apis: {
   value: string;
@@ -202,6 +202,15 @@ export default function Browse() {
                 className="w-5 h-5 3xl:h-10 3xl:w-10"
               />
             </DownloadLink>
+            <button
+              className="relative left-[0.125rem] py-[0.25rem]"
+              aria-label="Save image on account"
+            >
+              <FaSave
+                aria-hidden={true}
+                className="w-5 h-5 3xl:h-10 3xl:w-10"
+              />
+            </button>
           </div>
           <div className="flex flex-col items-center 3xl:mt-12">
             <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">

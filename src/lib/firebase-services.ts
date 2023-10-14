@@ -7,6 +7,7 @@ import "firebase/compat/auth";
 import "firebase/compat/functions";
 import "firebase/compat/analytics";
 import "firebase/compat/storage";
+import "firebase/compat/app-check";
 import { createContext } from "react";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -18,7 +19,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBJZer3Ud9W6LehR-GgJhm52zyxN9XLNGo",
   authDomain: "stare-into-the-void.firebaseapp.com",
   projectId: "stare-into-the-void",
-  storageBucket: "stare-into-the-void.appspot.com",
+  storageBucket: "gs://stare-into-the-void.appspot.com",
   messagingSenderId: "144334433499",
   appId: "1:144334433499:web:ec88283f1e623cd02c70fe",
   measurementId: "G-2868R29G5L",
@@ -73,15 +74,29 @@ class CloudFunctionsService {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+const appCheck = firebase.appCheck();
 const functions = firebase.functions();
 const auth = firebase.auth();
 const storage = firebase.storage();
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  // @ts-ignore
+  // eslint-disable-next-line no-restricted-globals
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
   console.log("connecting to emulator");
   functions.useEmulator("localhost", 5001);
   auth.useEmulator("http://localhost:9099/");
   storage.useEmulator("localhost", 9199);
+  appCheck.activate("28a19d9a-7208-4c1a-baf7-3fbf9b682a41", true); // TODO hide this
+} else {
+  // Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
+  // key is the counterpart to the secret key you set in the Firebase console.
+  appCheck.activate(
+    "6LdXI6AoAAAAAEotzSSnDpzScjEkAWPCImJAx2x_",
+    // automatically refreshes App Check tokens as needed.
+    true
+  );
 }
+
 /* const analytics =*/ firebase.analytics();
 
 const apod = httpsCallable<undefined, ImageAsset>(functions, "apod", {});

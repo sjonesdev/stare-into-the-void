@@ -1,10 +1,11 @@
 import React from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { FaRegEye } from "react-icons/fa";
+import { FaRegEye, FaRegUser, FaUser } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Pages } from "../lib/pages";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../lib/firebase-services";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -20,6 +21,7 @@ export default function Navbar({ active }: { active: Pages }) {
   const { query } = useParams();
   const [searchStr, setSearchStr] = React.useState<string>(query ?? "");
   const navigate = useNavigate();
+  const user = React.useContext(AuthContext);
 
   const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -29,15 +31,40 @@ export default function Navbar({ active }: { active: Pages }) {
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     navigate(`/browse/${searchStr}`);
-    // navigate("/browse", { query: searchStr });
   };
 
   const navigation = [
     { name: "Browse", to: "/browse", current: active === Pages.Browse },
     { name: "Edit", to: "/edit", current: active === Pages.Edit },
     { name: "Recent", to: "/recent", current: active === Pages.Recent },
+    { name: "Saved", to: "/saved", current: active === Pages.Saved },
     { name: "About", to: "/about", current: active === Pages.About },
   ];
+
+  const getUserIcon = () => {
+    const userIconClass = "hidden block h-6 w-auto lg:block";
+    if (user) {
+      if (user.photoURL) {
+        return (
+          <img
+            src={user.photoURL}
+            className={userIconClass}
+            alt={`${user.displayName}`}
+          />
+        );
+      } else if (active === Pages.Profile) {
+        return <FaUser color="white" className={userIconClass} />;
+      } else {
+        return <FaRegUser color="white" className={userIconClass} />;
+      }
+    } else {
+      if (active === Pages.SignIn) {
+        return <FaUser color="white" className={userIconClass} />;
+      } else {
+        return <FaRegUser color="white" className={userIconClass} />;
+      }
+    }
+  };
 
   const getDisclosurePanel = () => {
     switch (activeDisclosure) {
@@ -150,7 +177,7 @@ export default function Navbar({ active }: { active: Pages }) {
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 min-w-0">
+              <div className="absolute inset-y-0 right-0 flex space-x-4 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 min-w-0">
                 <form
                   className="bg-gray-700 rounded-md px-3 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0"
                   onSubmit={handleSearchSubmit}
@@ -179,6 +206,14 @@ export default function Navbar({ active }: { active: Pages }) {
                     <BsSearch className="block h-6 w-6" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
+
+                <Link
+                  to={user ? "/profile" : "/signin"}
+                  aria-label={user ? "Profile" : "Sign In"}
+                  className="bg-gray-700 rounded-3xl  px-2 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0"
+                >
+                  {getUserIcon()}
+                </Link>
               </div>
             </div>
           </div>

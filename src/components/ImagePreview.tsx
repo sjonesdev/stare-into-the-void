@@ -1,6 +1,6 @@
 import React from "react";
 import { RiImageEditLine } from "react-icons/ri";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaSave } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
@@ -50,6 +50,9 @@ export default function ImagePreview({
               className=" w-5 h-5 3xl:h-8 3xl:w-8"
             />
           </DownloadLink>
+          <button className="block m-2" aria-label="Save image on account">
+            <FaSave aria-hidden={true} className="w-5 h-5 3xl:h-8 3xl:w-8" />
+          </button>
         </div>
         <img
           className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"

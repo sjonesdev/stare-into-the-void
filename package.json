@@ -35,7 +35,7 @@
     "stop-emulators": "lsof -t -i:5002 -i:5001 -i:8080 -i:9000 -i:9099 -i:9199 -i:9090 | xargs kill -9",
     "lint": "eslint --no-eslintrc -c ./package.json .",
     "lint:fix": "eslint --no-eslintrc -c ./package.json --fix .",
-    "emulate-auth": "firebase emulators:start --only auth"
+    "emulators": "firebase emulators:start --only auth,functions,storage"
   },
   "eslintConfig": {
     "extends": [
