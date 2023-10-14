@@ -4,19 +4,6 @@ Search engine and exploration tool for NASA image APIs
 ## Version Control Strategy
 For our version control strategy we used a slightly modified GitHub flow. We start by having feature branches which represent feature sets. These are not intended to be deleted after merging, and these branches can be merged in the development branch either through plain merges or PRs. We have a development branch we use for collecting changes from feature branches for testing and such. Finally we have the main branch which requires a PR with approval to merge into, and which builds and deploys into firebase.
 
-### Submodules
-In our repository, we use a git submodule to store our Firebase Functions code, allowing to hide sensitive info or logic behind serverless functions. As long as you have access to the submodule, it should come with the parent repository when cloning and should update with the latest changes when fetching through GitHub Desktop. 
-
-To do the same through the git CLI, run `git clone --recursive https://github.com/SamJones329/stare-into-the-void.git`, and use `git pull --recurse-submodules` when pulling changes. 
-
-Alternatively, if you already cloned the parent repo and want to add the submodule, run `git submodule update --init --recursive`.
-
-To commit changes to the submodule, treat it normally like it's own git repository, so likely either commiting through GitHub desktop or through `git commit -a -m "Message"`, the ensure the commit is pushed to remote.
-For committing a new version of the submodule to the parent repository, you must first ensure the instance of the submodule you have is at that commit. If you made the changes to the submodule directly on your local machine, this should already done. Otherwise, either open the submodule as a repository in GitHub desktop and fetch and pull the latest changes, or from the CLI, `cd` into the directory of the submodule and run `git pull`.
-Once the submodule is at the desired commit, simply make a commit from the parent repository, which will change the commit your repo points to in the submodule. This will show through `git status` as `modified:   stare-into-the-void-functions (new commits)`, and through GitHub desktop as a modification on `stare-into-the-void-functions` looking something like:
-<pre><code>`-Subproject commit 2491272e64b2e537ec94ede2381d0f4c9cbd7ad0`
-`+Subproject commit 359c181e0ed55aa224211378cb1f4637540e7fc6`</code></pre>
-
 ## Project Setup
 
 ### Getting Started
