@@ -1,14 +1,25 @@
-import React from "react";
+import { useContext, useState } from "react";
 import { RiImageEditLine } from "react-icons/ri";
-import { FaDownload, FaSave } from "react-icons/fa";
+import { BiSolidErrorCircle } from "react-icons/bi";
+import {
+  FaDownload,
+  FaSave,
+  FaTrash,
+  FaSpinner,
+  FaCheck,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
+import { AuthContext } from "../lib/firebase-services";
 
 interface ImagePreviewProps {
   img: ImageAsset;
   lastOpened?: string;
   selected?: boolean;
+  saved?: boolean;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
@@ -16,9 +27,107 @@ export default function ImagePreview({
   img,
   lastOpened,
   selected,
+  saved = false,
   onClick,
 }: ImagePreviewProps) {
   const navigate = useNavigate();
+  const user = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const saveImage = async () => {
+    setLoading(true);
+    const req = new Request(img.urls.orig, { mode: "no-cors" });
+    const imgBlob = await (await fetch(req)).blob();
+    const thumbReq = new Request(img.urls.thumb, { mode: "no-cors" });
+    const imgThumbBlob = await (await fetch(thumbReq)).blob();
+    const uploadTask = firebase
+      .storage()
+      .ref(`users/${user?.uid}/saved/images`)
+      .child(img.title)
+      // .putString(img.urls.orig, "raw", {
+      .put(imgBlob, {
+        customMetadata: {
+          title: img.title,
+          description: img.description,
+          sourceAPI: img.sourceAPI,
+        },
+      });
+    firebase
+      .storage()
+      .ref(`users/${user?.uid}/saved/thumbnails`)
+      .child(img.title)
+      .put(imgThumbBlob)
+      .on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        null,
+        (error) => {
+          console.error("thumbnail error", error);
+        },
+        () => {
+          console.log("Thumbnail uploaded");
+        }
+      );
+
+    uploadTask.on(
+      firebase.storage.TaskEvent.STATE_CHANGED,
+      null,
+      (error) => {
+        console.error(error);
+        setLoading(false);
+        setError(true);
+      },
+      () => {
+        setLoading(false);
+        setDone(true);
+      }
+    );
+  };
+
+  const deleteImage = () => {
+    setLoading(true);
+  };
+
+  const getStorageButton = () => {
+    if (!user) return <></>;
+    let onClick;
+    let label = "Operation success";
+    let disabled = true;
+    let Icon = FaCheck;
+    let iconClassName = "w-5 h-5 3xl:h-8 3xl:w-8";
+    let tooltip = "";
+    if (loading) {
+      Icon = FaSpinner;
+      iconClassName += " animate-spin";
+    } else if (error) {
+      Icon = BiSolidErrorCircle;
+      tooltip = "Error saving image, please refresh the page and try again";
+    } else if (done) {
+      Icon = FaCheck;
+    } else if (saved) {
+      Icon = FaTrash;
+      disabled = false;
+      onClick = deleteImage;
+      label = "Delete image from account";
+    } else {
+      Icon = FaSave;
+      disabled = false;
+      onClick = saveImage;
+      label = "Save image on account";
+    }
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className="block m-2"
+        aria-label={label}
+      >
+        <Icon aria-hidden={true} className={iconClassName} />
+        {tooltip && <span className="absolute text-xs">{tooltip}</span>}
+      </button>
+    );
+  };
 
   return (
     <div
@@ -50,9 +159,7 @@ export default function ImagePreview({
               className=" w-5 h-5 3xl:h-8 3xl:w-8"
             />
           </DownloadLink>
-          <button className="block m-2" aria-label="Save image on account">
-            <FaSave aria-hidden={true} className="w-5 h-5 3xl:h-8 3xl:w-8" />
-          </button>
+          {getStorageButton()}
         </div>
         <img
           className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"

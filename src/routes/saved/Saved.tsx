@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SourceAPI } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import ImagePreview from "../../components/ImagePreview";
 import { AuthContext } from "../../lib/firebase-services";
@@ -12,27 +12,34 @@ export default function Saved() {
   const navigate = useNavigate();
   const [imagePreviews, setImagePreviews] = useState<React.ReactNode[]>([]);
 
-  if (!user) {
-    navigate("/signin");
-    return <></>;
-  }
-
-  const userImages = storage.ref(`users/${user.uid}/saved/images`);
-  const userThumbnails = storage.ref(`users/${user.uid}/saved/thumbnails`);
-
-  userThumbnails.listAll().then((res) => {
-    res.items.forEach((item) => {
-      const metadata = item.getMetadata();
-      const downloadURL = item.getDownloadURL();
-      Promise.all([metadata, downloadURL]).then(([metadata, url]) => {
-        const previews = [];
-        previews.push(
+  useEffect(() => {
+    if (!user) {
+      navigate("/signin");
+      return;
+    }
+    const userImages = storage.ref(`users/${user.uid}/saved/images`);
+    const userThumbnails = storage.ref(`users/${user.uid}/saved/thumbnails`);
+    userImages.listAll().then((res) => {
+      console.log("userImages", res);
+      const previewPromises = res.items.map(async (item) => {
+        let thumbnailURL;
+        try {
+          thumbnailURL = await userThumbnails.child(item.name).getDownloadURL();
+        } catch (e) {
+          console.warn("Error getting thumbnail", e);
+        }
+        const [metadata, downloadURL] = await Promise.all([
+          item.getMetadata(),
+          item.getDownloadURL(),
+        ]);
+        console.log(metadata, downloadURL, thumbnailURL);
+        return (
           <ImagePreview
             img={{
               title: metadata.customMetadata?.title ?? "Untitled",
               urls: {
-                orig: url,
-                thumb: url,
+                orig: downloadURL,
+                thumb: thumbnailURL ? thumbnailURL : downloadURL,
               },
               description:
                 metadata.customMetadata?.description ?? "No description",
@@ -42,12 +49,24 @@ export default function Saved() {
                 ("None" as SourceAPI),
             }}
             lastOpened="6 days ago"
+            saved
           />
         );
+      });
+      const previews: React.ReactNode[] = [];
+
+      Promise.allSettled(previewPromises).then((results) => {
+        results.forEach((result) => {
+          console.log("result", result);
+          if (result.status === "fulfilled") {
+            previews.push(result.value);
+          }
+        });
+        console.log("previews", previews);
         setImagePreviews(previews);
       });
     });
-  });
+  }, []);
 
-  return <>imagePreviews</>;
+  return <>{imagePreviews}</>;
 }
