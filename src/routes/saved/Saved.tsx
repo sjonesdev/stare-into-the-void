@@ -17,7 +17,6 @@ export default function Saved() {
     const userImages = StorageService.imagesRef(user.uid);
     const userThumbnails = StorageService.thumbnailsRef(user.uid);
     userImages.listAll().then((res) => {
-      console.log(`res ${res.items.length}`);
       const previewPromises = res.items.map(async (item) => {
         let thumbnailURL;
         try {
@@ -73,5 +72,9 @@ export default function Saved() {
     });
   }, []);
 
-  return <>{imagePreviews}</>;
+  return (
+    <div className="w-10/12 bg-charcoal bg-opacity-90 rounded-xl max-h-max mx-auto my-12 p-8 flex flex-wrap justify-between">
+      {imagePreviews}
+    </div>
+  );
 }

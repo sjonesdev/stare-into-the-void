@@ -120,8 +120,7 @@ class FunctionsService {
       console.error("Error downloading image: ", reason);
     });
     console.debug(
-      `Got image buffer of size ${response?.data.buffer.length} and type ${response?.data.type}`,
-      response?.data.buffer
+      `Got image buffer of size ${response?.data.buffer.length} and type ${response?.data.type}`
     );
     if (!response?.data.buffer.length) return null;
     return response.data;
