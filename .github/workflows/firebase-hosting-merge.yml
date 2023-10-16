@@ -41,4 +41,4 @@ jobs:
       with:
           args: deploy --only functions
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}'
+        GCP_SA_KEY: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}'
