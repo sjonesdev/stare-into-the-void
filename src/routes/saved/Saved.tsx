@@ -70,6 +70,7 @@ export default function Saved() {
         setImagePreviews(previews);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
