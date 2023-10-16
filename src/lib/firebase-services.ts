@@ -113,6 +113,25 @@ class FunctionsService {
     return `data:${type};base64,` + (await bufferToBase64(buffer));
   }
 
+  /**
+   * Converts a base64 data URI string to a Uint8Array
+   * @param dataStringBase64
+   * @returns
+   */
+  static getBase64DataStringUint8Array(dataStringBase64: string) {
+    const BASE64_MARKER = ";base64,";
+    const base64Index =
+      dataStringBase64.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+    const base64 = dataStringBase64.substring(base64Index);
+    const raw = window.atob(base64);
+    const array = new Uint8Array(new ArrayBuffer(raw.length));
+
+    for (let i = 0; i < raw.length; i++) {
+      array[i] = raw.charCodeAt(i);
+    }
+    return array;
+  }
+
   private static async getRawImageData(url: string) {
     const response = await this.downloadImageData({
       url,
@@ -137,6 +156,59 @@ class FunctionsService {
     const imageBuffer = await this.getImageBuffer(url);
     if (!imageBuffer) return null;
     return new Blob([imageBuffer.buffer], { type: imageBuffer.type });
+  }
+
+  static getUint8ArrayImageblob(imageBuffer: Uint8Array, type: string) {
+    return new Blob([imageBuffer], { type });
+  }
+
+  static promisify(fn: (...args: any[]) => any) {
+    return (...args: any[]) => {
+      return new Promise((resolve, reject) => {
+        fn(...args, (err: any, result: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      });
+    };
+  }
+
+  /**
+   * Resizes an image blob to the specified width, maintaining aspect ratio
+   * @param image
+   * @param width
+   */
+  static async resizeImageBlob(image: Blob, width: number) {
+    console.log("resizing blob", image, width);
+    const img = new Image();
+    img.src = URL.createObjectURL(image);
+    await new Promise((resolve) => {
+      img.onload = resolve;
+    });
+    console.log("img", img);
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = Math.floor((width / img.width) * img.height);
+    // const offscreenCanvas = canvas.transferControlToOffscreen();
+    // hacky stuff because offscreen canvas needs unsigned long int
+    const canvasSize = new Uint32Array(2);
+    canvasSize[0] = width;
+    canvasSize[1] = Math.floor((width / img.width) * img.height);
+    console.log("canvasSize", canvasSize);
+    const offscreenCanvas = new OffscreenCanvas(canvasSize[0], canvasSize[1]);
+    console.log(
+      "offscreenCanvas",
+      offscreenCanvas.width,
+      offscreenCanvas.height
+    );
+    const ctx = offscreenCanvas.getContext("2d");
+    ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob = await offscreenCanvas.convertToBlob({ type: image.type });
+    console.log("blob", blob);
+    return blob;
   }
 }
 

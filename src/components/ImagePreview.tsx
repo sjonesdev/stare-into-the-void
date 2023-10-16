@@ -101,10 +101,9 @@ export default function ImagePreview({
   };
 
   const deleteImage = () => {
+    if (!user) return;
     setLoading(true);
-    firebase
-      .storage()
-      .ref(`users/${user?.uid}/saved/images`)
+    StorageService.imagesRef(user.uid)
       .child(img.title)
       .delete()
       .then(() => {
@@ -177,7 +176,11 @@ export default function ImagePreview({
           <button
             className="block m-1 3xl:m-2"
             aria-label="Open image in editor"
-            onClick={() => navigate("/edit", { state: img })}
+            onClick={() =>
+              navigate("/edit", {
+                state: img,
+              })
+            }
           >
             <RiImageEditLine
               aria-hidden={true}

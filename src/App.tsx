@@ -22,6 +22,7 @@ import Profile from "./routes/profile/Profile";
 import NotFound from "./routes/notfound/NotFound";
 
 import { Pages } from "./lib/pages";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // createContext<Pages>(Pages.Home);
 
@@ -111,7 +112,9 @@ function App() {
           element={
             <>
               <Navbar active={Pages.Edit} />
-              <Edit />
+              <ErrorBoundary>
+                <Edit />
+              </ErrorBoundary>
             </>
           }
         />
