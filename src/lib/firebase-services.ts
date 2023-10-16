@@ -1,7 +1,10 @@
 // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
-import { HttpsCallable, httpsCallable } from "firebase/functions";
-import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
+import { HttpsCallable } from "firebase/functions";
+import {
+  ImageAsset,
+  ImageAssetRaw,
+} from "../../stare-into-the-void-functions/src/models/image-assets";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/functions";
@@ -24,53 +27,6 @@ const firebaseConfig = {
   appId: "1:144334433499:web:ec88283f1e623cd02c70fe",
   measurementId: "G-2868R29G5L",
 };
-
-class CloudFunctionsService {
-  private apod: HttpsCallable<undefined, ImageAsset>;
-  private nivl: HttpsCallable<any, ImageAsset[]>;
-  static instance: CloudFunctionsService;
-
-  static initialize = (
-    apod: HttpsCallable<undefined, ImageAsset>,
-    nivl: HttpsCallable<any, ImageAsset[]>
-  ) => {
-    CloudFunctionsService.instance = new CloudFunctionsService(apod, nivl);
-    return CloudFunctionsService.instance;
-  };
-
-  private constructor(
-    apod: HttpsCallable<undefined, ImageAsset>,
-    nivl: HttpsCallable<any, ImageAsset[]>
-  ) {
-    this.apod = apod;
-    this.nivl = nivl;
-  }
-
-  getPictureOfTheDay() {
-    var apodUrl = this.apod()
-      .then((res) => {
-        return res.data.urls.orig;
-      })
-      .catch((reason) => {
-        console.log("error: " + reason);
-        return null;
-      });
-    return apodUrl;
-  }
-
-  async getNIVLWithQuery(query: string): Promise<ImageAsset[]> {
-    var nivlUrls: ImageAsset[] = [];
-    await this.nivl({ search: query })
-      .then((res) => {
-        nivlUrls = res.data;
-        return res.data;
-      })
-      .catch((reason) => {
-        console.log("error: " + reason);
-      });
-    return nivlUrls;
-  }
-}
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -97,20 +53,102 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   );
 }
 
+// note: `buffer` arg can be an ArrayBuffer or a Uint8Array
+async function bufferToBase64(buffer: Uint8Array | ArrayBuffer) {
+  // use a FileReader to generate a base64 data URI:
+  const base64url: string = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(new Blob([buffer]));
+  });
+  console.log("base64url", base64url);
+  // remove the `data:...;base64,` part from the start
+  return base64url.slice(base64url.indexOf(",") + 1);
+}
+
+class FunctionsService {
+  private static _functions = functions;
+  private static apod: HttpsCallable<any, ImageAsset> =
+    functions.httpsCallable("apod");
+  private static nivl: HttpsCallable<any, ImageAsset[]> =
+    functions.httpsCallable("nivl");
+  private static downloadImageData: HttpsCallable<any, ImageAssetRaw> =
+    functions.httpsCallable("downloadProxy");
+
+  get functions() {
+    return FunctionsService._functions;
+  }
+
+  static getPictureOfTheDay() {
+    var apodUrl = FunctionsService.apod()
+      .then((res) => {
+        return res.data.urls.orig;
+      })
+      .catch((reason) => {
+        console.log("error: " + reason);
+        return null;
+      });
+    return apodUrl;
+  }
+
+  static async getNIVLWithQuery(query: string): Promise<ImageAsset[]> {
+    var nivlUrls: ImageAsset[] = [];
+    await FunctionsService.nivl({ search: query })
+      .then((res) => {
+        nivlUrls = res.data;
+        return res.data;
+      })
+      .catch((reason) => {
+        console.log("error: " + reason);
+      });
+    return nivlUrls;
+  }
+
+  /**
+   * Gets image to be used in src of img tag
+   * @param url
+   * @returns
+   */
+  static async getImageBase64(buffer: Uint8Array | ArrayBuffer, type: string) {
+    return (
+      `data:${type};base64,` + (await bufferToBase64(buffer))
+      // Buffer.from(image.buffer).toString("base64")
+    );
+  }
+
+  static async getImageArrayBuffer(url: string) {
+    const response = await FunctionsService.downloadImageData({
+      url,
+    }).catch((reason) => {
+      console.error("Error downloading image: ", reason);
+    });
+    console.debug(
+      `Got image buffer of size ${response?.data.buffer.length} and type ${response?.data.type}`,
+      response?.data.buffer
+    );
+    if (!response?.data.buffer.length) return null;
+    const buffer = Uint8Array.from(response.data.buffer);
+    return { buffer, type: response.data.type };
+  }
+}
+
+class StorageService {
+  private static _storage = storage;
+  static imagesRef(userId: string) {
+    return StorageService._storage.ref(`users/${userId}/saved/images`);
+  }
+  static thumbnailsRef(userId: string) {
+    return StorageService._storage.ref(`users/${userId}/saved/thumbnails`);
+  }
+  static get storage() {
+    return StorageService._storage;
+  }
+}
+
 /* const analytics =*/ firebase.analytics();
-
-const apod = httpsCallable<undefined, ImageAsset>(functions, "apod", {});
-const nivl = httpsCallable<any, ImageAsset[]>(functions, "nivl", {});
-
-CloudFunctionsService.initialize(apod, nivl);
 
 type UserType = firebase.User | null | undefined;
 
 const AuthContext = createContext<UserType>(null);
 
-export {
-  CloudFunctionsService as FunctionsService,
-  type UserType,
-  AuthContext,
-  auth,
-};
+export { FunctionsService, StorageService, type UserType, AuthContext, auth };

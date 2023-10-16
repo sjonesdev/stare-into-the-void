@@ -5,6 +5,8 @@ import ImageEditor from "@toast-ui/react-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
 import { useLocation } from "react-router-dom";
 import { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
+import { AuthContext } from "../../lib/firebase-services";
+import { useNavigate } from "react-router-dom";
 
 const theme = {
   "common.bi.image": "https://www.colorhexa.com/374151.png",
@@ -94,6 +96,12 @@ export default function Edit() {
   const imgPassed: ImageAsset | null = loc.state;
   const [windowSize, setWindowSize] = useState(getWindowSize());
   const editorRef = React.createRef<ImageEditor>();
+  const user = React.useContext(AuthContext);
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!user) navigate("/signin");
+  }, [user, navigate]);
 
   React.useEffect(() => {
     const handleWindowResize = () => {
@@ -116,7 +124,8 @@ export default function Edit() {
       window.removeEventListener("resize", handleWindowResize);
     };
   }, [windowSize, editorRef]);
-  console.log(`path: ${imgPassed?.urls.orig}`);
+  console.debug(`path: ${imgPassed?.urls.orig}`);
+
   return (
     <div className="max-w-min mx-auto my-4">
       <ImageEditor

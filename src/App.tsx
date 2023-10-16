@@ -30,10 +30,16 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged((newUser) => {
+      console.debug("User changed: ", newUser);
       setUser(newUser);
     });
     return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
   }, []);
+
+  if (user === undefined) {
+    // don't render until context is valid
+    return <></>;
+  }
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 }

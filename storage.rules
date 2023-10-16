@@ -4,18 +4,26 @@ service firebase.storage {
     match /users/{userId}/saved {
       match /thumbnails/{filename} {
         allow read: if request.auth.uid == userId;
-        allow write: if request.auth.uid == userId 
+        allow delete: if request.auth.uid == userId;
+        allow create: if request.auth.uid == userId 
                     && (
                       request.resource.contentType.matches('image/.*')
                       || request.resource.contentType.matches('application/octet-stream')) // for file urls
                     && request.resource.size < 500 * 1024; // 500 KB
+        allow update: if request.auth.uid == userId 
+                    && request.resource.contentType.matches('image/.*')
+                    && request.resource.size < 500 * 1024; // 500 KB
       }
       match /images/{filename} {
         allow read: if request.auth.uid == userId;
-        allow write: if request.auth.uid == userId 
+        allow delete: if request.auth.uid == userId;
+        allow create: if request.auth.uid == userId 
                     && (
                       request.resource.contentType.matches('image/.*') 
                       || request.resource.contentType.matches("application/octet-stream")) // for file urls
+                    && request.resource.size < 50 * 1024 * 1024; // 50 MB
+        allow update: if request.auth.uid == userId 
+                    && request.resource.contentType.matches('image/.*') 
                     && request.resource.size < 50 * 1024 * 1024; // 50 MB
       }
     }

@@ -32,7 +32,7 @@ export default function SignIn() {
   useEffect(() => {
     const oldDelete = ui.delete;
     ui.delete = () => new Promise(() => {});
-    if (!!user) navigate("/");
+    if (user) navigate("/");
     return () => {
       ui.delete = oldDelete;
     };

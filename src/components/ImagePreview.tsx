@@ -13,13 +13,17 @@ import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image
 import DownloadLink from "./DownloadLink";
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
-import { AuthContext } from "../lib/firebase-services";
+import {
+  AuthContext,
+  FunctionsService,
+  StorageService,
+} from "../lib/firebase-services";
 
 interface ImagePreviewProps {
   img: ImageAsset;
   lastOpened?: string;
   selected?: boolean;
-  saved?: boolean;
+  onDelete?: () => void;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
@@ -27,8 +31,8 @@ export default function ImagePreview({
   img,
   lastOpened,
   selected,
-  saved = false,
   onClick,
+  onDelete,
 }: ImagePreviewProps) {
   const navigate = useNavigate();
   const user = useContext(AuthContext);
@@ -37,56 +41,87 @@ export default function ImagePreview({
   const [done, setDone] = useState(false);
 
   const saveImage = async () => {
+    if (!user) return;
     setLoading(true);
-    const req = new Request(img.urls.orig, { mode: "no-cors" });
-    const imgBlob = await (await fetch(req)).blob();
-    const thumbReq = new Request(img.urls.thumb, { mode: "no-cors" });
-    const imgThumbBlob = await (await fetch(thumbReq)).blob();
-    const uploadTask = firebase
-      .storage()
-      .ref(`users/${user?.uid}/saved/images`)
+    const imgBuf = await FunctionsService.getImageArrayBuffer(img.urls.orig);
+    if (!imgBuf || !imgBuf.buffer.byteLength) {
+      console.error("Error getting image buffer");
+      setLoading(false);
+      setError(true);
+      setDone(true);
+      return;
+    }
+    console.log("imgSrc", imgBuf);
+    const imgThumbBuf = await FunctionsService.getImageArrayBuffer(
+      img.urls.thumb
+    );
+    const uploadTask = StorageService.imagesRef(user.uid) // upload main image
       .child(img.title)
-      // .putString(img.urls.orig, "raw", {
-      .put(imgBlob, {
+      // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
+      .put(imgBuf.buffer, {
+        contentType: imgBuf.type,
         customMetadata: {
           title: img.title,
           description: img.description,
           sourceAPI: img.sourceAPI,
         },
       });
-    firebase
-      .storage()
-      .ref(`users/${user?.uid}/saved/thumbnails`)
-      .child(img.title)
-      .put(imgThumbBlob)
-      .on(
-        firebase.storage.TaskEvent.STATE_CHANGED,
-        null,
-        (error) => {
-          console.error("thumbnail error", error);
-        },
-        () => {
-          console.log("Thumbnail uploaded");
-        }
-      );
-
     uploadTask.on(
       firebase.storage.TaskEvent.STATE_CHANGED,
       null,
       (error) => {
-        console.error(error);
+        console.error("Error uploading image", error);
         setLoading(false);
         setError(true);
+        // todo: delete/cancel thumbnail here
       },
       () => {
+        console.debug("Image uploaded successfully");
         setLoading(false);
         setDone(true);
       }
     );
+
+    // upload thumbnail, we don't really care if it fails
+    if (imgThumbBuf) {
+      StorageService.thumbnailsRef(user.uid)
+        .child(img.title)
+        .put(imgThumbBuf.buffer, { contentType: imgThumbBuf.type })
+        .on(
+          firebase.storage.TaskEvent.STATE_CHANGED,
+          null,
+          (error) => {
+            console.error("Error uploading thumbnail", error);
+          },
+          () => {
+            console.debug("Thumbnail uploaded successfully");
+          }
+        );
+    }
   };
 
   const deleteImage = () => {
     setLoading(true);
+    firebase
+      .storage()
+      .ref(`users/${user?.uid}/saved/images`)
+      .child(img.title)
+      .delete()
+      .then(() => {
+        console.debug("Image deleted successfully");
+        setLoading(false);
+        setError(false);
+        setDone(true);
+        if (onDelete) {
+          setTimeout(onDelete, 1000);
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting file", error);
+        setLoading(false);
+        setError(true);
+        setDone(true);
+      });
   };
 
   const getStorageButton = () => {
@@ -105,7 +140,7 @@ export default function ImagePreview({
       tooltip = "Error saving image, please refresh the page and try again";
     } else if (done) {
       Icon = FaCheck;
-    } else if (saved) {
+    } else if (onDelete) {
       Icon = FaTrash;
       disabled = false;
       onClick = deleteImage;

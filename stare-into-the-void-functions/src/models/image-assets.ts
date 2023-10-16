@@ -108,3 +108,8 @@ export class MRPImageAsset extends ImageAsset {
     );
   }
 }
+
+export type ImageAssetRaw = {
+  buffer: number[];
+  type: string;
+};

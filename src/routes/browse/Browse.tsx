@@ -77,7 +77,7 @@ export default function Browse() {
   const [imgs, setImgs] = React.useState<ImageAsset[]>([]);
 
   React.useEffect(() => {
-    FunctionsService.instance.getNIVLWithQuery(query ?? "").then((val) => {
+    FunctionsService.getNIVLWithQuery(query ?? "").then((val) => {
       const processedVal = val.map((img, idx) => {
         img.date = new Date(img.date);
         return img;
