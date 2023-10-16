@@ -110,14 +110,11 @@ class FunctionsService {
    * @returns
    */
   static async getImageBase64(buffer: Uint8Array | ArrayBuffer, type: string) {
-    return (
-      `data:${type};base64,` + (await bufferToBase64(buffer))
-      // Buffer.from(image.buffer).toString("base64")
-    );
+    return `data:${type};base64,` + (await bufferToBase64(buffer));
   }
 
-  static async getImageArrayBuffer(url: string) {
-    const response = await FunctionsService.downloadImageData({
+  private static async getRawImageData(url: string) {
+    const response = await this.downloadImageData({
       url,
     }).catch((reason) => {
       console.error("Error downloading image: ", reason);
@@ -127,8 +124,20 @@ class FunctionsService {
       response?.data.buffer
     );
     if (!response?.data.buffer.length) return null;
-    const buffer = Uint8Array.from(response.data.buffer);
-    return { buffer, type: response.data.type };
+    return response.data;
+  }
+
+  static async getImageBuffer(url: string) {
+    const data = await this.getRawImageData(url);
+    if (!data) return null;
+    const buffer = Uint8Array.from(data.buffer);
+    return { buffer, type: data.type };
+  }
+
+  static async getImageBlob(url: string) {
+    const imageBuffer = await this.getImageBuffer(url);
+    if (!imageBuffer) return null;
+    return new Blob([imageBuffer.buffer], { type: imageBuffer.type });
   }
 }
 

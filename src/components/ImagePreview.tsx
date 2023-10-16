@@ -43,22 +43,22 @@ export default function ImagePreview({
   const saveImage = async () => {
     if (!user) return;
     setLoading(true);
-    const imgBuf = await FunctionsService.getImageArrayBuffer(img.urls.orig);
-    if (!imgBuf || !imgBuf.buffer.byteLength) {
+    const imgBuf = await FunctionsService.getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
+    if (!imgBuf || !imgBuf.size) {
+      //buffer.byteLength) {
       console.error("Error getting image buffer");
       setLoading(false);
       setError(true);
       setDone(true);
       return;
     }
-    console.log("imgSrc", imgBuf);
-    const imgThumbBuf = await FunctionsService.getImageArrayBuffer(
-      img.urls.thumb
-    );
+    console.log(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
+    const imgThumbBuf = await FunctionsService.getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
     const uploadTask = StorageService.imagesRef(user.uid) // upload main image
       .child(img.title)
       // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
-      .put(imgBuf.buffer, {
+      .put(imgBuf, {
+        //.buffer, {
         contentType: imgBuf.type,
         customMetadata: {
           title: img.title,
@@ -86,7 +86,7 @@ export default function ImagePreview({
     if (imgThumbBuf) {
       StorageService.thumbnailsRef(user.uid)
         .child(img.title)
-        .put(imgThumbBuf.buffer, { contentType: imgThumbBuf.type })
+        .put(imgThumbBuf /*.buffer*/, { contentType: imgThumbBuf.type })
         .on(
           firebase.storage.TaskEvent.STATE_CHANGED,
           null,

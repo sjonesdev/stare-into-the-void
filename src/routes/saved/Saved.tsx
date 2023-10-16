@@ -1,13 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { SourceAPI } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import ImagePreview from "../../components/ImagePreview";
-import {
-  AuthContext,
-  StorageService,
-  FunctionsService,
-} from "../../lib/firebase-services";
+import { AuthContext, StorageService } from "../../lib/firebase-services";
 import { useNavigate } from "react-router-dom";
-import { getBlob, getBytes } from "firebase/storage";
 
 export default function Saved() {
   const user = useContext(AuthContext);
