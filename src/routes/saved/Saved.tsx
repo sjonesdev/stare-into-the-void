@@ -24,31 +24,18 @@ export default function Saved() {
     userImages.listAll().then((res) => {
       console.log(`res ${res.items.length}`);
       const previewPromises = res.items.map(async (item) => {
-        let thumbnail, thumbnailURL;
+        let thumbnailURL;
         try {
-          thumbnail = await getBytes(userThumbnails.child(item.name));
+          thumbnailURL = await userThumbnails.child(item.name).getDownloadURL();
         } catch (e) {
           console.warn("Error getting thumbnail", e);
         }
         const [metadata, image] = await Promise.all([
           item.getMetadata(),
-          getBytes(item),
+          item.getDownloadURL(),
         ]);
         if (!metadata.contentType) return null;
-        if (thumbnail) {
-          thumbnailURL = await FunctionsService.getImageBase64(
-            thumbnail,
-            metadata.contentType
-          );
-        }
-        const downloadURL = await FunctionsService.getImageBase64(
-          image,
-          metadata.contentType
-        );
-        console.debug(
-          `Got ${metadata.name} image blob of size ${image.byteLength} and type ${metadata.contentType} with thumbnail of size ${thumbnail?.byteLength} and type ${metadata.contentType}`
-        );
-        // const downloadURL = URL.createObjectURL(image);
+        const downloadURL = image;
         return (
           <ImagePreview
             key={downloadURL}
