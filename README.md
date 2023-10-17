@@ -1,5 +1,5 @@
 # stare-into-the-void
-Search engine and exploration tool for NASA image APIs 
+Search engine and exploration tool for NASA image APIs. Visit at [stareintothevoid.com](https://stareintothevoid.com)
 
 ## Version Control Strategy
 For our version control strategy we used a slightly modified GitHub flow. We start by having feature branches which represent feature sets. These are not intended to be deleted after merging, and these branches can be merged in the development branch either through plain merges or PRs. We have a development branch we use for collecting changes from feature branches for testing and such. Finally we have the main branch which requires a PR with approval to merge into, and which builds and deploys into firebase.
