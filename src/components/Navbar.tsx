@@ -39,7 +39,7 @@ export default function Navbar({ active }: { active: Pages }) {
   const navigation = [
     { name: "Browse", to: "/browse", current: active === Pages.Browse },
     { name: "Edit", to: "/edit", current: active === Pages.Edit },
-    { name: "Recent", to: "/recent", current: active === Pages.Recent },
+    // { name: "Recent", to: "/recent", current: active === Pages.Recent },
     { name: "Saved", to: "/saved", current: active === Pages.Saved },
     { name: "About", to: "/about", current: active === Pages.About },
   ];
