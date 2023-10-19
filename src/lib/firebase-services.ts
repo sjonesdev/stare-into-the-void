@@ -12,7 +12,6 @@ import "firebase/compat/analytics";
 import "firebase/compat/storage";
 import "firebase/compat/app-check";
 import { createContext } from "react";
-import dotenv from "dotenv";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -44,8 +43,10 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   auth.useEmulator("http://localhost:9099/");
   storage.useEmulator("localhost", 9199);
   // use dev app check token
-  dotenv.configDotenv();
-  appCheck.activate(process.env.APP_CHECK_DEBUG_TOKEN ?? "", true); // TODO hide this
+  // @ts-ignore
+  // eslint-disable-next-line no-restricted-globals
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  appCheck.activate(process.env.REACT_APP_CHECK_DEBUG_TOKEN ?? "", true); // Note this is per browser per dev env
 } else {
   // Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
   // key is the counterpart to the secret key you set in the Firebase console.

@@ -6,6 +6,8 @@ import { BsSearch } from "react-icons/bs";
 import { Pages } from "../lib/pages";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../lib/firebase-services";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -22,6 +24,7 @@ export default function Navbar({ active }: { active: Pages }) {
   const [searchStr, setSearchStr] = React.useState<string>(query ?? "");
   const navigate = useNavigate();
   const user = React.useContext(AuthContext);
+  const [showUserOptions, setShowUserOptions] = React.useState<boolean>(false);
 
   const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -41,28 +44,58 @@ export default function Navbar({ active }: { active: Pages }) {
     { name: "About", to: "/about", current: active === Pages.About },
   ];
 
-  const getUserIcon = () => {
+  const getProfileButton = () => {
     const userIconClass = "hidden block h-6 w-auto lg:block";
     if (user) {
+      let icon = <FaUser color="white" className={userIconClass} />;
       if (user.photoURL) {
-        return (
+        icon = (
           <img
             src={user.photoURL}
             className={userIconClass}
             alt={`${user.displayName}`}
           />
         );
-      } else if (active === Pages.Profile) {
-        return <FaUser color="white" className={userIconClass} />;
-      } else {
-        return <FaRegUser color="white" className={userIconClass} />;
       }
+      return (
+        <>
+          <button
+            className={`${
+              showUserOptions
+                ? "border-white border-solid"
+                : "border-transparent"
+            } border border-2 bg-gray-700 rounded-3xl px-2 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0`}
+            aria-label={"User options"}
+            onClick={() => setShowUserOptions(!showUserOptions)}
+          >
+            {icon}
+          </button>
+          {showUserOptions && (
+            <div className="rounded-md absolute top-20 -right-4 flex flex-col items-center text-white font-md text-gray-300 bg-gray-700 min-w-[8rem]">
+              <span className="w-full text-gray-300 p-2">
+                {user.displayName}
+              </span>
+              <span className="w-full max-w-9/10 h-[2px] bg-gray-500 rounded-sm" />
+              <button
+                className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
+                onClick={() => firebase.auth().signOut()}
+              >
+                Sign Out
+              </button>
+            </div>
+          )}
+        </>
+      );
     } else {
-      if (active === Pages.SignIn) {
-        return <FaUser color="white" className={userIconClass} />;
-      } else {
-        return <FaRegUser color="white" className={userIconClass} />;
-      }
+      return (
+        <Link
+          to={"/signin"}
+          aria-label={user ? "Profile" : "Sign In"}
+          className="bg-gray-700 rounded-md  px-2 py-2 text-gray-300 hidden sm:flex flex-no-wrap flex-shrink min-w-0"
+        >
+          Sign In
+        </Link>
+      );
     }
   };
 
@@ -207,13 +240,7 @@ export default function Navbar({ active }: { active: Pages }) {
                   )}
                 </Disclosure.Button>
 
-                <Link
-                  to={user ? "/profile" : "/signin"}
-                  aria-label={user ? "Profile" : "Sign In"}
-                  className="bg-gray-700 rounded-3xl  px-2 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0"
-                >
-                  {getUserIcon()}
-                </Link>
+                {getProfileButton()}
               </div>
             </div>
           </div>

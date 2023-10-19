@@ -32,6 +32,7 @@ module.exports = {
       'fit': 'fit-content',
       '1/4': '25%',
       '1/2': '50%',
+      '9/10': '90%',
     },
     maxHeight: {
       '2xl': '40rem',
