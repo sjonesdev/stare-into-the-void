@@ -1,3 +1,10 @@
+import { useEffect, useState } from "react";
+import { FunctionsService } from "../lib/firebase-services";
+import {
+  ImageAsset,
+  SourceAPI,
+} from "../../stare-into-the-void-functions/src/models/image-assets";
+
 const MAX_LENGTH = 260;
 
 interface ApodProps {
@@ -16,6 +23,21 @@ export default function Apod({
   title,
   description, //260 max char
 }: ApodProps) {
+  const [apod, setApod] = useState<ImageAsset>({
+    title: "",
+    urls: {
+      orig: "",
+      thumb: "",
+    },
+    description: "",
+    date: new Date(),
+    sourceAPI: "None" as SourceAPI,
+  });
+  useEffect(() => {
+    FunctionsService.getPictureOfTheDay().then((res) => {
+      if (res) setApod(res);
+    });
+  }, []);
   return (
     <div className="flex flex-wrap justify-evenly mt-5 3xl:text-3xl p-4 3xl:p-8">
       <div className="3xl:w-64">

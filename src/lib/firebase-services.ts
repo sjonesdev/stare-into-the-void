@@ -12,6 +12,7 @@ import "firebase/compat/analytics";
 import "firebase/compat/storage";
 import "firebase/compat/app-check";
 import { createContext } from "react";
+import dotenv from "dotenv";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -42,7 +43,9 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   functions.useEmulator("localhost", 5001);
   auth.useEmulator("http://localhost:9099/");
   storage.useEmulator("localhost", 9199);
-  appCheck.activate("28a19d9a-7208-4c1a-baf7-3fbf9b682a41", true); // TODO hide this
+  // use dev app check token
+  dotenv.configDotenv();
+  appCheck.activate(process.env.APP_CHECK_DEBUG_TOKEN ?? "", true); // TODO hide this
 } else {
   // Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
   // key is the counterpart to the secret key you set in the Firebase console.
@@ -79,16 +82,10 @@ class FunctionsService {
     return FunctionsService._functions;
   }
 
-  static getPictureOfTheDay() {
-    var apodUrl = FunctionsService.apod()
-      .then((res) => {
-        return res.data.urls.orig;
-      })
-      .catch((reason) => {
-        console.log("error: " + reason);
-        return null;
-      });
-    return apodUrl;
+  static async getPictureOfTheDay() {
+    const apod = await FunctionsService.apod();
+    if (!apod.data) return null;
+    return apod.data;
   }
 
   static async getNIVLWithQuery(query: string): Promise<ImageAsset[]> {
