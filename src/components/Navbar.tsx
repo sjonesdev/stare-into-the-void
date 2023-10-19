@@ -1,7 +1,7 @@
 import React from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { FaRegEye, FaRegUser, FaUser } from "react-icons/fa";
+import { FaRegEye, FaUser } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Pages } from "../lib/pages";
 import { Link, useNavigate, useParams } from "react-router-dom";
