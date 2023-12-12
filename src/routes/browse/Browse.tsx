@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Listbox } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
-import Button from "../../components/Button";
 import CheckboxDropdown from "../../components/CheckboxDropdown";
 import DatePicker from "../../components/DatePicker";
 import ImagePreview from "../../components/ImagePreview";
@@ -26,41 +24,15 @@ for (const key in ApiInfo) {
     tooltip: ApiInfo[key].desc,
     isDefault: true,
   };
-  apis.push(apiVal);
+  if (
+    ApiInfo[key].name === ApiInfo.ImageAndVideoLibrary.name ||
+    ApiInfo[key].name === ApiInfo.APOD.name
+  ) {
+    apis.push(apiVal);
+  }
 }
 
-const sortOpts = ["Recent", "Relevant", "Something else idk"];
-
-const testImgInfo = [
-  {
-    url: "https://picsum.photos/500/500",
-    title: "Random Picture",
-  },
-  {
-    url: "https://picsum.photos/300/500",
-    title: "Random Picture 2",
-  },
-  {
-    url: "https://picsum.photos/500/300",
-    title: "Random Picture 3",
-  },
-  {
-    url: "https://picsum.photos/250/250",
-    title: "Random Picture 4",
-  },
-  {
-    url: "https://picsum.photos/1000/1000",
-    title: "Random Picture 5",
-  },
-  {
-    url: "https://picsum.photos/640/480",
-    title: "Random Picture 6",
-  },
-  {
-    url: "https://picsum.photos/480/640",
-    title: "Random Picture 6",
-  },
-];
+const sortOpts = ["Relevant", "Recent", "Oldest"];
 
 export default function Browse() {
   const { query } = useParams();
@@ -73,7 +45,8 @@ export default function Browse() {
   const [topElement, setTopElement] = React.useState<HTMLElement>();
 
   // If image drawer is not open, will be null or undefined, else will be url of selected img
-  const [openImg, setOpenImg] = React.useState<string>("");
+  // const [openImg, setOpenImg] = React.useState<string>("");
+  const [queryImgs, setQueryImgs] = React.useState<ImageAsset[]>([]);
   const [imgs, setImgs] = React.useState<ImageAsset[]>([]);
 
   React.useEffect(() => {
@@ -82,9 +55,30 @@ export default function Browse() {
         img.date = new Date(img.date);
         return img;
       });
-      setImgs(val);
+      setQueryImgs(processedVal);
     });
   }, [query]);
+
+  React.useEffect(() => {
+    const filtered = queryImgs.filter((img) => {
+      const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
+      const to = toDate?.valueOf() ?? new Date().valueOf();
+      return (
+        img.date.valueOf() >= from && img.date.valueOf() <= to
+        // && selectedAPIs?.has(img.sourceAPI)
+      );
+    });
+    if (sortBy === "Recent") {
+      filtered.sort((a, b) => {
+        return b.date.valueOf() - a.date.valueOf();
+      });
+    } else if (sortBy === "Oldest") {
+      filtered.sort((a, b) => {
+        return a.date.valueOf() - b.date.valueOf();
+      });
+    }
+    setImgs(filtered);
+  }, [queryImgs, fromDate, toDate, sortBy, selectedAPIs]);
 
   React.useEffect(() => {
     topElement?.scrollIntoView({
@@ -113,24 +107,20 @@ export default function Browse() {
 
   const getImgs = () => {
     const imgResults: JSX.Element[] = [];
+    console.log("IMGS");
     imgs.forEach((img, idx) => {
-      if (
-        (!fromDate || img.date.valueOf() >= fromDate.valueOf()) &&
-        (!toDate || img.date.valueOf() <= toDate.valueOf()) &&
-        (!selectedAPIs || selectedAPIs.has(img.sourceAPI))
-      ) {
-        imgResults.push(
-          <ImagePreview
-            img={img}
-            onClick={(e) => {
-              setSelectedPreview(idx);
-              setTopElement(e.currentTarget);
-            }}
-            key={idx}
-            selected={selectedPreview === idx}
-          />
-        );
-      }
+      console.log(img.date.toISOString());
+      imgResults.push(
+        <ImagePreview
+          img={img}
+          onClick={(e) => {
+            setSelectedPreview(idx);
+            setTopElement(e.currentTarget);
+          }}
+          key={idx}
+          selected={selectedPreview === idx}
+        />
+      );
     });
 
     return imgResults;
@@ -172,7 +162,7 @@ export default function Browse() {
           </div>
         </div>
       </div>
-      {selectedPreview && (
+      {selectedPreview != null && (
         <div className="fixed right-0 bottom-0 md:bottom-12 h3xl:bottom-auto top-0 md:top-12 h3xl:top-72 h3xl:min-h-[75rem] overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl w-full md:w-5/12 3xl:w-3/12 bg-gray-500 text-white">
           <div className="absolute flex flex gap-1 ml-1 mt-1 3xl:mt-4 3xl:ml-4 3xl:gap-4">
             <button onClick={() => setSelectedPreview(null)}>

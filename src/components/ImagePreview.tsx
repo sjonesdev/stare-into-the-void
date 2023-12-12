@@ -207,7 +207,7 @@ export default function ImagePreview({
         />
       </div>
       <span className="hidden md:block text-md 3xl:text-xl text-center">
-        {img.title}
+        {img.title} {img.date.toUTCString().slice(5, 16)}
       </span>
       <span className="text-sm 3xl:text-xl text-center">
         {lastOpened ?? ""}
