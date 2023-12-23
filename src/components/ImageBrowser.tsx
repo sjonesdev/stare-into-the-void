@@ -14,6 +14,7 @@ import { FaDownload, FaSave } from "react-icons/fa";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const LOCAL_STORAGE_KEY = "recent";
+const MAX_RECENT_IMAGES = 50;
 
 const apis: {
   value: string;
@@ -39,9 +40,13 @@ const sortOpts = ["Relevant", "Recent", "Oldest"];
 export default function ImageBrowser({
   images,
   title,
+  presorted = false,
+  prefiltered = false,
 }: {
   images: ImageAsset[];
   title: React.ReactNode;
+  presorted?: boolean;
+  prefiltered?: boolean;
 }) {
   const [recent, setRecent] = useLocalStorage<ImageAsset[]>(
     LOCAL_STORAGE_KEY,
@@ -97,11 +102,10 @@ export default function ImageBrowser({
       if (recentIdx !== 0) {
         recent.unshift(filteredImages[selectedPreview]);
       }
-      if (recent.length > 10) {
+      if (recent.length > MAX_RECENT_IMAGES) {
         recent.pop();
       }
       setRecent(recent);
-      console.log(recent);
     }
   }, [selectedPreview, filteredImages, recent, setRecent]);
 
@@ -153,13 +157,15 @@ export default function ImageBrowser({
   return (
     <>
       <div className="bg-gray-800">
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <form className="relative h-16 flex items-center text-gray-300 3xl:text-xl">
-            {apiSelector}
-            {dateRangeSelector}
-            {sortBySelector}
-          </form>
-        </div>
+        {(!presorted || !prefiltered) && (
+          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+            <form className="relative h-16 flex items-center text-gray-300 3xl:text-xl">
+              {!prefiltered && apiSelector}
+              {!prefiltered && dateRangeSelector}
+              {!presorted && sortBySelector}
+            </form>
+          </div>
+        )}
       </div>
       <div className="xl:py-12 3xl:py-24 mx-auto">
         <div className="w-full xl:w-10/12 bg-charcoal bg-opacity-80 xl:rounded-xl max-h-max mx-auto p-4 xl:p-8">

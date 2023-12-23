@@ -9,7 +9,19 @@ const getLocalStorageValue = (
   if (stringVal) {
     let storedValue;
     try {
-      storedValue = JSON.parse(stringVal);
+      storedValue = JSON.parse(stringVal, (key, value) => {
+        if (typeof value === "string") {
+          // ISO 8601 format is standard toString representation in Chrome and Firefox (also recommended by standard), not sure about elsewhere
+          // ex: 2010-10-26T22:24:50.000Z
+          const match = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g.exec(
+            value
+          );
+          if (match) {
+            return new Date(value);
+          }
+        }
+        return value;
+      });
       if (!validator(storedValue)) {
         console.warn(`Invalid value found in local storage at key ${key}`);
         storedValue = defaultValue;
@@ -34,7 +46,7 @@ const getLocalStorageValue = (
  * the local storage value.
  *
  * Local Storage itself is not monitored for changes, so the same
- * key should not be used across multiple components or hooks.
+ * key should not be set across multiple components or hooks.
  * @param key The local storage key to access
  * @param defaultValue: The default value to return if the key is not found or the stored value is invalid
  * @param validator A function to validate the value stored in local storage, should return true if the value is valid

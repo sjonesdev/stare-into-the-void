@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import { FunctionsService } from "../../lib/firebase-services";
 import { ApiInfo } from "../../lib/apiInfo";
