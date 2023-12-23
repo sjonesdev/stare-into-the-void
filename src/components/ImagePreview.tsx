@@ -41,7 +41,10 @@ export default function ImagePreview({
   const [done, setDone] = useState(false);
 
   const saveImage = async () => {
-    if (!user) return;
+    if (!user) {
+      console.warn("Save with no user");
+      return;
+    }
     setLoading(true);
     const imgBuf = await FunctionsService.getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
     if (!imgBuf || !imgBuf.size) {

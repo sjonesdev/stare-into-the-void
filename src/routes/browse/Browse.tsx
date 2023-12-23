@@ -26,10 +26,12 @@ for (const key in ApiInfo) {
 
 export default function Browse() {
   const { query } = useParams();
-  const title = (
+  const title = query ? (
     <>
       Results for <span className="font-bold">"{query}"</span>
     </>
+  ) : (
+    "Please enter a search query"
   );
 
   const [queryImgs, setQueryImgs] = React.useState<ImageAsset[]>([]);
