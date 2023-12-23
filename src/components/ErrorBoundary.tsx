@@ -12,7 +12,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: any) {
-    console.log("Error boundary state deriving from", error);
+    console.error("Error boundary state deriving from", error);
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
@@ -24,7 +24,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     //   in div (created by App)
     //   in App
     //   logErrorToMyService(error, info.componentStack);
-    console.log("Error caught by boundary", error, info);
+    console.error("Error caught by boundary", error, info);
   }
 
   render() {
