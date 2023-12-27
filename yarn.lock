@@ -2395,14 +2395,6 @@
   dependencies:
     "@toast-ui/editor" "^3.2.2"
 
-"@toast-ui/react-image-editor@^3.15.2":
-  version "3.15.2"
-  resolved "https://registry.yarnpkg.com/@toast-ui/react-image-editor/-/react-image-editor-3.15.2.tgz#369cf3a943a2c88474082f970886a0eded9dc7a7"
-  integrity sha512-oVLidJ03RsFiS+QpqqLiOvhEw7nhdAeaNRL+UNvjW8He5lYP9wh/l4SkOMhH7UGI6bZq7W950Y19mGKK3fl5+Q==
-  dependencies:
-    fabric "^4.2.0"
-    tui-image-editor "^3.15.2"
-
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
@@ -3232,9 +3224,9 @@ array-buffer-byte-length@^1.0.0:
     is-array-buffer "^3.0.1"
 
 array-equal@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/array-equal/-/array-equal-1.0.0.tgz#8c2a5ef2472fd9ea742b04c77a75093ba2757c93"
-  integrity sha512-H3LU5RLiSsGXPhN+Nipar0iR0IofH+8r89G2y1tBKxQ/agagKyAjhkAFDRBfodP2caPrNKHpAWNIM/c9yeL7uA==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/array-equal/-/array-equal-1.0.2.tgz#a8572e64e822358271250b9156d20d96ef5dec04"
+  integrity sha512-gUHx76KtnhEgB3HOuFYiCm3FIdEs6ocM2asHvNTkfu/Y09qQVrrVVaOKENmS2KkSaGoxgXNqC+ZVtR/n0MOkSA==
 
 array-flatten@1.1.1:
   version "1.1.1"
@@ -10227,7 +10219,7 @@ tui-color-picker@^2.2.6:
   resolved "https://registry.yarnpkg.com/tui-color-picker/-/tui-color-picker-2.2.8.tgz#8e140ab04066dbdb2353c4a1f434ad7d8d7b0d73"
   integrity sha512-q5sE9NQ5NR9lYpilYjcI7Sdv0KCogo+W8fZY+AYTj/HYg+9fscYy3UuJ6UQiV1bF+ARCLwFRWC8UcOt9kuUctQ==
 
-tui-image-editor@^3.15.2:
+tui-image-editor@^3.15.3:
   version "3.15.3"
   resolved "https://registry.yarnpkg.com/tui-image-editor/-/tui-image-editor-3.15.3.tgz#b016c53de5ed11c0ed4a91604a868e7964d1b431"
   integrity sha512-7B5YUxe2eSSh+8YrlREmjqkgeFFKrVkdy0D/G0dWCJIQ2WLPQ/Bkm02WXQeWJiFPzgvargZjn7eAe80p3qBHPQ==
