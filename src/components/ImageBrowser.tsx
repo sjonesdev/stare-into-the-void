@@ -42,12 +42,14 @@ export default function ImageBrowser({
   title,
   presorted = false,
   prefiltered = false,
+  saved = false,
   onDeleteImage = () => {},
 }: {
   images: ImageAsset[];
   title: React.ReactNode;
   presorted?: boolean;
   prefiltered?: boolean;
+  saved?: boolean;
   onDeleteImage?: (img: ImageAsset) => void;
 }) {
   const [recent, setRecent] = useLocalStorage<ImageAsset[]>(
@@ -140,11 +142,12 @@ export default function ImageBrowser({
             setSelectedPreview(idx);
             setTopElement(e.currentTarget);
           }}
-          key={idx}
+          key={img.urls.orig}
           selected={selectedPreview === idx}
           onDelete={() => {
             onDeleteImage(img);
           }}
+          saved={saved}
         />
       );
     });

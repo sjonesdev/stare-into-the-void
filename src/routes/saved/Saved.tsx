@@ -68,7 +68,7 @@ export default function Saved() {
         setSaved(imageAssets);
       });
     });
-  });
+  }, [navigate, user]);
 
   const deleteImage = (img: ImageAsset) => {
     const deletedIndex = saved.findIndex((asset) => {
@@ -85,6 +85,7 @@ export default function Saved() {
       images={saved}
       title="Saved Images"
       onDeleteImage={deleteImage}
+      saved
     />
   );
 }

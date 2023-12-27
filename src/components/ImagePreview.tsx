@@ -23,6 +23,7 @@ interface ImagePreviewProps {
   img: ImageAsset;
   lastOpened?: string;
   selected?: boolean;
+  saved?: boolean;
   onDelete?: () => void;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
@@ -31,6 +32,7 @@ export default function ImagePreview({
   img,
   lastOpened,
   selected,
+  saved = false,
   onClick,
   onDelete,
 }: ImagePreviewProps) {
@@ -142,7 +144,7 @@ export default function ImagePreview({
       tooltip = "Error saving image, please refresh the page and try again";
     } else if (done) {
       Icon = FaCheck;
-    } else if (onDelete) {
+    } else if (saved) {
       Icon = FaTrash;
       disabled = false;
       onClick = deleteImage;
