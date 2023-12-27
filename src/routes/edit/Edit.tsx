@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 
-import ImageEditor from "@toast-ui/react-image-editor";
+import TuiImageEditor from "tui-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
 import { useLocation } from "react-router-dom";
 import { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
@@ -22,12 +22,42 @@ const getWindowSize = () => {
 
 export default function Edit() {
   const loc = useLocation();
-  const imagePassed: ImageAsset | null = loc.state; // TODO maybe change to where can check if this is already saved to provide an overwrite option
+  const imagePassed = loc.state as ImageAsset;
   const [windowSize, setWindowSize] = useState(getWindowSize());
-  const editorRef = React.createRef<ImageEditor>();
+  const editorRef = React.createRef<HTMLDivElement>();
   const user = React.useContext(AuthContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [imageEditor, setImageEditor] = useState<TuiImageEditor | null>(null);
+
+  React.useEffect(() => {
+    // editorRef should never be null since component is mounted, but for typing
+    if (!editorRef.current) return;
+
+    setImageEditor(
+      new TuiImageEditor(editorRef.current, {
+        includeUI: {
+          loadImage: {
+            path: imagePassed?.urls.orig ?? "",
+            name: imagePassed?.title ?? "Untitled",
+          },
+          theme,
+          //menu: ["shape", "filter"],
+          initMenu: "filter",
+          uiSize: {
+            width: `${windowSize.innerWidth - 100}px`,
+            height: `${windowSize.innerHeight - 100}px`,
+          },
+          menuBarPosition: "bottom",
+        },
+        selectionStyle: {
+          cornerSize: 20,
+          rotatingPointOffset: 70,
+        },
+        usageStatistics: true,
+      })
+    );
+  }, []);
 
   React.useEffect(() => {
     if (!user) navigate("/signin");
@@ -37,7 +67,7 @@ export default function Edit() {
     const handleWindowResize = () => {
       const newWinSize = getWindowSize();
       setWindowSize((curWinSize) => ({ ...curWinSize, ...newWinSize }));
-      editorRef.current?.getInstance().ui.resizeEditor({
+      imageEditor?.ui?.resizeEditor({
         uiSize: {
           width: `${newWinSize.innerWidth - 100}px`,
           height: `${newWinSize.innerHeight - 100}px`,
@@ -53,14 +83,14 @@ export default function Edit() {
     return () => {
       window.removeEventListener("resize", handleWindowResize);
     };
-  }, [windowSize, editorRef]);
+  }, [imageEditor]);
   console.debug(`Image URL: ${imagePassed?.urls.orig}`);
 
   const saveImage = async () => {
     if (!user) return;
     setLoading(true);
     const img = FunctionsService.getBase64DataStringUint8Array(
-      editorRef.current?.getInstance().toDataURL() ?? ""
+      imageEditor?.toDataURL() ?? ""
     );
     console.log("Data", img);
     const imgBlob = FunctionsService.getUint8ArrayImageblob(img, "image/png"); // could check type here, but we know tui-image-editor always uses png
@@ -72,7 +102,7 @@ export default function Edit() {
     }
     console.log(`Uploading ${imgBlob.size} byte ${imgBlob.type}`);
     const imgThumbBlob = await FunctionsService.resizeImageBlob(imgBlob, 200);
-    // Can't let file names have commas or it causes issues with content dispotition header
+    // Can't let file names have commas or it causes issues with content disposition header
     const title =
       (imagePassed?.title ?? "Untitled") +
       ` (edited ${new Date().toISOString()})`;
@@ -133,28 +163,7 @@ export default function Edit() {
           "Save"
         )}
       </button>
-      <ImageEditor
-        includeUI={{
-          loadImage: {
-            path: imagePassed?.urls.orig ?? "",
-            name: "SampleImage",
-          },
-          theme,
-          //menu: ["shape", "filter"],
-          initMenu: "filter",
-          uiSize: {
-            width: `${windowSize.innerWidth - 100}px`,
-            height: `${windowSize.innerHeight - 100}px`,
-          },
-          menuBarPosition: "bottom",
-        }}
-        selectionStyle={{
-          cornerSize: 20,
-          rotatingPointOffset: 70,
-        }}
-        usageStatistics={true}
-        ref={editorRef}
-      />
+      <div ref={editorRef} />
     </div>
   );
 }
