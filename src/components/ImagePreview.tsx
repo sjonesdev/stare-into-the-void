@@ -174,9 +174,13 @@ export default function ImagePreview({
       onClick={onClick}
     >
       <div className="m-2 w-full h-full">
-        {selected && (
-          <div className="absolute -translate-x-2 -translate-y-2 h-[15rem] lg:w-[15rem] lg:h-[13rem] 3xl:w-[23rem] 3xl:h-[21rem] rounded-md bg-indigo-300/25 border-indigo-300 border-solid border-2" />
-        )}
+        <div
+          className={`${
+            selected
+              ? "bg-indigo-300/25 border-indigo-300"
+              : "bg-transparent border-transparent"
+          } absolute -translate-x-2 -translate-y-2 h-[15rem] lg:w-[15rem] lg:h-[13rem] 3xl:w-[23rem] 3xl:h-[21rem] rounded-md border-solid border-2 transition-all`}
+        />
         <div className="absolute bg-black/50 rounded-tl-md rounded-br-md">
           <button
             className="block m-1 3xl:m-2"

@@ -114,7 +114,7 @@ export default function Navbar({ active }: { active: Pages }) {
                     item.current
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block px-3 py-2 rounded-md text-base font-medium"
+                    "transition-colors block px-3 py-2 rounded-md text-base font-medium"
                   )}
                   aria-current={item.current ? "page" : undefined}
                 >
@@ -200,7 +200,7 @@ export default function Navbar({ active }: { active: Pages }) {
                           item.current
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "px-3 py-2 rounded-md text-sm 3xl:text-xl font-medium"
+                          "transition-colors px-3 py-2 rounded-md text-sm 3xl:text-xl font-medium"
                         )}
                         aria-current={item.current ? "page" : undefined}
                       >

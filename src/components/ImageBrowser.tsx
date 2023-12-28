@@ -193,70 +193,76 @@ export default function ImageBrowser({
           </div>
         </div>
       </div>
-      {selectedPreview != null && (
-        <div className="fixed right-0 bottom-0 md:bottom-12 h3xl:bottom-auto top-0 md:top-12 h3xl:top-72 h3xl:min-h-[75rem] overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl w-full md:w-5/12 3xl:w-3/12 bg-gray-500 text-white">
-          <div className="absolute flex flex gap-1 ml-1 mt-1 3xl:mt-4 3xl:ml-4 3xl:gap-4">
-            <button onClick={() => setSelectedPreview(null)}>
-              <XMarkIcon
-                className="block h-6 w-6 3xl:h-12 3xl:w-12"
-                aria-hidden="true"
-              />
-            </button>
-            <button
-              aria-label="Open image in editor"
-              onClick={() =>
-                navigate("/edit", { state: filteredImages[selectedPreview] })
-              }
-            >
-              <RiImageEditLine
-                aria-hidden={true}
-                className="h-6 w-6 3xl:h-12 3xl:w-12"
-              />
-            </button>
-            <DownloadLink
-              className="relative left-[0.125rem] py-[0.125rem]"
-              href={filteredImages[selectedPreview].urls.orig}
-              imgTitle={filteredImages[selectedPreview].title}
-            >
-              <FaDownload
-                aria-hidden={true}
-                className="w-5 h-5 3xl:h-10 3xl:w-10"
-              />
-            </DownloadLink>
-            <button
-              className="relative left-[0.125rem] py-[0.25rem]"
-              aria-label="Save image on account"
-            >
-              <FaSave
-                aria-hidden={true}
-                className="w-5 h-5 3xl:h-10 3xl:w-10"
-              />
-            </button>
-          </div>
-          <div className="flex flex-col items-center 3xl:mt-12">
-            <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
-              <img
-                className="rounded-lg object-scale-down mx-auto"
-                src={filteredImages[selectedPreview].urls.thumb}
-                alt=""
-              />
+      <div
+        className={`${
+          selectedPreview != null ? "w-full md:w-5/12 3xl:w-3/12" : "w-0"
+        } fixed right-0 bottom-0 md:bottom-12 h3xl:bottom-auto top-0 md:top-12 h3xl:top-72 h3xl:min-h-[75rem] overflow-y-scroll shadow-lg shadow-black/40 md:rounded-l-xl bg-gray-500 text-white transition-all`}
+      >
+        {selectedPreview != null && (
+          <>
+            <div className="absolute flex flex gap-1 ml-1 mt-1 3xl:mt-4 3xl:ml-4 3xl:gap-4">
+              <button onClick={() => setSelectedPreview(null)}>
+                <XMarkIcon
+                  className="block h-6 w-6 3xl:h-12 3xl:w-12"
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                aria-label="Open image in editor"
+                onClick={() =>
+                  navigate("/edit", { state: filteredImages[selectedPreview] })
+                }
+              >
+                <RiImageEditLine
+                  aria-hidden={true}
+                  className="h-6 w-6 3xl:h-12 3xl:w-12"
+                />
+              </button>
+              <DownloadLink
+                className="relative left-[0.125rem] py-[0.125rem]"
+                href={filteredImages[selectedPreview].urls.orig}
+                imgTitle={filteredImages[selectedPreview].title}
+              >
+                <FaDownload
+                  aria-hidden={true}
+                  className="w-5 h-5 3xl:h-10 3xl:w-10"
+                />
+              </DownloadLink>
+              <button
+                className="relative left-[0.125rem] py-[0.25rem]"
+                aria-label="Save image on account"
+              >
+                <FaSave
+                  aria-hidden={true}
+                  className="w-5 h-5 3xl:h-10 3xl:w-10"
+                />
+              </button>
             </div>
-            <div className="w-10/12 flex justify-between mb-4 items-end">
-              <span className="font-bold text-xl 3xl:text-3xl">
-                {filteredImages[selectedPreview].title}
-              </span>
-              <span className="3xl:text-2xl">
-                {filteredImages[selectedPreview].date
-                  .toUTCString()
-                  .slice(0, 16)}
-              </span>
+            <div className="flex flex-col items-center 3xl:mt-12">
+              <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
+                <img
+                  className="rounded-lg object-scale-down mx-auto"
+                  src={filteredImages[selectedPreview].urls.thumb}
+                  alt={filteredImages[selectedPreview].title}
+                />
+              </div>
+              <div className="w-10/12 flex justify-between mb-4 items-end">
+                <span className="font-bold text-xl 3xl:text-3xl">
+                  {filteredImages[selectedPreview].title}
+                </span>
+                <span className="3xl:text-2xl">
+                  {filteredImages[selectedPreview].date
+                    .toUTCString()
+                    .slice(0, 16)}
+                </span>
+              </div>
+              <p className="w-10/12 break-words leading-relaxed 3xl:text-2xl mb-8">
+                {filteredImages[selectedPreview].description}
+              </p>
             </div>
-            <p className="w-10/12 break-words leading-relaxed 3xl:text-2xl mb-8">
-              {filteredImages[selectedPreview].description}
-            </p>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </>
   );
 }
