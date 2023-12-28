@@ -86,6 +86,8 @@ class FunctionsService {
   static async getPictureOfTheDay() {
     const apod = await FunctionsService.apod();
     if (!apod.data) return null;
+    apod.data.date = new Date(apod.data.date);
+    if (!apod.data.urls.thumb) apod.data.urls.thumb = apod.data.urls.orig;
     return apod.data;
   }
 

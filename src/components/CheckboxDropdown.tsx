@@ -2,12 +2,11 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { createRef, useState } from "react";
 import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
 
-type CheckboxDropdownOption = {
-  value?: string;
+interface CheckboxDropdownInput {
+  value: string;
+  /** Optional, value is used as label if not provided */
+  label?: string;
   tooltip?: string;
-};
-
-interface CheckboxDropdownInput extends CheckboxDropdownOption {
   isDefault?: boolean;
 }
 
@@ -27,21 +26,22 @@ export default function CheckboxDropdown({
   values,
   setValues,
 }: CheckboxDropdownProps) {
-  const defSelected = new Set<string>();
-  for (const idx in values) {
-    if (values[idx].isDefault) defSelected.add(idx);
+  const defaultSelected = new Set<string>();
+  for (const val of values) {
+    if (val.isDefault) defaultSelected.add(val.value);
   }
-  const [selected, setSelected] = useState<Set<string>>(defSelected);
+  const [selected, setSelected] = useState<Set<string>>(defaultSelected);
+  setValues(selected);
   const [open, setOpen] = useState<boolean>(false);
   const dropdown = createRef<HTMLDivElement>();
 
   useCloseOnClickAway(dropdown, () => setOpen(false));
 
-  const changeSelected = (idx: string) => {
-    if (selected.has(idx)) {
-      selected.delete(idx);
+  const changeSelected = (value: string) => {
+    if (selected.has(value)) {
+      selected.delete(value);
     } else {
-      selected.add(idx);
+      selected.add(value);
     }
     const newSelected = new Set(selected);
     setSelected(newSelected);
@@ -50,34 +50,33 @@ export default function CheckboxDropdown({
 
   const getOpts = () => {
     const opts = [];
-    for (const idx in values) {
-      const val = values[idx];
-      const active = selected.has(idx);
+    for (const val of values) {
+      const active = selected.has(val.value);
       opts.push(
         <li
-          key={idx}
+          key={val.value}
           className={`relative cursor-pointer select-none py-2 pl-10 pr-4 truncate ease-in-out background-color duration-100 text-white ${
             active
               ? "font-medium hover:bg-gray-500"
               : "font-normal hover:bg-amber-600"
           }`}
-          onClick={() => changeSelected(idx)}
+          onClick={() => changeSelected(val.value)}
         >
           <label htmlFor={val.value} className="cursor-pointer">
             <input
               className="absolute opacity-0 w-0 h-0 cursor-pointer"
               type="checkbox"
               name={val.value}
-              value={idx}
+              value={val.value}
               checked={active}
-              onChange={() => changeSelected(idx)}
+              onChange={() => changeSelected(val.value)}
             />
             {active ? (
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
                 <CheckIcon className="h-5 w-5" aria-hidden="true" />
               </span>
             ) : null}
-            {val.value}
+            {val.label ?? val.value}
           </label>
         </li>
       );

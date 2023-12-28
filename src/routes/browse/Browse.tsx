@@ -37,12 +37,35 @@ export default function Browse() {
   const [queryImgs, setQueryImgs] = React.useState<ImageAsset[]>([]);
 
   React.useEffect(() => {
-    FunctionsService.getNIVLWithQuery(query ?? "").then((val) => {
-      const processedVal = val.map((img, idx) => {
-        img.date = new Date(img.date);
-        return img;
-      });
-      setQueryImgs(processedVal);
+    const newQueryImgs: ImageAsset[] = [];
+
+    const promises = [
+      FunctionsService.getPictureOfTheDay().then((val) => {
+        // if there is no query, we want to still show APOD, but if there is a query, we only want to show APOD if it matches the query
+        if (val) {
+          if (
+            !query ||
+            (query && val.title.toLowerCase().includes(query.toLowerCase()))
+          ) {
+            newQueryImgs.push(val);
+          }
+        }
+      }),
+    ];
+
+    if (query) {
+      promises.push(
+        FunctionsService.getNIVLWithQuery(query ?? "").then((val) => {
+          val.forEach((img) => {
+            img.date = new Date(img.date);
+            newQueryImgs.push(img);
+          });
+        })
+      );
+    }
+
+    Promise.allSettled(promises).then(() => {
+      setQueryImgs(newQueryImgs);
     });
   }, [query]);
 

@@ -23,7 +23,8 @@ const apis: {
 }[] = [];
 for (const key in ApiInfo) {
   const apiVal = {
-    value: ApiInfo[key].name,
+    value: key,
+    label: ApiInfo[key].name,
     tooltip: ApiInfo[key].desc,
     isDefault: true,
   };
@@ -69,12 +70,15 @@ export default function ImageBrowser({
   const [filteredImages, setFilteredImages] = React.useState<ImageAsset[]>([]);
 
   React.useEffect(() => {
+    console.log("selectedAPIs", selectedAPIs);
     const filtered = images.filter((img) => {
       const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
       const to = toDate?.valueOf() ?? new Date().valueOf();
+      console.log("API", img.sourceAPI, selectedAPIs?.has(img.sourceAPI));
       return (
-        img.date.valueOf() >= from && img.date.valueOf() <= to
-        // && selectedAPIs?.has(img.sourceAPI)
+        img.date.valueOf() >= from &&
+        img.date.valueOf() <= to &&
+        selectedAPIs?.has(img.sourceAPI)
       );
     });
     if (sortBy === "Recent") {
