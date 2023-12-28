@@ -129,7 +129,11 @@ export default function ImageBrowser({
   );
 
   const sortBySelector = (
-    <SelectDropdown values={sortOpts} setValue={setSortBy} />
+    <SelectDropdown
+      dropdownText="Sort By:"
+      values={sortOpts}
+      setValue={setSortBy}
+    />
   );
 
   const getImgs = () => {
