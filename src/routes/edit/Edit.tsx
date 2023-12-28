@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 import { FaSpinner } from "react-icons/fa";
+import useOnMount from "../../hooks/useOnMount";
 
 const getWindowSize = () => {
   const { innerWidth, innerHeight } = window;
@@ -30,7 +31,7 @@ export default function Edit() {
   const [loading, setLoading] = useState(false);
   const [imageEditor, setImageEditor] = useState<TuiImageEditor | null>(null);
 
-  React.useEffect(() => {
+  useOnMount(() => {
     // editorRef should never be null since component is mounted, but for typing
     if (!editorRef.current) return;
 
@@ -57,9 +58,7 @@ export default function Edit() {
         usageStatistics: true,
       })
     );
-    // only want this to run once after component mounts
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   React.useEffect(() => {
     if (!user) navigate("/signin");

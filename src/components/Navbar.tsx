@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FaRegEye, FaUser } from "react-icons/fa";
@@ -18,6 +18,8 @@ enum Disclosures {
   Search,
 }
 
+const userOptionsIdentifier = "user-options-search-class";
+
 export default function Navbar({ active }: { active: Pages }) {
   const [activeDisclosure, setActiveDisclosure] = React.useState<Disclosures>();
   const { query } = useParams();
@@ -25,6 +27,25 @@ export default function Navbar({ active }: { active: Pages }) {
   const navigate = useNavigate();
   const user = React.useContext(AuthContext);
   const [showUserOptions, setShowUserOptions] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    if (!showUserOptions) return;
+    const listener = (ev: MouseEvent) => {
+      const target = ev.target as HTMLElement;
+      if (
+        target?.classList?.contains(userOptionsIdentifier) ||
+        target?.parentElement?.classList.contains(userOptionsIdentifier) ||
+        target?.parentElement?.parentElement?.classList.contains(
+          userOptionsIdentifier
+        )
+      ) {
+        return;
+      }
+      setShowUserOptions(false);
+    };
+    globalThis.addEventListener("click", listener);
+    return () => globalThis.removeEventListener("click", listener);
+  }, [showUserOptions]);
 
   const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -60,7 +81,7 @@ export default function Navbar({ active }: { active: Pages }) {
       return (
         <>
           <button
-            className={`${
+            className={`${userOptionsIdentifier} ${
               showUserOptions
                 ? "border-white border-solid"
                 : "border-transparent"
@@ -74,9 +95,9 @@ export default function Navbar({ active }: { active: Pages }) {
           <div
             className={`${
               showUserOptions ? "visible" : "invisible opacity-0"
-            } transition-[visibility,opacity] rounded-md absolute top-16 -right-4 flex flex-col items-center text-white font-md text-gray-300 bg-gray-700 min-w-[8rem]`}
+            } ${userOptionsIdentifier} transition-[visibility,opacity] rounded-md absolute top-16 -right-4 flex flex-col items-center text-white font-md text-gray-300 bg-gray-700 min-w-[8rem]`}
           >
-            <span className="w-full text-gray-300 p-2">{user.displayName}</span>
+            <p className="w-full text-gray-300 p-2">{user.displayName}</p>
             <span className="w-full max-w-9/10 h-[2px] bg-gray-500 rounded-sm" />
             <button
               className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
