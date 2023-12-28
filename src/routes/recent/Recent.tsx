@@ -5,7 +5,5 @@ import useLocalStorage from "../../hooks/useLocalStorage";
 export default function Recent() {
   const [recent] = useLocalStorage<ImageAsset[]>("recent", []);
 
-  console.log(recent);
-
   return <ImageBrowser images={recent} title="Recent" presorted prefiltered />;
 }

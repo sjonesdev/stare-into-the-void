@@ -38,7 +38,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   // @ts-ignore
   // eslint-disable-next-line no-restricted-globals
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-  console.log("connecting to emulator");
+  console.debug("connecting to emulator");
   functions.useEmulator("localhost", 5001);
   auth.useEmulator("http://localhost:9099/");
   storage.useEmulator("localhost", 9199);
@@ -65,7 +65,7 @@ async function bufferToBase64(buffer: Uint8Array | ArrayBuffer) {
     reader.onload = () => resolve(reader.result as string);
     reader.readAsDataURL(new Blob([buffer]));
   });
-  console.log("base64url", base64url);
+  console.debug("base64url", base64url);
   // remove the `data:...;base64,` part from the start
   return base64url.slice(base64url.indexOf(",") + 1);
 }
@@ -97,7 +97,7 @@ class FunctionsService {
         return res.data;
       })
       .catch((reason) => {
-        console.log("error: " + reason);
+        console.error("error: " + reason);
       });
     return nivlUrls;
   }
@@ -180,32 +180,26 @@ class FunctionsService {
    * @param width
    */
   static async resizeImageBlob(image: Blob, width: number) {
-    console.log("resizing blob", image, width);
     const img = new Image();
     img.src = URL.createObjectURL(image);
     await new Promise((resolve) => {
       img.onload = resolve;
     });
-    console.log("img", img);
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = Math.floor((width / img.width) * img.height);
+
     // const offscreenCanvas = canvas.transferControlToOffscreen();
     // hacky stuff because offscreen canvas needs unsigned long int
     const canvasSize = new Uint32Array(2);
     canvasSize[0] = width;
     canvasSize[1] = Math.floor((width / img.width) * img.height);
-    console.log("canvasSize", canvasSize);
+
     const offscreenCanvas = new OffscreenCanvas(canvasSize[0], canvasSize[1]);
-    console.log(
-      "offscreenCanvas",
-      offscreenCanvas.width,
-      offscreenCanvas.height
-    );
+
     const ctx = offscreenCanvas.getContext("2d");
     ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
     const blob = await offscreenCanvas.convertToBlob({ type: image.type });
-    console.log("blob", blob);
     return blob;
   }
 }

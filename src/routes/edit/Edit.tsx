@@ -93,7 +93,7 @@ export default function Edit() {
     const img = FunctionsService.getBase64DataStringUint8Array(
       imageEditor?.toDataURL() ?? ""
     );
-    console.log("Data", img);
+    console.debug("Data", img);
     const imgBlob = FunctionsService.getUint8ArrayImageblob(img, "image/png"); // could check type here, but we know tui-image-editor always uses png
 
     if (!imgBlob || !imgBlob.size) {
@@ -101,7 +101,7 @@ export default function Edit() {
       setLoading(false);
       return;
     }
-    console.log(`Uploading ${imgBlob.size} byte ${imgBlob.type}`);
+    console.debug(`Uploading ${imgBlob.size} byte ${imgBlob.type}`);
     const imgThumbBlob = await FunctionsService.resizeImageBlob(imgBlob, 200);
     // Can't let file names have commas or it causes issues with content disposition header
     const title =

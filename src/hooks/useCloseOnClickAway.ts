@@ -15,13 +15,8 @@ export default function useCloseOnClickAway(
   useEffect(() => {
     const listener = (ev: MouseEvent) => {
       let target: HTMLElement | null = ev.target as HTMLElement;
-      console.log("looking for", elementRef.current);
       while (target) {
-        console.log(target);
-        if (target === elementRef.current) {
-          console.log("found");
-          return;
-        }
+        if (target === elementRef.current) return;
         target = target.parentElement;
       }
       close();

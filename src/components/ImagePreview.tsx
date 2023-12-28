@@ -57,7 +57,7 @@ export default function ImagePreview({
       setDone(true);
       return;
     }
-    console.log(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
+    console.debug(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
     const imgThumbBuf = await FunctionsService.getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
     const uploadTask = StorageService.imagesRef(user.uid) // upload main image
       .child(img.title)
