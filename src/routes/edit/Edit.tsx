@@ -57,6 +57,8 @@ export default function Edit() {
         usageStatistics: true,
       })
     );
+    // only want this to run once after component mounts
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
