@@ -1,5 +1,6 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
-import * as React from "react";
+import { createRef, useState } from "react";
+import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
 
 type CheckboxDropdownOption = {
   value?: string;
@@ -30,8 +31,11 @@ export default function CheckboxDropdown({
   for (const idx in values) {
     if (values[idx].isDefault) defSelected.add(idx);
   }
-  const [selected, setSelected] = React.useState<Set<string>>(defSelected);
-  const [open, setOpen] = React.useState<boolean>(false);
+  const [selected, setSelected] = useState<Set<string>>(defSelected);
+  const [open, setOpen] = useState<boolean>(false);
+  const dropdown = createRef<HTMLDivElement>();
+
+  useCloseOnClickAway(dropdown, () => setOpen(false));
 
   const changeSelected = (idx: string) => {
     if (selected.has(idx)) {
@@ -82,7 +86,7 @@ export default function CheckboxDropdown({
   };
   /* TODO - change to or wrap with fieldset */
   return (
-    <div className="w-72">
+    <div className="w-72" ref={dropdown}>
       <button
         className="h-10 z-30 max-h-min relative w-full rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm 3xl:text-lg"
         onClick={() => {
@@ -103,9 +107,6 @@ export default function CheckboxDropdown({
           "absolute z-20 mt-1 absolute mt-1 max-h-60 w-100 overflow-auto rounded-md bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm 3xl:text-lg origin-top ease-in-out all transition duration-500 " +
           (open ? "" : " opacity-0 -translate-y-4 scale-y-0")
         }
-        onBlur={() => {
-          setOpen(false);
-        }}
       >
         {getOpts()}
       </ul>

@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
+import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { FaRegEye, FaUser } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Pages } from "../lib/pages";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { AuthContext } from "../lib/firebase-services";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import ProfileButton from "./ProfileButton";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -18,34 +16,11 @@ enum Disclosures {
   Search,
 }
 
-const userOptionsIdentifier = "user-options-search-class";
-
 export default function Navbar({ active }: { active: Pages }) {
-  const [activeDisclosure, setActiveDisclosure] = React.useState<Disclosures>();
+  const [activeDisclosure, setActiveDisclosure] = useState<Disclosures>();
   const { query } = useParams();
-  const [searchStr, setSearchStr] = React.useState<string>(query ?? "");
+  const [searchStr, setSearchStr] = useState<string>(query ?? "");
   const navigate = useNavigate();
-  const user = React.useContext(AuthContext);
-  const [showUserOptions, setShowUserOptions] = React.useState<boolean>(false);
-
-  useEffect(() => {
-    if (!showUserOptions) return;
-    const listener = (ev: MouseEvent) => {
-      const target = ev.target as HTMLElement;
-      if (
-        target?.classList?.contains(userOptionsIdentifier) ||
-        target?.parentElement?.classList.contains(userOptionsIdentifier) ||
-        target?.parentElement?.parentElement?.classList.contains(
-          userOptionsIdentifier
-        )
-      ) {
-        return;
-      }
-      setShowUserOptions(false);
-    };
-    globalThis.addEventListener("click", listener);
-    return () => globalThis.removeEventListener("click", listener);
-  }, [showUserOptions]);
 
   const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -64,62 +39,6 @@ export default function Navbar({ active }: { active: Pages }) {
     { name: "Saved", to: "/saved", current: active === Pages.Saved },
     { name: "About", to: "/about", current: active === Pages.About },
   ];
-
-  const getProfileButton = () => {
-    const userIconClass = "hidden block h-6 w-auto lg:block";
-    if (user) {
-      let icon = <FaUser color="white" className={userIconClass} />;
-      if (user.photoURL) {
-        icon = (
-          <img
-            src={user.photoURL}
-            className={userIconClass}
-            alt={`${user.displayName}`}
-          />
-        );
-      }
-      return (
-        <>
-          <button
-            className={`${userOptionsIdentifier} ${
-              showUserOptions
-                ? "border-white border-solid"
-                : "border-transparent"
-            } border border-2 bg-gray-700 rounded-3xl px-2 py-2 text-white hidden sm:flex flex-no-wrap flex-shrink min-w-0`}
-            aria-label={"User options"}
-            onClick={() => setShowUserOptions(!showUserOptions)}
-          >
-            {icon}
-          </button>
-
-          <div
-            className={`${
-              showUserOptions ? "visible" : "invisible opacity-0"
-            } ${userOptionsIdentifier} transition-[visibility,opacity] rounded-md absolute top-16 -right-4 flex flex-col items-center text-white font-md text-gray-300 bg-gray-700 min-w-[8rem]`}
-          >
-            <p className="w-full text-gray-300 p-2">{user.displayName}</p>
-            <span className="w-full max-w-9/10 h-[2px] bg-gray-500 rounded-sm" />
-            <button
-              className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
-              onClick={() => firebase.auth().signOut()}
-            >
-              Sign Out
-            </button>
-          </div>
-        </>
-      );
-    } else {
-      return (
-        <Link
-          to={"/signin"}
-          aria-label={user ? "Profile" : "Sign In"}
-          className="bg-gray-700 rounded-md  px-2 py-2 text-gray-300 hidden sm:flex flex-no-wrap flex-shrink min-w-0"
-        >
-          Sign In
-        </Link>
-      );
-    }
-  };
 
   const getDisclosurePanel = () => {
     switch (activeDisclosure) {
@@ -262,7 +181,7 @@ export default function Navbar({ active }: { active: Pages }) {
                   )}
                 </Disclosure.Button>
 
-                {getProfileButton()}
+                <ProfileButton />
               </div>
             </div>
           </div>
