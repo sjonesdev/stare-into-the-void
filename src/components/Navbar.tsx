@@ -70,20 +70,21 @@ export default function Navbar({ active }: { active: Pages }) {
           >
             {icon}
           </button>
-          {showUserOptions && (
-            <div className="rounded-md absolute top-20 -right-4 flex flex-col items-center text-white font-md text-gray-300 bg-gray-700 min-w-[8rem]">
-              <span className="w-full text-gray-300 p-2">
-                {user.displayName}
-              </span>
-              <span className="w-full max-w-9/10 h-[2px] bg-gray-500 rounded-sm" />
-              <button
-                className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
-                onClick={() => firebase.auth().signOut()}
-              >
-                Sign Out
-              </button>
-            </div>
-          )}
+
+          <div
+            className={`${
+              showUserOptions ? "visible" : "invisible opacity-0"
+            } transition-[visibility,opacity] rounded-md absolute top-16 -right-4 flex flex-col items-center text-white font-md text-gray-300 bg-gray-700 min-w-[8rem]`}
+          >
+            <span className="w-full text-gray-300 p-2">{user.displayName}</span>
+            <span className="w-full max-w-9/10 h-[2px] bg-gray-500 rounded-sm" />
+            <button
+              className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
+              onClick={() => firebase.auth().signOut()}
+            >
+              Sign Out
+            </button>
+          </div>
         </>
       );
     } else {
