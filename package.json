@@ -3,67 +3,46 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@headlessui/react": "^1.7.3",
-    "@heroicons/react": "^2.0.12",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@toast-ui/react-editor": "^3.2.0",
-    "@types/file-saver": "^2.0.5",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.13",
-    "@types/offscreencanvas": "^2019.7.1",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
+    "@toast-ui/react-editor": "^3.2.3",
+    "@types/file-saver": "^2.0.7",
+    "@types/offscreencanvas": "^2019.7.3",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
     "file-saver": "^2.0.5",
-    "firebase": "^9.10.0",
+    "firebase": "^9.23.0",
     "firebaseui": "^6.1.0",
+    "next": "14.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-firebaseui": "^6.0.0",
-    "react-icons": "^4.6.0",
-    "react-router-dom": "^6.4.2",
-    "react-scripts": "5.0.1",
+    "react-icons": "^4.12.0",
+    "swr": "^2.2.4",
     "tui-image-editor": "^3.15.3",
-    "typescript": "^4.4.2",
-    "web-vitals": "^2.1.0"
+    "typescript": "^4.9.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "export": "next export",
+    "format": "prettier --write .",
     "stop-emulators": "lsof -t -i:5002 -i:5001 -i:8080 -i:9000 -i:9099 -i:9199 -i:9090 | xargs kill -9",
-    "lint": "eslint --no-eslintrc -c ./package.json .",
     "lint:fix": "eslint --no-eslintrc -c ./package.json --fix .",
     "emulators": "firebase emulators:start --only auth,functions,storage"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "ignorePatterns": [
-      "stare-into-the-void-functions/*"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.18",
-    "prettier": "^2.7.1",
-    "tailwindcss": "^3.2.1"
+    "@types/node": "^20.11.6",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "postcss": "^8.4.33",
+    "prettier": "^2.8.8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }

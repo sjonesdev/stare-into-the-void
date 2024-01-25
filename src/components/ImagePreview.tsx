@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext, useState } from "react";
 import { RiImageEditLine } from "react-icons/ri";
 import { BiSolidErrorCircle } from "react-icons/bi";
@@ -8,16 +10,14 @@ import {
   FaSpinner,
   FaCheck,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
-import {
-  AuthContext,
-  FunctionsService,
-  StorageService,
-} from "../lib/firebase-services";
+import { StorageService } from "../lib/firebase-services";
+import { AuthContext } from "../lib/auth-context";
+import { useRouter } from "next/navigation";
+import { getImageBlob, imageToQueryParams } from "../lib/util";
 
 interface ImagePreviewProps {
   img: ImageAsset;
@@ -36,7 +36,7 @@ export default function ImagePreview({
   onClick,
   onDelete,
 }: ImagePreviewProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const user = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -45,10 +45,10 @@ export default function ImagePreview({
   const saveImage = async () => {
     if (!user) {
       console.warn("Save with no user");
-      return;
+      return <></>;
     }
     setLoading(true);
-    const imgBuf = await FunctionsService.getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
+    const imgBuf = await getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
     if (!imgBuf || !imgBuf.size) {
       //buffer.byteLength) {
       console.error("Error getting image buffer");
@@ -58,7 +58,7 @@ export default function ImagePreview({
       return;
     }
     console.debug(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
-    const imgThumbBuf = await FunctionsService.getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
+    const imgThumbBuf = await getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
     const uploadTask = StorageService.imagesRef(user.uid) // upload main image
       .child(img.title)
       // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
@@ -185,11 +185,7 @@ export default function ImagePreview({
           <button
             className="block m-1 3xl:m-2"
             aria-label="Open image in editor"
-            onClick={() =>
-              navigate("/edit", {
-                state: img,
-              })
-            }
+            onClick={() => router.push(`/edit${imageToQueryParams(img)}`)}
           >
             <RiImageEditLine
               aria-hidden={true}

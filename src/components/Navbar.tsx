@@ -1,10 +1,13 @@
+"use client";
+
 import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Pages } from "../lib/pages";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import ProfileButton from "./ProfileButton";
 
 function classNames(...classes: string[]) {
@@ -18,9 +21,11 @@ enum Disclosures {
 
 export default function Navbar({ active }: { active: Pages }) {
   const [activeDisclosure, setActiveDisclosure] = useState<Disclosures>();
-  const { query } = useParams();
-  const [searchStr, setSearchStr] = useState<string>(query ?? "");
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const [searchStr, setSearchStr] = useState<string>(
+    searchParams.get("query") ?? ""
+  );
+  const router = useRouter();
 
   const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -29,7 +34,7 @@ export default function Navbar({ active }: { active: Pages }) {
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate(`/browse/${searchStr}`);
+    router.push(`/browse/${searchStr}`);
   };
 
   const navigation = [
@@ -118,13 +123,13 @@ export default function Navbar({ active }: { active: Pages }) {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <Link to="/">
+                  <Link href="/">
                     <FaRegEye
                       color="white"
                       className="block h-8 w-auto lg:hidden"
                     />
                   </Link>
-                  <Link to="/">
+                  <Link href="/">
                     <FaRegEye
                       color="white"
                       className="hidden h-8 w-auto lg:block"
@@ -136,7 +141,7 @@ export default function Navbar({ active }: { active: Pages }) {
                     {navigation.map((item) => (
                       <Link
                         key={item.name}
-                        to={item.to}
+                        href={item.to}
                         className={classNames(
                           item.current
                             ? "bg-gray-900 text-white"

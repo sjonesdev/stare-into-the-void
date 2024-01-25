@@ -1,11 +1,13 @@
+"use client";
+
 import { createRef, useContext, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
 
-import { AuthContext } from "../lib/firebase-services";
+import { AuthContext } from "../lib/auth-context";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 export default function ProfileButton() {
   const user = useContext(AuthContext);
@@ -57,7 +59,7 @@ export default function ProfileButton() {
   } else {
     return (
       <Link
-        to={"/signin"}
+        href={"/signin"}
         aria-label={user ? "Profile" : "Sign In"}
         className="bg-gray-700 rounded-md  px-2 py-2 text-gray-300 hidden sm:flex flex-no-wrap flex-shrink min-w-0"
       >

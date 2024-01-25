@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { saveAs } from "file-saver";
 
@@ -28,6 +30,7 @@ export default function Download(props: DownloadProps) {
     const dataURL = props.href ?? "";
     saveAs(dataURL, fileName);
   };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { imgTitle, downloadTargetDesc, ...anchorProps } = props;
   return (
     <a

@@ -1,3 +1,5 @@
+"use client";
+
 enum Pages {
   Home,
   Browse,

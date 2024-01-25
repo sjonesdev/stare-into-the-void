@@ -1,17 +1,20 @@
+"use client";
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import * as React from "react";
 import CheckboxDropdown from "./CheckboxDropdown";
 import DatePicker from "./DatePicker";
 import ImagePreview from "./ImagePreview";
 import SelectDropdown from "./SelectDropdown";
 import { ApiInfo } from "../lib/apiInfo";
 import { type ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { RiImageEditLine } from "react-icons/ri";
 import DownloadLink from "./DownloadLink";
 import { FaDownload, FaSave } from "react-icons/fa";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { imageToQueryParams } from "../lib/util";
+import { useEffect, useState } from "react";
 
 const LOCAL_STORAGE_KEY = "recent";
 const MAX_RECENT_IMAGES = 50;
@@ -58,23 +61,23 @@ export default function ImageBrowser({
     [],
     (val) => Array.isArray(val)
   );
-  const navigate = useNavigate();
-  const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
-  const [fromDate, setFromDate] = React.useState<Date>();
-  const [toDate, setToDate] = React.useState<Date>();
-  const [sortBy, setSortBy] = React.useState(sortOpts[0]);
-  const [selectedPreview, setSelectedPreview] = React.useState<number | null>();
-  const [topElement, setTopElement] = React.useState<HTMLElement>();
+  const router = useRouter();
+  const [selectedAPIs, setSelectedAPIs] = useState<Set<string>>();
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+  const [sortBy, setSortBy] = useState(sortOpts[0]);
+  const [selectedPreview, setSelectedPreview] = useState<number | null>();
+  const [topElement, setTopElement] = useState<HTMLElement>();
 
   // If image drawer is not open, will be null or undefined, else will be url of selected img
-  const [filteredImages, setFilteredImages] = React.useState<ImageAsset[]>([]);
+  const [filteredImages, setFilteredImages] = useState<ImageAsset[]>([]);
 
-  React.useEffect(() => {
-    console.log("selectedAPIs", selectedAPIs);
+  useEffect(() => {
+    console.debug("selectedAPIs", selectedAPIs);
     const filtered = images.filter((img) => {
       const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
       const to = toDate?.valueOf() ?? new Date().valueOf();
-      console.log("API", img.sourceAPI, selectedAPIs?.has(img.sourceAPI));
+      console.debug("API", img.sourceAPI, selectedAPIs?.has(img.sourceAPI));
       return (
         img.date.valueOf() >= from &&
         img.date.valueOf() <= to &&
@@ -93,13 +96,13 @@ export default function ImageBrowser({
     setFilteredImages(filtered);
   }, [images, fromDate, toDate, sortBy, selectedAPIs]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     topElement?.scrollIntoView({
       behavior: "smooth",
     });
   }, [selectedPreview, topElement]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedPreview != null) {
       const recentIdx = recent.findIndex(
         (val) => val.urls.orig === filteredImages[selectedPreview].urls.orig
@@ -218,7 +221,11 @@ export default function ImageBrowser({
               <button
                 aria-label="Open image in editor"
                 onClick={() =>
-                  navigate("/edit", { state: filteredImages[selectedPreview] })
+                  router.push(
+                    `/edit${imageToQueryParams(
+                      filteredImages[selectedPreview]
+                    )}`
+                  )
                 }
               >
                 <RiImageEditLine

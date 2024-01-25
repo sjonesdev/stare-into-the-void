@@ -1,6 +1,9 @@
+"use client";
+
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { createRef, useState } from "react";
 import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
+import useOnMount from "../hooks/useOnMount";
 
 interface CheckboxDropdownInput {
   value: string;
@@ -31,11 +34,14 @@ export default function CheckboxDropdown({
     if (val.isDefault) defaultSelected.add(val.value);
   }
   const [selected, setSelected] = useState<Set<string>>(defaultSelected);
-  setValues(selected);
   const [open, setOpen] = useState<boolean>(false);
   const dropdown = createRef<HTMLDivElement>();
 
   useCloseOnClickAway(dropdown, () => setOpen(false));
+
+  useOnMount(() => {
+    setValues(selected);
+  });
 
   const changeSelected = (value: string) => {
     if (selected.has(value)) {

@@ -1,5 +1,7 @@
+"use client";
+
 // TODO - change this to be a mapped type or whatever tf from SourceAPI
-export const ApiInfo: {[index: string]: {name: string, desc: string}} = {
+export const ApiInfo: { [index: string]: { name: string; desc: string } } = {
   APOD: {
     name: "Astronomy Picture Of The Day",
     desc: "NASA Selected Astronomy Picture Of The Day",
@@ -26,8 +28,8 @@ export const ApiInfo: {[index: string]: {name: string, desc: string}} = {
   },
   VMMTWMTS: {
     name: "Vesta/Moon/Mars Trek WMTS",
-    desc: "A Web Map Tile Service for the Vesta, Moon, and Mars Trek imagery projects"
+    desc: "A Web Map Tile Service for the Vesta, Moon, and Mars Trek imagery projects",
   },
-} as const
+} as const;
 
-export type ApiInfoValue = typeof ApiInfo[keyof typeof ApiInfo]
+export type ApiInfoValue = (typeof ApiInfo)[keyof typeof ApiInfo];
