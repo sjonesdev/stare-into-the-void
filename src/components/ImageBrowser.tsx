@@ -6,15 +6,17 @@ import CheckboxDropdown from "./CheckboxDropdown";
 import DatePicker from "./DatePicker";
 import ImagePreview from "./ImagePreview";
 import SelectDropdown from "./SelectDropdown";
-import { ApiInfo } from "../lib/apiInfo";
-import { type ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
+import { ApiInfo } from "../client-lib/apiInfo";
+import type { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import { useRouter } from "next/navigation";
 import { RiImageEditLine } from "react-icons/ri";
 import DownloadLink from "./DownloadLink";
 import { FaDownload, FaSave } from "react-icons/fa";
 import useLocalStorage from "../hooks/useLocalStorage";
-import { imageToQueryParams } from "../lib/util";
+import { imageToQueryParams } from "../client-lib/util";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { ImageQueryResults } from "../server-lib/nasa-api";
 
 const LOCAL_STORAGE_KEY = "recent";
 const MAX_RECENT_IMAGES = 50;
@@ -42,20 +44,21 @@ for (const key in ApiInfo) {
 const sortOpts = ["Relevant", "Recent", "Oldest"];
 
 export default function ImageBrowser({
-  images,
+  imgResults,
   title,
   presorted = false,
   prefiltered = false,
   saved = false,
   onDeleteImage = () => {},
 }: {
-  images: ImageAsset[];
+  imgResults: ImageQueryResults;
   title: React.ReactNode;
   presorted?: boolean;
   prefiltered?: boolean;
   saved?: boolean;
   onDeleteImage?: (img: ImageAsset) => void;
 }) {
+  const { images, loadMore } = imgResults;
   const [recent, setRecent] = useLocalStorage<ImageAsset[]>(
     LOCAL_STORAGE_KEY,
     [],
@@ -220,13 +223,17 @@ export default function ImageBrowser({
               </button>
               <button
                 aria-label="Open image in editor"
-                onClick={() =>
+                onClick={() => {
+                  console.log(
+                    "queryparams",
+                    imageToQueryParams(filteredImages[selectedPreview])
+                  );
                   router.push(
                     `/edit${imageToQueryParams(
                       filteredImages[selectedPreview]
                     )}`
-                  )
-                }
+                  );
+                }}
               >
                 <RiImageEditLine
                   aria-hidden={true}
@@ -255,10 +262,12 @@ export default function ImageBrowser({
             </div>
             <div className="flex flex-col items-center 3xl:mt-12">
               <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
-                <img
+                <Image
                   className="rounded-lg object-scale-down mx-auto"
                   src={filteredImages[selectedPreview].urls.thumb}
                   alt={filteredImages[selectedPreview].title}
+                  width={600}
+                  height={200}
                 />
               </div>
               <div className="w-10/12 flex justify-between mb-4 items-end">

@@ -1,14 +1,12 @@
+import { queryImages } from "../../../server-lib/nasa-api";
 import BrowseClient from "../BrowseClient";
-import { FunctionsService } from "../../../lib/firebase-services";
 
-export default async function BrowseQuery(
-  {
-    params,
-  }: {
-    params: { query: string };
-  } = { params: { query: "" } }
-) {
+export default async function BrowseQuery({
+  params,
+}: {
+  params: { query: string };
+}) {
   // TODO maybe switch to using query params instead of path params using export const dynamic = 'force-dynamic'; and useSearchParams on server
-  const images = await FunctionsService.fetchImages(params.query ?? "");
+  const images = await queryImages(params.query ?? "");
   return <BrowseClient initialQueryImgs={images} />;
 }

@@ -12,12 +12,16 @@ import {
 } from "react-icons/fa";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
-import firebase from "firebase/compat/app";
-import "firebase/compat/storage";
-import { StorageService } from "../lib/firebase-services";
-import { AuthContext } from "../lib/auth-context";
+import { StorageService } from "../client-lib/firebase-services";
+import { AuthContext } from "../app/FirebaseContextProvider";
 import { useRouter } from "next/navigation";
-import { getImageBlob, imageToQueryParams } from "../lib/util";
+import {
+  bufferToBase64,
+  getImageBlob,
+  imageToQueryParams,
+} from "../client-lib/util";
+import Image from "next/image";
+import { deleteObject, ref } from "firebase/storage";
 
 interface ImagePreviewProps {
   img: ImageAsset;
@@ -49,36 +53,23 @@ export default function ImagePreview({
     }
     setLoading(true);
     const imgBuf = await getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
-    if (!imgBuf || !imgBuf.size) {
-      //buffer.byteLength) {
+    if (!imgBuf) {
       console.error("Error getting image buffer");
       setLoading(false);
       setError(true);
       setDone(true);
       return;
     }
-    console.debug(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
-    const imgThumbBuf = await getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
-    const uploadTask = StorageService.imagesRef(user.uid) // upload main image
-      .child(img.title)
-      // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
-      .put(imgBuf, {
-        //.buffer, {
-        contentType: imgBuf.type,
-        customMetadata: {
-          title: img.title,
-          description: img.description,
-          sourceAPI: img.sourceAPI,
-        },
-      });
-    uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
-      null,
-      (error) => {
-        console.error("Error uploading image", error);
+    StorageService.saveImage(
+      await bufferToBase64(imgBuf),
+      img.title,
+      img.description,
+      img.sourceAPI,
+      user.uid,
+      () => {
+        console.error("Error saving image");
         setLoading(false);
         setError(true);
-        // todo: delete/cancel thumbnail here
       },
       () => {
         console.debug("Image uploaded successfully");
@@ -86,31 +77,63 @@ export default function ImagePreview({
         setDone(true);
       }
     );
+    // setLoading(true);
+    // if (!imgBuf || !imgBuf.size) {
+    //   //buffer.byteLength) {
+    //   console.error("Error getting image buffer");
+    //   setLoading(false);
+    //   setError(true);
+    //   setDone(true);
+    //   return;
+    // }
+    // console.debug(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
+    // const imgThumbBuf = await getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
+    // const uploadTaskRef = ref(StorageService.imagesRef(user.uid), img.title); // upload main image
+    // // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
+    // uploadBytes(uploadTaskRef, imgBuf, {
+    //   //.buffer, {
+    //   contentType: imgBuf.type,
+    //   customMetadata: {
+    //     title: img.title,
+    //     description: img.description,
+    //     sourceAPI: img.sourceAPI,
+    //   },
+    // })
+    //   .then(() => {
+    //     console.debug("Image uploaded successfully");
+    //     setLoading(false);
+    //     setDone(true);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error uploading image", error);
+    //     setLoading(false);
+    //     setError(true);
+    //     // todo: delete/cancel thumbnail here
+    //   });
 
-    // upload thumbnail, we don't really care if it fails
-    if (imgThumbBuf) {
-      StorageService.thumbnailsRef(user.uid)
-        .child(img.title)
-        .put(imgThumbBuf /*.buffer*/, { contentType: imgThumbBuf.type })
-        .on(
-          firebase.storage.TaskEvent.STATE_CHANGED,
-          null,
-          (error) => {
-            console.error("Error uploading thumbnail", error);
-          },
-          () => {
-            console.debug("Thumbnail uploaded successfully");
-          }
-        );
-    }
+    // // upload thumbnail, we don't really care if it fails
+    // if (imgThumbBuf) {
+    //   StorageService.thumbnailsRef(user.uid)
+    //     .child(img.title)
+    //     .put(imgThumbBuf /*.buffer*/, { contentType: imgThumbBuf.type })
+    //     .on(
+    //       firebase.storage.TaskEvent.STATE_CHANGED,
+    //       null,
+    //       (error) => {
+    //         console.error("Error uploading thumbnail", error);
+    //       },
+    //       () => {
+    //         console.debug("Thumbnail uploaded successfully");
+    //       }
+    //     );
+    // }
   };
 
   const deleteImage = () => {
     if (!user) return;
     setLoading(true);
-    StorageService.imagesRef(user.uid)
-      .child(img.title)
-      .delete()
+    const imgRef = ref(StorageService.imagesRef(user.uid), img.title);
+    deleteObject(imgRef)
       .then(() => {
         console.debug("Image deleted successfully");
         setLoading(false);
@@ -204,11 +227,13 @@ export default function ImagePreview({
           </DownloadLink>
           {getStorageButton()}
         </div>
-        <img
+        <Image
           className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"
           src={img.urls.thumb}
           alt={img.title}
           loading="lazy"
+          width={224}
+          height={192}
         />
       </div>
       <span className="hidden md:block text-md 3xl:text-xl text-center">

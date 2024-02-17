@@ -2,7 +2,7 @@
 
 import { useContext, useState } from "react";
 import type { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { AuthContext } from "../../lib/auth-context";
+import { AuthContext } from "../../client-lib/auth-context";
 import { useRouter } from "next/navigation";
 import ImageBrowser from "../../components/ImageBrowser";
 

@@ -5,8 +5,8 @@ import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
-import { Pages } from "../lib/pages";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Pages } from "../client-lib/pages";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import ProfileButton from "./ProfileButton";
 
@@ -21,10 +21,10 @@ enum Disclosures {
 
 export default function Navbar({ active }: { active: Pages }) {
   const [activeDisclosure, setActiveDisclosure] = useState<Disclosures>();
-  const searchParams = useSearchParams();
-  const [searchStr, setSearchStr] = useState<string>(
-    searchParams.get("query") ?? ""
-  );
+  const path = usePathname().split("/");
+  const query = path.length > 2 ? path[path.length - 1] : "";
+
+  const [searchStr, setSearchStr] = useState<string>(query);
   const router = useRouter();
 
   const handleChangeSearchStr = (e: React.ChangeEvent<HTMLInputElement>) => {

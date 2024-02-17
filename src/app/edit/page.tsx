@@ -1,75 +1,91 @@
 "use client";
 
 import { createRef, useContext, useEffect, useState } from "react";
-import TuiImageEditor from "tui-image-editor";
+import type TuiImageEditor from "tui-image-editor";
 import "tui-image-editor/dist/tui-image-editor.css";
-import { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { StorageService } from "../../lib/firebase-services";
-import { AuthContext } from "../../lib/auth-context";
-import { useRouter, useSearchParams } from "next/navigation";
-import firebase from "firebase/compat/app";
+import {
+  type ImageAsset,
+  SourceAPI,
+} from "../../../stare-into-the-void-functions/src/models/image-assets";
+import { StorageService } from "../../client-lib/firebase-services";
+import { AuthContext } from "../../client-lib/auth-context";
+import { useSearchParams } from "next/navigation";
 import "firebase/compat/storage";
 import { FaSpinner } from "react-icons/fa";
 import useOnMount from "../../hooks/useOnMount";
-import {
-  getBase64DataStringUint8Array,
-  getUint8ArrayImageblob,
-  resizeImageBlob,
-} from "../../lib/util";
-
-const getWindowSize = () => {
-  const { innerWidth, innerHeight } = window;
-  return { innerWidth, innerHeight };
-};
+import { getImageBlob } from "../../client-lib/util";
 
 export default function Edit() {
   const searchParams = useSearchParams();
-  const dateStr = searchParams.get("date");
-  const imagePassed = {
-    title: searchParams.get("title") ?? "Untitled",
-    description: searchParams.get("description") ?? "",
-    urls: {
-      orig: searchParams.get("orig") ?? "",
-      thumb: searchParams.get("thumb") ?? "",
-    },
-    sourceAPI: searchParams.get("sourceAPI") ?? "None",
-    date: dateStr ? new Date(dateStr) : new Date(),
-  } as ImageAsset;
+  const [imagePassed, setImagePassed] = useState<ImageAsset | null>();
 
-  const [windowSize, setWindowSize] = useState(getWindowSize());
+  const [windowSize, setWindowSize] = useState({
+    innerHeight: 0,
+    innerWidth: 0,
+  });
   const editorRef = createRef<HTMLDivElement>();
   const user = useContext(AuthContext);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [imageEditor, setImageEditor] = useState<TuiImageEditor | null>(null);
 
   useOnMount(() => {
+    const urlImage = {
+      title: searchParams.get("title") ?? "Untitled",
+      description: "User edited image",
+      urls: {
+        orig: searchParams.get("orig") ?? "",
+        thumb: searchParams.get("orig") ?? "",
+      },
+      sourceAPI: searchParams.get("sourceAPI") ?? SourceAPI.None,
+      date: new Date(),
+    } as ImageAsset;
+    setImagePassed(urlImage);
+
+    // TUI Image Editor is not made for Next.js with initial HTML construction being on the server, as it references "self" object on import
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const TuiImageEditor = require("tui-image-editor");
+
     // editorRef should never be null since component is mounted, but for typing
     if (!editorRef.current) return;
 
-    setImageEditor(
-      new TuiImageEditor(editorRef.current, {
-        includeUI: {
-          loadImage: {
-            path: imagePassed?.urls.orig ?? "",
-            name: imagePassed?.title ?? "Untitled",
+    const ref = editorRef.current;
+
+    const setImageEditorFromPath = (path: string) => {
+      setImageEditor(
+        new TuiImageEditor(ref, {
+          includeUI: {
+            loadImage: {
+              path: path,
+              name: urlImage?.title ?? "Untitled",
+            },
+            theme,
+            //menu: ["shape", "filter"],
+            initMenu: "filter",
+            uiSize: {
+              width: `${windowSize.innerWidth - 100}px`,
+              height: `${windowSize.innerHeight - 100}px`,
+            },
+            menuBarPosition: "bottom",
           },
-          theme,
-          //menu: ["shape", "filter"],
-          initMenu: "filter",
-          uiSize: {
-            width: `${windowSize.innerWidth - 100}px`,
-            height: `${windowSize.innerHeight - 100}px`,
+          selectionStyle: {
+            cornerSize: 20,
+            rotatingPointOffset: 70,
           },
-          menuBarPosition: "bottom",
-        },
-        selectionStyle: {
-          cornerSize: 20,
-          rotatingPointOffset: 70,
-        },
-        usageStatistics: true,
-      })
-    );
+          usageStatistics: true,
+        })
+      );
+    };
+
+    if (urlImage?.urls.orig) {
+      getImageBlob(urlImage?.urls.orig).then((blob) => {
+        if (blob) {
+          console.log("blobin", blob);
+          setImageEditorFromPath(URL.createObjectURL(blob));
+          return;
+        }
+      });
+    }
+    setImageEditorFromPath("");
   });
 
   // useEffect(() => {
@@ -78,7 +94,10 @@ export default function Edit() {
 
   useEffect(() => {
     const handleWindowResize = () => {
-      const newWinSize = getWindowSize();
+      const newWinSize = {
+        innerHeight: window.innerHeight,
+        innerWidth: window.innerWidth,
+      };
       setWindowSize((curWinSize) => ({ ...curWinSize, ...newWinSize }));
       imageEditor?.ui?.resizeEditor({
         uiSize: {
@@ -91,6 +110,7 @@ export default function Edit() {
       //   height: newWinSize.innerHeight - 100,
       // });
     };
+    handleWindowResize();
     window.addEventListener("resize", handleWindowResize);
 
     return () => {
@@ -99,64 +119,26 @@ export default function Edit() {
   }, [imageEditor]);
   console.debug(`Image URL: ${imagePassed?.urls.orig}`);
 
-  const saveImage = async () => {
-    if (!user) return <></>;
-    setLoading(true);
-    const img = getBase64DataStringUint8Array(imageEditor?.toDataURL() ?? "");
-    console.debug("Data", img);
-    const imgBlob = getUint8ArrayImageblob(img, "image/png"); // could check type here, but we know tui-image-editor always uses png
-
-    if (!imgBlob || !imgBlob.size) {
-      console.error("Error getting image blob");
-      setLoading(false);
-      return;
-    }
-    console.debug(`Uploading ${imgBlob.size} byte ${imgBlob.type}`);
-    const imgThumbBlob = await resizeImageBlob(imgBlob, 200);
+  const saveImage = () => {
     // Can't let file names have commas or it causes issues with content disposition header
     const title =
       (imagePassed?.title ?? "Untitled") +
       ` (edited ${new Date().toISOString()})`;
-    const uploadTask = StorageService.imagesRef(user.uid) // upload main image
-      .child(title)
-      .put(imgBlob, {
-        contentType: imgBlob.type,
-        customMetadata: {
-          title: title,
-          description: imagePassed?.description ?? "",
-          sourceAPI: imagePassed?.sourceAPI ?? "None",
-        },
-      });
-    uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
-      null,
+    StorageService.saveImage(
+      imageEditor?.toDataURL() ?? "",
+      title,
+      imagePassed?.description ?? "",
+      imagePassed?.sourceAPI ?? SourceAPI.None,
+      user?.uid ?? "",
       (error) => {
-        console.error("Error uploading image", error);
+        console.error(error);
         setLoading(false);
-        // todo: delete/cancel thumbnail here
       },
       () => {
-        console.debug("Image uploaded successfully");
+        console.debug("Image saved successfully");
         setLoading(false);
       }
     );
-
-    // upload thumbnail, we don't really care if it fails
-    if (imgThumbBlob) {
-      StorageService.thumbnailsRef(user.uid)
-        .child(title)
-        .put(imgThumbBlob, { contentType: imgThumbBlob.type })
-        .on(
-          firebase.storage.TaskEvent.STATE_CHANGED,
-          null,
-          (error) => {
-            console.error("Error uploading thumbnail", error);
-          },
-          () => {
-            console.debug("Thumbnail uploaded successfully");
-          }
-        );
-    }
   };
 
   return (

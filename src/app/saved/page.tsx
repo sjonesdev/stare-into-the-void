@@ -4,11 +4,11 @@ import type {
   ImageAsset,
   SourceAPI,
 } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { StorageService } from "../../lib/firebase-services";
+import { StorageService } from "../../client-lib/firebase-services";
 import { redirect } from "next/navigation";
 import ClientSaved from "./ClientSaved";
 import { useContext, useEffect, useState } from "react"; // TODO remove
-import { AuthContext } from "../../lib/auth-context"; // TODO remove
+import { AuthContext } from "../../client-lib/auth-context"; // TODO remove
 
 export default function Saved() {
   // const user = auth.currentUser;

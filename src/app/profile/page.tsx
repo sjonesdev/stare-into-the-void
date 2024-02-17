@@ -1,9 +1,10 @@
 "use client";
 
 import { useContext } from "react";
-import { AuthContext } from "../../lib/auth-context";
+import { AuthContext } from "../../client-lib/auth-context";
 import { useRouter } from "next/navigation";
 import { FaUser } from "react-icons/fa";
+import Image from "next/image";
 
 export default function Profile() {
   const user = useContext(AuthContext);
@@ -20,7 +21,12 @@ export default function Profile() {
           <span className="font-bold">{user.displayName}</span>
         </h2>
         {user.photoURL ? (
-          <img src={user.photoURL} alt={user.displayName ?? "User"} />
+          <Image
+            src={user.photoURL}
+            alt={user.displayName ?? "User"}
+            width={100}
+            height={100}
+          />
         ) : (
           <FaUser color="white" className="h-24 w-24 mx-auto" />
         )}

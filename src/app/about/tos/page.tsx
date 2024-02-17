@@ -1,5 +1,3 @@
-"use client";
-
 const tosStr = `TERMS OF SERVICE
 
 ----
@@ -150,6 +148,6 @@ SECTION 20 - CONTACT INFORMATION
 
 Questions about the Terms of Service should be sent to us at spjones329@gmail.com.`;
 
-export default function TermsOfService() {
+export default async function TermsOfService() {
   return <p>{tosStr}</p>;
 }

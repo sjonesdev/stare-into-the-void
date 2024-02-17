@@ -1,18 +1,13 @@
-"use client";
-
 import { type ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import { FunctionsService } from "./firebase-services";
+import { Buffer } from "buffer";
 
 export function imageToQueryParams(img: ImageAsset) {
-  return `?title=${img.title}&orig=${img.urls.orig}&thumb=${
-    img.urls.thumb ?? img.urls.orig
-  }&desc=${img.description}&date=${img.date.toISOString()}&api=${
-    img.sourceAPI
-  }`;
+  return `?title=${img.title}&orig=${img.urls.orig}&api=${img.sourceAPI}`;
 }
 
 // note: `buffer` arg can be an ArrayBuffer or a Uint8Array
-export async function bufferToBase64(buffer: Uint8Array | ArrayBuffer) {
+export async function bufferToBase64(buffer: Uint8Array | ArrayBuffer | Blob) {
   // use a FileReader to generate a base64 data URI:
   const base64url: string = await new Promise((resolve) => {
     const reader = new FileReader();
@@ -46,13 +41,14 @@ export function getBase64DataStringUint8Array(dataStringBase64: string) {
   const base64Index =
     dataStringBase64.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
   const base64 = dataStringBase64.substring(base64Index);
-  const raw = self.atob(base64);
-  const array = new Uint8Array(new ArrayBuffer(raw.length));
+  // const raw = window.atob(base64);
+  // const array = new Uint8Array(new ArrayBuffer(raw.length));
 
-  for (let i = 0; i < raw.length; i++) {
-    array[i] = raw.charCodeAt(i);
-  }
-  return array;
+  // for (let i = 0; i < raw.length; i++) {
+  //   array[i] = raw.charCodeAt(i);
+  // }
+  // return array;
+  return Buffer.from(base64);
 }
 
 export async function getRawImageData(url: string) {

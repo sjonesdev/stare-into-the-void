@@ -1,30 +1,24 @@
-"use client";
 import { FaRegEye } from "react-icons/fa";
 import Apod from "../components/Apod";
 import SearchBar from "./SearchBar";
-import { FunctionsService } from "../lib/firebase-services";
-import { type SourceAPI } from "../../stare-into-the-void-functions/src/models/image-assets";
-import { useState } from "react";
-import useOnMount from "../hooks/useOnMount";
+// import { FunctionsService } from "../lib/firebase-services";
+// import { type SourceAPI } from "../../stare-into-the-void-functions/src/models/image-assets";
+import Image from "next/image";
+import { getPictureOfTheDay } from "../server-lib/nasa-api";
+// import { useState } from "react";
+// import useOnMount from "../hooks/useOnMount";
 
-export default function Home() {
-  const [apod, setApod] = useState({
-    title: "",
-    urls: {
-      orig: "",
-      thumb: "",
-    },
-    description: "",
-    date: new Date(),
-    sourceAPI: "None" as SourceAPI,
-  });
-  useOnMount(() => {
-    FunctionsService.getPictureOfTheDay().then((newApod) => {
-      if (newApod) {
-        setApod(newApod);
-      }
-    });
-  });
+export default async function Home() {
+  const apod = await getPictureOfTheDay();
+  const img = (
+    <Image
+      className="h-48 w-60 3xl:h-56 3xl:w-64 rounded-lg"
+      src={apod.urls.orig}
+      alt={apod.title}
+      width={500}
+      height={400}
+    />
+  );
 
   return (
     <div className="h-2/3 w-3/4 mx-auto pt-20 flex flex-col items-center justify-center max-h-screenminusnav">
@@ -37,7 +31,7 @@ export default function Home() {
         <h2 className="text-white font-medium text-center mt-5 3xl:text-3xl">
           Astronomy Picture of the Day
         </h2>
-        <Apod apod={apod} />
+        <Apod apod={apod} apodImage={img} />
       </div>
     </div>
   );

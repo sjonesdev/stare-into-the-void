@@ -1,5 +1,3 @@
-"use client";
-
 // TODO - change this to be a mapped type or whatever tf from SourceAPI
 export const ApiInfo: { [index: string]: { name: string; desc: string } } = {
   APOD: {

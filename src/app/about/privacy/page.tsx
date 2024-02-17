@@ -1,5 +1,3 @@
-"use client";
-
 const ppStr = `Samuel Jones Privacy Policy.
 Last updated: October 13, 2023
 
@@ -152,6 +150,6 @@ Contact
 
 Should you have any questions about our privacy practices or this Privacy Policy, or if you would like to exercise any of the rights available to you, please email us at spjones329@gmail.com or contact us at WA, United States.`;
 
-export default function PrivacyPolicy() {
+export default async function PrivacyPolicy() {
   return <p>{ppStr}</p>;
 }

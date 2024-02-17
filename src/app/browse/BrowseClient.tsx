@@ -1,10 +1,11 @@
 "use client";
-import useSWR from "swr";
-import { FunctionsService } from "../../lib/firebase-services";
-import { ApiInfo } from "../../lib/apiInfo";
-import { type ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
+
+import { ApiInfo } from "../../client-lib/apiInfo";
 import { usePathname } from "next/navigation";
 import ImageBrowser from "../../components/ImageBrowser";
+import { ImageQueryResults } from "../../server-lib/nasa-api";
+import useSWR from "swr";
+import { FunctionsService } from "../../client-lib/firebase-services";
 
 const apis: {
   value: string;
@@ -26,12 +27,12 @@ for (const key in ApiInfo) {
 }
 
 interface BrowseClientProps {
-  initialQueryImgs: ImageAsset[];
+  initialQueryImgs: ImageQueryResults;
 }
 
 export default function BrowseClient({ initialQueryImgs }: BrowseClientProps) {
   const path = usePathname().split("/");
-  const query = path[path.length - 1];
+  const query = path.length > 2 ? path[path.length - 1] : "";
   const title = query ? (
     <>
       Results for <span className="font-bold">&ldquo;{query}&rdquo;</span>
@@ -48,5 +49,5 @@ export default function BrowseClient({ initialQueryImgs }: BrowseClientProps) {
     }
   );
 
-  return <ImageBrowser images={queryImgs} title={title} />;
+  return <ImageBrowser imgResults={queryImgs} title={title} />;
 }

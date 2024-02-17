@@ -1,7 +1,7 @@
 import BrowseClient from "./BrowseClient";
-import { FunctionsService } from "../../lib/firebase-services";
+import { queryImages } from "../../server-lib/nasa-api";
 
 export default async function Browse() {
-  const images = await FunctionsService.fetchImages("");
+  const images = await queryImages("");
   return <BrowseClient initialQueryImgs={images} />;
 }
