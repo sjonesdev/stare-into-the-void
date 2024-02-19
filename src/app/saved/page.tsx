@@ -19,19 +19,9 @@ export default async function Saved() {
   const auth = getAuth(app);
   const user = await auth
     .verifySessionCookie(cookies().get("__session")!.value, true)
-    .then((decodedClaims) => {
-      console.log("session cookie valid", decodedClaims);
-      // Check custom claims to confirm user is an admin.
-      // if (decodedClaims.admin === true) {
-      //   return serveContentForAdmin('/admin', req, res, decodedClaims);
-      // }
-      // res.status(401).send('UNAUTHORIZED REQUEST!');
-      return decodedClaims;
-    })
-    .catch((error) => {
-      // Session cookie is unavailable or invalid. Force user to login.
-      // res.redirect('/login');
-      console.log("session cookie invalid", error);
+    .catch((e) => {
+      console.error(e);
+      return null;
     });
 
   if (!user) {

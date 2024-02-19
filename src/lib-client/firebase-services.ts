@@ -6,7 +6,14 @@ import {
   ImageAssetRaw,
   SourceAPI,
 } from "../../stare-into-the-void-functions/src/models/image-assets";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  getMetadata,
+  getStorage,
+  listAll,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { b64toBlob, downloadImage, resizeImage } from "./util";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -161,6 +168,54 @@ class StorageService {
           console.error("Error uploading thumbnail", error);
         });
     }
+  }
+
+  static async fetchSaved(uid?: string) {
+    if (!uid) return [];
+    const thumbRef = StorageService.thumbnailsRef(uid);
+    const savedRefs = await listAll(StorageService.imagesRef(uid));
+    const assetPromises: Promise<ImageAsset | null>[] = savedRefs.items.map(
+      async (item) => {
+        let thumbnailURL;
+        try {
+          thumbnailURL = await getDownloadURL(ref(thumbRef, item.name));
+        } catch (e) {
+          console.warn("Error getting thumbnail", e);
+        }
+
+        const [metadata, image] = await Promise.all([
+          getMetadata(item),
+          getDownloadURL(item),
+        ]);
+
+        if (!metadata.contentType) return null;
+        const downloadURL = image;
+
+        const asset: ImageAsset = {
+          title: metadata.customMetadata?.title ?? "Untitled",
+          urls: {
+            orig: downloadURL,
+            thumb: thumbnailURL ? thumbnailURL : downloadURL,
+          },
+          description: metadata.customMetadata?.description ?? "No description",
+          date: new Date(metadata.updated),
+
+          sourceAPI:
+            (metadata.customMetadata?.sourceAPI as SourceAPI) ??
+            ("None" as SourceAPI),
+        };
+        return asset;
+      }
+    );
+    const saved: ImageAsset[] = [];
+
+    const results = await Promise.allSettled(assetPromises);
+    for (const result of results) {
+      if (result.status === "fulfilled" && result.value) {
+        saved.push(result.value);
+      }
+    }
+    return saved;
   }
 }
 
