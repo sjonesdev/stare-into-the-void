@@ -8,12 +8,12 @@ import {
   SourceAPI,
 } from "../../../stare-into-the-void-functions/src/models/image-assets";
 import { StorageService } from "../../lib-client/firebase-services";
-import { AuthContext } from "../../lib-client/auth-context";
 import { useSearchParams } from "next/navigation";
 import "firebase/compat/storage";
 import { FaSpinner } from "react-icons/fa";
 import useOnMount from "../../hooks/useOnMount";
-import { getImageBlob } from "../../lib-client/util";
+import { AuthContext } from "../../lib-client/FirebaseContextProvider";
+import { downloadImage } from "../../lib-client/util";
 
 export default function Edit() {
   const searchParams = useSearchParams();
@@ -77,9 +77,8 @@ export default function Edit() {
     };
 
     if (urlImage?.urls.orig) {
-      getImageBlob(urlImage?.urls.orig).then((blob) => {
+      downloadImage(urlImage?.urls.orig).then((blob) => {
         if (blob) {
-          console.log("blobin", blob);
           setImageEditorFromPath(URL.createObjectURL(blob));
           return;
         }
