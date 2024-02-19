@@ -12,14 +12,10 @@ import {
 } from "react-icons/fa";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
-import { StorageService } from "../client-lib/firebase-services";
-import { AuthContext } from "../app/FirebaseContextProvider";
+import { StorageService } from "../lib-client/firebase-services";
+import { AuthContext } from "../lib-client/FirebaseContextProvider";
 import { useRouter } from "next/navigation";
-import {
-  bufferToBase64,
-  getImageBlob,
-  imageToQueryParams,
-} from "../client-lib/util";
+import { imageToQueryParams } from "../lib-client/util";
 import Image from "next/image";
 import { deleteObject, ref } from "firebase/storage";
 
@@ -46,22 +42,24 @@ export default function ImagePreview({
   const [error, setError] = useState(false);
   const [done, setDone] = useState(false);
 
-  const saveImage = async () => {
+  const save = async () => {
     if (!user) {
       console.warn("Save with no user");
       return <></>;
     }
     setLoading(true);
-    const imgBuf = await getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
-    if (!imgBuf) {
-      console.error("Error getting image buffer");
-      setLoading(false);
-      setError(true);
-      setDone(true);
-      return;
-    }
-    StorageService.saveImage(
-      await bufferToBase64(imgBuf),
+    // const imgBuf = await getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
+    // console.debug("imgBuf");
+    // if (!imgBuf) {
+    //   console.error("Error getting image buffer");
+    //   setLoading(false);
+    //   setError(true);
+    //   setDone(true);
+    //   return;
+    // }
+    console.log("save");
+    await StorageService.saveImage(
+      img.urls.orig,
       img.title,
       img.description,
       img.sourceAPI,
@@ -77,56 +75,6 @@ export default function ImagePreview({
         setDone(true);
       }
     );
-    // setLoading(true);
-    // if (!imgBuf || !imgBuf.size) {
-    //   //buffer.byteLength) {
-    //   console.error("Error getting image buffer");
-    //   setLoading(false);
-    //   setError(true);
-    //   setDone(true);
-    //   return;
-    // }
-    // console.debug(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
-    // const imgThumbBuf = await getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
-    // const uploadTaskRef = ref(StorageService.imagesRef(user.uid), img.title); // upload main image
-    // // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
-    // uploadBytes(uploadTaskRef, imgBuf, {
-    //   //.buffer, {
-    //   contentType: imgBuf.type,
-    //   customMetadata: {
-    //     title: img.title,
-    //     description: img.description,
-    //     sourceAPI: img.sourceAPI,
-    //   },
-    // })
-    //   .then(() => {
-    //     console.debug("Image uploaded successfully");
-    //     setLoading(false);
-    //     setDone(true);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error uploading image", error);
-    //     setLoading(false);
-    //     setError(true);
-    //     // todo: delete/cancel thumbnail here
-    //   });
-
-    // // upload thumbnail, we don't really care if it fails
-    // if (imgThumbBuf) {
-    //   StorageService.thumbnailsRef(user.uid)
-    //     .child(img.title)
-    //     .put(imgThumbBuf /*.buffer*/, { contentType: imgThumbBuf.type })
-    //     .on(
-    //       firebase.storage.TaskEvent.STATE_CHANGED,
-    //       null,
-    //       (error) => {
-    //         console.error("Error uploading thumbnail", error);
-    //       },
-    //       () => {
-    //         console.debug("Thumbnail uploaded successfully");
-    //       }
-    //     );
-    // }
   };
 
   const deleteImage = () => {
@@ -175,7 +123,7 @@ export default function ImagePreview({
     } else {
       Icon = FaSave;
       disabled = false;
-      onClick = saveImage;
+      onClick = save;
       label = "Save image on account";
     }
     return (

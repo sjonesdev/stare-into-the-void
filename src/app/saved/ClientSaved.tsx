@@ -2,9 +2,9 @@
 
 import { useContext, useState } from "react";
 import type { ImageAsset } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { AuthContext } from "../../client-lib/auth-context";
 import { useRouter } from "next/navigation";
 import ImageBrowser from "../../components/ImageBrowser";
+import { AuthContext } from "../../lib-client/FirebaseContextProvider";
 
 export default function ClientSaved({
   initialSaved,
@@ -13,8 +13,7 @@ export default function ClientSaved({
 }) {
   const user = useContext(AuthContext);
   const router = useRouter();
-
-  const [saved, setSaved] = useState(initialSaved);
+  const [saved, setSaved] = useState<ImageAsset[]>(initialSaved);
 
   if (!user) {
     router.push("/signin");
@@ -33,7 +32,7 @@ export default function ClientSaved({
 
   return (
     <ImageBrowser
-      images={saved}
+      imgResults={{ images: saved }}
       title="Saved Images"
       onDeleteImage={deleteImage}
       saved

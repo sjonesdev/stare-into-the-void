@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { LuLoader2 } from "react-icons/lu";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "../FirebaseContextProvider";
+import { AuthContext } from "../../lib-client/FirebaseContextProvider";
 
 export default function SignInClient() {
   const [signingUp, setSigningUp] = useState(false);

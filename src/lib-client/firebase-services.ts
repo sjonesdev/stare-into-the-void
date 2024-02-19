@@ -6,12 +6,8 @@ import {
   ImageAssetRaw,
   SourceAPI,
 } from "../../stare-into-the-void-functions/src/models/image-assets";
-import {
-  getBase64DataStringUint8Array,
-  getUint8ArrayImageblob,
-  resizeImageBlob,
-} from "./util";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { b64toBlob, downloadImage, resizeImage } from "./util";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -99,8 +95,18 @@ class StorageService {
     return StorageService._storage;
   }
 
+  /**
+   *
+   * @param url base64 data url string as to pass to an img src or url to the image
+   * @param title
+   * @param description
+   * @param sourceAPI
+   * @param uid
+   * @param onError
+   * @param onComplete
+   */
   static async saveImage(
-    dataUrl: string,
+    url: string,
     title: string,
     description: string,
     sourceAPI: SourceAPI,
@@ -108,17 +114,24 @@ class StorageService {
     onError: (error: Error) => void,
     onComplete: () => void
   ) {
-    const img = getBase64DataStringUint8Array(dataUrl);
-    const imgBlob = getUint8ArrayImageblob(img, "image/png"); // could check type here, but we know tui-image-editor always uses png
-
-    if (!imgBlob || !imgBlob.size) {
-      onError(new Error("Error getting image blob"));
+    // could check type here, but we know tui-image-editor always uses png
+    let blob: Blob | null;
+    if (url.startsWith("data:")) {
+      blob = b64toBlob(url);
+    } else {
+      blob = await downloadImage(url);
     }
-    console.debug(`Uploading ${imgBlob.size} byte ${imgBlob.type}`);
-    const imgThumbBlob = await resizeImageBlob(imgBlob, 200);
+
+    if (!blob || !blob.size) {
+      onError(new Error("Error getting image blob"));
+      return;
+    }
+    console.debug(`Uploading ${blob.size} byte ${blob.type}`);
+    const imgThumbBlob = await resizeImage(blob, 200);
+    console.debug("Resized image");
     const uploadRef = ref(StorageService.imagesRef(uid), title); // upload main image
-    uploadBytes(uploadRef, imgBlob, {
-      contentType: imgBlob.type,
+    await uploadBytes(uploadRef, blob, {
+      contentType: blob.type,
       customMetadata: {
         title: title,
         description: description,
@@ -132,11 +145,13 @@ class StorageService {
       .catch((error) => {
         onError(error);
       });
+    console.debug("Uploaded image");
 
     // upload thumbnail, we don't really care if it fails
     if (imgThumbBlob) {
+      console.debug("Uploading thumbnail");
       const uploadThumbRef = ref(StorageService.thumbnailsRef(uid), title);
-      uploadBytes(uploadThumbRef, imgThumbBlob, {
+      await uploadBytes(uploadThumbRef, imgThumbBlob, {
         contentType: imgThumbBlob.type,
       })
         .then(() => {

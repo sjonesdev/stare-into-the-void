@@ -7,13 +7,13 @@ import {
   type ImageAsset,
   SourceAPI,
 } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { StorageService } from "../../client-lib/firebase-services";
-import { AuthContext } from "../../client-lib/auth-context";
+import { StorageService } from "../../lib-client/firebase-services";
+import { AuthContext } from "../../lib-client/auth-context";
 import { useSearchParams } from "next/navigation";
 import "firebase/compat/storage";
 import { FaSpinner } from "react-icons/fa";
 import useOnMount from "../../hooks/useOnMount";
-import { getImageBlob } from "../../client-lib/util";
+import { getImageBlob } from "../../lib-client/util";
 
 export default function Edit() {
   const searchParams = useSearchParams();

@@ -6,7 +6,7 @@ import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
 import Link from "next/link";
 import Image from "next/image";
 import { getAuth } from "firebase/auth";
-import { AuthContext } from "../app/FirebaseContextProvider";
+import { AuthContext } from "../lib-client/FirebaseContextProvider";
 
 export default function ProfileButton() {
   const user = useContext(AuthContext);

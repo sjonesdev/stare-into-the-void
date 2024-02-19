@@ -1,75 +1,107 @@
-"use client"; // TODO remove
-
-import type {
+import { redirect } from "next/navigation";
+import ClientSaved from "./ClientSaved";
+import { getAuth } from "firebase-admin/auth";
+import { cookies } from "next/headers";
+import {
   ImageAsset,
   SourceAPI,
 } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { StorageService } from "../../client-lib/firebase-services";
-import { redirect } from "next/navigation";
-import ClientSaved from "./ClientSaved";
-import { useContext, useEffect, useState } from "react"; // TODO remove
-import { AuthContext } from "../../client-lib/auth-context"; // TODO remove
+import {
+  imageFiles,
+  imgNamePrefixLen,
+  thumbNamePrefixLen,
+  thumbnailFiles,
+  getDownloadURL,
+} from "../../lib-server/storage-helpers";
+import { app } from "../../lib-server/firebase";
 
-export default function Saved() {
-  // const user = auth.currentUser;
-  const user = useContext(AuthContext);
+export default async function Saved() {
+  const auth = getAuth(app);
+  const user = await auth
+    .verifySessionCookie(cookies().get("__session")!.value, true)
+    .then((decodedClaims) => {
+      console.log("session cookie valid", decodedClaims);
+      // Check custom claims to confirm user is an admin.
+      // if (decodedClaims.admin === true) {
+      //   return serveContentForAdmin('/admin', req, res, decodedClaims);
+      // }
+      // res.status(401).send('UNAUTHORIZED REQUEST!');
+      return decodedClaims;
+    })
+    .catch((error) => {
+      // Session cookie is unavailable or invalid. Force user to login.
+      // res.redirect('/login');
+      console.log("session cookie invalid", error);
+    });
+
   if (!user) {
     redirect("/signin");
   }
 
-  const userImagesRef = StorageService.imagesRef(user.uid);
-  const userThumbnails = StorageService.thumbnailsRef(user.uid);
+  const imgPrefixLen = imgNamePrefixLen(user.uid);
+  const thumbPrefixLen = thumbNamePrefixLen(user.uid);
+  const userImgsPromise = imageFiles(user.uid);
+  const userThumbsPromise = thumbnailFiles(user.uid);
+  const saved = await Promise.all([userImgsPromise, userThumbsPromise]).then(
+    (results) => {
+      const [[imgs], [unorderedThumbs]] = results;
 
-  const [saved, setSaved] = useState<ImageAsset[]>([]);
-  useEffect(() => {
-    userImagesRef.listAll().then((userImages) => {
-      const assetPromises: Promise<ImageAsset | null>[] = userImages.items.map(
-        async (item) => {
-          let thumbnailURL;
-          try {
-            thumbnailURL = await userThumbnails
-              .child(item.name)
-              .getDownloadURL();
-          } catch (e) {
-            console.warn("Error getting thumbnail", e);
+      // reorder thumbnails to match images order and get metadata
+      const thumbUrls: Promise<string>[] = [];
+      const thumbNames = unorderedThumbs.map((thumb) =>
+        thumb.name.slice(thumbPrefixLen)
+      );
+      const imgUrls: Promise<string>[] = [];
+      const imgMetadata = imgs.map((img) => {
+        imgUrls.push(getDownloadURL(img));
+        const imgName = img.name.slice(imgPrefixLen);
+        const thumbIdx = thumbNames.findIndex((name) => {
+          return name === imgName;
+        });
+        if (thumbIdx === -1) {
+          console.warn("No thumbnail found for", imgName);
+          thumbUrls.push(imgUrls[imgUrls.length - 1]);
+        } else {
+          thumbUrls.push(getDownloadURL(unorderedThumbs[thumbIdx]));
+        }
+        return img.getMetadata();
+      });
+
+      return Promise.all([
+        Promise.all(imgUrls),
+        Promise.all(thumbUrls),
+        Promise.all(imgMetadata),
+      ]).then((results) => {
+        const [imgUrls, thumbUrls, imgMetadata] = results;
+        const saved: ImageAsset[] = [];
+        for (let i = 0; i < imgUrls.length; i++) {
+          const img = imgUrls[i];
+          const thumb = thumbUrls[i];
+          const metadata = imgMetadata[i];
+          if (!metadata[0].contentType) {
+            console.warn("No content type for", img);
+            continue;
           }
-
-          const [metadata, image] = await Promise.all([
-            item.getMetadata(),
-            item.getDownloadURL(),
-          ]);
-
-          if (!metadata.contentType) return null;
-          const downloadURL = image;
-
           const asset: ImageAsset = {
-            title: metadata.customMetadata?.title ?? "Untitled",
+            title: metadata[0].metadata?.title ?? "Untitled",
             urls: {
-              orig: downloadURL,
-              thumb: thumbnailURL ? thumbnailURL : downloadURL,
+              orig: img,
+              thumb: thumb,
             },
-            description:
-              metadata.customMetadata?.description ?? "No description",
-            date: new Date(metadata.updated),
+            description: metadata[0].metadata?.description ?? "No description",
+            date: metadata[0].updated
+              ? new Date(metadata[0].updated)
+              : new Date(),
             sourceAPI:
-              (metadata.customMetadata?.sourceAPI as SourceAPI) ??
+              (metadata[0].metadata?.sourceAPI as SourceAPI) ??
               ("None" as SourceAPI),
           };
-          return asset;
+          saved.push(asset);
         }
-      );
-      const newSaved: ImageAsset[] = [];
-
-      Promise.allSettled(assetPromises).then((results) => {
-        results.forEach((result) => {
-          if (result.status === "fulfilled" && result.value) {
-            newSaved.push(result.value);
-          }
-        });
-        setSaved(newSaved);
+        return saved;
       });
-    });
-  }, [userImagesRef, userThumbnails]);
+    }
+  ); // handle error
 
   return <ClientSaved initialSaved={saved} />;
 }

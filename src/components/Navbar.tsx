@@ -5,7 +5,7 @@ import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FaRegEye } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
-import { Pages } from "../client-lib/pages";
+import { Pages } from "../lib-client/pages";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import ProfileButton from "./ProfileButton";

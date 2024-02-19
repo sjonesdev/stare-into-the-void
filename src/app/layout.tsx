@@ -1,8 +1,8 @@
 import Navbar from "../components/Navbar";
-import { Pages } from "../client-lib/pages";
+import { Pages } from "../lib-client/pages";
 import "./globals.css";
 import { Metadata } from "next";
-import FirebaseContextProvider from "./FirebaseContextProvider";
+import FirebaseContextProvider from "../lib-client/FirebaseContextProvider";
 
 export const metadata: Metadata = {
   title: "Stare Into the Void",

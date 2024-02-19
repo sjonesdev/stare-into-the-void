@@ -1,4 +1,4 @@
-import { queryImages } from "../../../server-lib/nasa-api";
+import { queryImages } from "../../../lib-server/nasa-api";
 import BrowseClient from "../BrowseClient";
 
 export default async function BrowseQuery({

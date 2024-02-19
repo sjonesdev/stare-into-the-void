@@ -11,6 +11,12 @@ const nextConfig = {
       {
         hostname: "images-assets.nasa.gov",
       },
+      {
+        hostname: "127.0.0.1", // for local development
+      },
+      {
+        hostname: "firebasestorage.googleapis.com",
+      },
     ],
   },
 };

@@ -1,11 +1,11 @@
 "use client";
 
-import { ApiInfo } from "../../client-lib/apiInfo";
+import { ApiInfo } from "../../lib-client/apiInfo";
 import { usePathname } from "next/navigation";
 import ImageBrowser from "../../components/ImageBrowser";
-import { ImageQueryResults } from "../../server-lib/nasa-api";
+import { ImageQueryResults } from "../../lib-server/nasa-api";
 import useSWR from "swr";
-import { FunctionsService } from "../../client-lib/firebase-services";
+import { FunctionsService } from "../../lib-client/firebase-services";
 
 const apis: {
   value: string;

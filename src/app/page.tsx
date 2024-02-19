@@ -4,7 +4,7 @@ import SearchBar from "./SearchBar";
 // import { FunctionsService } from "../lib/firebase-services";
 // import { type SourceAPI } from "../../stare-into-the-void-functions/src/models/image-assets";
 import Image from "next/image";
-import { getPictureOfTheDay } from "../server-lib/nasa-api";
+import { getPictureOfTheDay } from "../lib-server/nasa-api";
 // import { useState } from "react";
 // import useOnMount from "../hooks/useOnMount";
 

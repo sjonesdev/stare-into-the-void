@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AuthContext } from "../../client-lib/auth-context";
+import { AuthContext } from "../../lib-client/auth-context";
 import { useRouter } from "next/navigation";
 import { FaUser } from "react-icons/fa";
 import Image from "next/image";
