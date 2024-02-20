@@ -16,7 +16,7 @@ jobs:
           version: 8.14.3 # Optional: specify a pnpm version
 
       - uses: actions/checkout@v4
-      - run: pnpm ci && pnpm run build
+      - run: pnpm i --frozen-lockfile && pnpm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -33,7 +33,7 @@ jobs:
       - name: Get functions submodule, install its packages, and build it
         run: |
           cd stare-into-the-void-functions
-          pnpm install
+          pnpm i --frozen-lockfile
           pnpm run build
           echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
       # Deploying the functions to firebase
