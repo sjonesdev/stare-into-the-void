@@ -20,5 +20,6 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS="./gac.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS"
           pnpm add -g firebase-tools
+          firebase login
           firebase experiments:enable webframeworks
           firebase hosting:channel:deploy --expires "3d" --project "stare-into-the-void"
