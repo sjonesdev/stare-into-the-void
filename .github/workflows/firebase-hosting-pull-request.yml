@@ -15,9 +15,11 @@ jobs:
       - run: |
           echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
           pnpm i --frozen-lockfile
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}" >> ./gac.json
-          export GOOGLE_APPLICATION_CREDENTIALS="./gac.json"
+          echo "Current dir:"
+          pwd
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}" >> "$HOME/gac.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gac.json"
           pnpm add -g firebase-tools
-          firebase use stare-into-the-void
-          firebase experiments:enable webframeworks
+          firebase use stare-into-the-void --debug
+          firebase experiments:enable webframeworks --debug
           firebase hosting:channel:deploy --expires "3d" --debug
