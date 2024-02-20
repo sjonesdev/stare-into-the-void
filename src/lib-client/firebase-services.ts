@@ -1,52 +1,64 @@
 "use client";
 
-import { HttpsCallable, getFunctions, httpsCallable } from "firebase/functions";
+import { Functions, HttpsCallable, httpsCallable } from "firebase/functions";
 import {
   ImageAsset,
   ImageAssetRaw,
   SourceAPI,
 } from "../../stare-into-the-void-functions/src/models/image-assets";
 import {
+  FirebaseStorage,
   getDownloadURL,
   getMetadata,
-  getStorage,
   listAll,
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { b64toBlob, downloadImage, resizeImage } from "./util";
+import { b64toBlob, resizeImage } from "./util";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 class FunctionsService {
-  private static _functions = getFunctions();
-  private static apod: HttpsCallable<unknown, ImageAsset> = httpsCallable(
-    FunctionsService._functions,
-    "apod"
-  );
-  private static nivl: HttpsCallable<unknown, ImageAsset[]> = httpsCallable(
-    FunctionsService._functions,
-    "nivl"
-  );
-  public static downloadImageData: HttpsCallable<unknown, ImageAssetRaw> =
-    httpsCallable(FunctionsService._functions, "downloadProxy");
+  public functions;
+  private apod: HttpsCallable<unknown, ImageAsset>;
+  private nivl: HttpsCallable<unknown, ImageAsset[]>;
+  private downloadImageData: HttpsCallable<unknown, ImageAssetRaw>;
 
-  get functions() {
-    return FunctionsService._functions;
+  constructor(functions: Functions) {
+    this.functions = functions;
+    this.apod = httpsCallable(this.functions, "apod");
+    this.nivl = httpsCallable(this.functions, "nivl");
+    this.downloadImageData = httpsCallable(this.functions, "downloadProxy");
   }
 
-  static async getPictureOfTheDay() {
-    const apod = await FunctionsService.apod();
+  async downloadImage(url: string) {
+    const response = await this.downloadImageData({
+      url,
+    }).catch((reason) => {
+      console.error("Error downloading image: ", reason);
+    });
+    console.debug(
+      `Got image buffer of size ${response?.data.buffer.length} and type ${response?.data.type}`
+    );
+    if (!response?.data.buffer.length) return null;
+    const { data } = response;
+
+    const buffer = Uint8Array.from(data.buffer);
+    return new Blob([buffer], { type: data.type });
+  }
+
+  async getPictureOfTheDay() {
+    const apod = await this.apod();
     if (!apod.data) return null;
     apod.data.date = new Date(apod.data.date);
     if (!apod.data.urls.thumb) apod.data.urls.thumb = apod.data.urls.orig;
     return apod.data;
   }
 
-  static async getNIVLWithQuery(query: string): Promise<ImageAsset[]> {
+  async getNIVLWithQuery(query: string): Promise<ImageAsset[]> {
     let nivlUrls: ImageAsset[] = [];
-    await FunctionsService.nivl({ search: query })
+    await this.nivl({ search: query })
       .then((res) => {
         nivlUrls = res.data;
         return res.data;
@@ -57,7 +69,7 @@ class FunctionsService {
     return nivlUrls;
   }
 
-  static async fetchImages(query: string) {
+  async fetchImages(query: string) {
     const newQueryImgs: ImageAsset[] = [];
 
     // const promises = [
@@ -76,7 +88,7 @@ class FunctionsService {
     const promises = [];
     if (query) {
       promises.push(
-        FunctionsService.getNIVLWithQuery(query).then((val) => {
+        this.getNIVLWithQuery(query).then((val) => {
           val.forEach((img) => {
             img.date = new Date(img.date);
             newQueryImgs.push(img);
@@ -91,20 +103,21 @@ class FunctionsService {
 }
 
 class StorageService {
-  private static _storage = getStorage();
-  static imagesRef(userId: string) {
-    return ref(StorageService._storage, `users/${userId}/saved/images`);
+  public storage;
+  imagesRef(userId: string) {
+    return ref(this.storage, `users/${userId}/saved/images`);
   }
-  static thumbnailsRef(userId: string) {
-    return ref(StorageService._storage, `users/${userId}/saved/thumbnails`);
+  thumbnailsRef(userId: string) {
+    return ref(this.storage, `users/${userId}/saved/thumbnails`);
   }
-  static get storage() {
-    return StorageService._storage;
+
+  constructor(storage: FirebaseStorage) {
+    this.storage = storage;
   }
 
   /**
    *
-   * @param url base64 data url string as to pass to an img src or url to the image
+   * @param url base64 data url string as to pass to an img src or image blob. Be warned, this function will not check for the validity of the base64 string
    * @param title
    * @param description
    * @param sourceAPI
@@ -112,8 +125,8 @@ class StorageService {
    * @param onError
    * @param onComplete
    */
-  static async saveImage(
-    url: string,
+  async saveImage(
+    image: Blob | string,
     title: string,
     description: string,
     sourceAPI: SourceAPI,
@@ -123,10 +136,10 @@ class StorageService {
   ) {
     // could check type here, but we know tui-image-editor always uses png
     let blob: Blob | null;
-    if (url.startsWith("data:")) {
-      blob = b64toBlob(url);
+    if (typeof image === "string") {
+      blob = b64toBlob(image);
     } else {
-      blob = await downloadImage(url);
+      blob = image;
     }
 
     if (!blob || !blob.size) {
@@ -136,7 +149,7 @@ class StorageService {
     console.debug(`Uploading ${blob.size} byte ${blob.type}`);
     const imgThumbBlob = await resizeImage(blob, 200);
     console.debug("Resized image");
-    const uploadRef = ref(StorageService.imagesRef(uid), title); // upload main image
+    const uploadRef = ref(this.imagesRef(uid), title); // upload main image
     await uploadBytes(uploadRef, blob, {
       contentType: blob.type,
       customMetadata: {
@@ -157,7 +170,7 @@ class StorageService {
     // upload thumbnail, we don't really care if it fails
     if (imgThumbBlob) {
       console.debug("Uploading thumbnail");
-      const uploadThumbRef = ref(StorageService.thumbnailsRef(uid), title);
+      const uploadThumbRef = ref(this.thumbnailsRef(uid), title);
       await uploadBytes(uploadThumbRef, imgThumbBlob, {
         contentType: imgThumbBlob.type,
       })
@@ -170,10 +183,10 @@ class StorageService {
     }
   }
 
-  static async fetchSaved(uid?: string) {
+  async fetchSaved(uid?: string) {
     if (!uid) return [];
-    const thumbRef = StorageService.thumbnailsRef(uid);
-    const savedRefs = await listAll(StorageService.imagesRef(uid));
+    const thumbRef = this.thumbnailsRef(uid);
+    const savedRefs = await listAll(this.imagesRef(uid));
     const assetPromises: Promise<ImageAsset | null>[] = savedRefs.items.map(
       async (item) => {
         let thumbnailURL;

@@ -1,12 +1,8 @@
 import { FaRegEye } from "react-icons/fa";
 import Apod from "../components/Apod";
 import SearchBar from "./SearchBar";
-// import { FunctionsService } from "../lib/firebase-services";
-// import { type SourceAPI } from "../../stare-into-the-void-functions/src/models/image-assets";
 import Image from "next/image";
 import { getPictureOfTheDay } from "../lib-server/nasa-api";
-// import { useState } from "react";
-// import useOnMount from "../hooks/useOnMount";
 
 export default async function Home() {
   const apod = await getPictureOfTheDay();

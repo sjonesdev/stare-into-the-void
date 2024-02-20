@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import ImageBrowser from "../../components/ImageBrowser";
 import { AuthContext } from "../../lib-client/FirebaseContextProvider";
 import useSWR from "swr";
-import { StorageService } from "../../lib-client/firebase-services";
+import useStorage from "../../lib-client/useStorage";
 
 export default function ClientSaved({
   initialSaved,
@@ -15,10 +15,11 @@ export default function ClientSaved({
 }) {
   const user = useContext(AuthContext);
   const router = useRouter();
-  // const [saved, setSaved] = useState<ImageAsset[]>(initialSaved);
+  const storage = useStorage();
+
   const { data, mutate } = useSWR(
     `/saved/${user?.uid}`,
-    () => StorageService.fetchSaved(user?.uid),
+    () => storage?.fetchSaved(user?.uid) ?? [],
     {
       fallbackData: initialSaved,
     }

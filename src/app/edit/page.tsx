@@ -7,13 +7,13 @@ import {
   type ImageAsset,
   SourceAPI,
 } from "../../../stare-into-the-void-functions/src/models/image-assets";
-import { StorageService } from "../../lib-client/firebase-services";
 import { useSearchParams } from "next/navigation";
 import "firebase/compat/storage";
 import { FaSpinner } from "react-icons/fa";
 import useOnMount from "../../hooks/useOnMount";
 import { AuthContext } from "../../lib-client/FirebaseContextProvider";
-import { downloadImage } from "../../lib-client/util";
+import useStorage from "../../lib-client/useStorage";
+import useFunctions from "../../lib-client/useFunctions";
 
 export default function Edit() {
   const searchParams = useSearchParams();
@@ -27,6 +27,8 @@ export default function Edit() {
   const user = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [imageEditor, setImageEditor] = useState<TuiImageEditor | null>(null);
+  const storage = useStorage();
+  const functions = useFunctions();
 
   useOnMount(() => {
     const urlImage = {
@@ -77,7 +79,7 @@ export default function Edit() {
     };
 
     if (urlImage?.urls.orig) {
-      downloadImage(urlImage?.urls.orig).then((blob) => {
+      functions?.downloadImage(urlImage?.urls.orig).then((blob) => {
         if (blob) {
           setImageEditorFromPath(URL.createObjectURL(blob));
           return;
@@ -119,11 +121,15 @@ export default function Edit() {
   console.debug(`Image URL: ${imagePassed?.urls.orig}`);
 
   const saveImage = () => {
+    if (!storage) {
+      console.warn("Save before storage is ready");
+      return;
+    }
     // Can't let file names have commas or it causes issues with content disposition header
     const title =
       (imagePassed?.title ?? "Untitled") +
       ` (edited ${new Date().toISOString()})`;
-    StorageService.saveImage(
+    storage.saveImage(
       imageEditor?.toDataURL() ?? "",
       title,
       imagePassed?.description ?? "",

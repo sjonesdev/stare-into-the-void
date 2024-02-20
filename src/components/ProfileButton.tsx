@@ -6,11 +6,11 @@ import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
 import Link from "next/link";
 import Image from "next/image";
 import { getAuth } from "firebase/auth";
-import { AuthContext } from "../lib-client/FirebaseContextProvider";
+import { AppContext, AuthContext } from "../lib-client/FirebaseContextProvider";
 
 export default function ProfileButton() {
   const user = useContext(AuthContext);
-  const auth = getAuth();
+  const app = useContext(AppContext);
   const [showUserOptions, setShowUserOptions] = useState(false);
   const profileDiv = createRef<HTMLDivElement>();
   useCloseOnClickAway(profileDiv, () => setShowUserOptions(false));
@@ -50,7 +50,7 @@ export default function ProfileButton() {
           <button
             className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
             onClick={() => {
-              auth.signOut();
+              if (app) getAuth(app).signOut();
             }}
           >
             Sign Out

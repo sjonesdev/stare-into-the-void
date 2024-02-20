@@ -9,7 +9,10 @@ import {
 } from "firebase/auth";
 import { LuLoader2 } from "react-icons/lu";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "../../lib-client/FirebaseContextProvider";
+import {
+  AppContext,
+  AuthContext,
+} from "../../lib-client/FirebaseContextProvider";
 
 export default function SignInClient() {
   const [signingUp, setSigningUp] = useState(false);
@@ -18,9 +21,9 @@ export default function SignInClient() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const auth = getAuth();
   const router = useRouter();
   const user = useContext(AuthContext);
+  const app = useContext(AppContext);
 
   if (user) {
     router.push("/");
@@ -33,10 +36,16 @@ export default function SignInClient() {
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
 
+    if (!app) {
+      setError("App not initialized");
+      return;
+    }
+
     setLoading(true);
 
     if (signingUp) {
       try {
+        const auth = getAuth(app);
         if (!name) throw new Error("Please enter a name");
         await createUserWithEmailAndPassword(auth, email, password);
         if (auth.currentUser == null) {
@@ -52,6 +61,7 @@ export default function SignInClient() {
       }
     } else {
       try {
+        const auth = getAuth();
         await signInWithEmailAndPassword(auth, email, password);
         console.debug("Signed in");
       } catch (e) {

@@ -1,10 +1,10 @@
 "use client";
 
 import { useContext } from "react";
-import { AuthContext } from "../../lib-client/auth-context";
 import { useRouter } from "next/navigation";
 import { FaUser } from "react-icons/fa";
 import Image from "next/image";
+import { AuthContext } from "../../lib-client/FirebaseContextProvider";
 
 export default function Profile() {
   const user = useContext(AuthContext);

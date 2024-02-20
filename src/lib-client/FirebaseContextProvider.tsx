@@ -1,6 +1,6 @@
 "use client";
 
-import { FirebaseApp, getApp, initializeApp } from "firebase/app";
+import { FirebaseApp, initializeApp } from "firebase/app";
 import {
   ReCaptchaEnterpriseProvider,
   initializeAppCheck,
@@ -36,13 +36,12 @@ function initFirebase(): FirebaseApp {
     connectStorageEmulator(storage, "localhost", 9199);
   }
 
-  getAnalytics();
+  getAnalytics(app);
 
   return app;
 }
 
-initFirebase();
-
+export const AppContext = createContext<FirebaseApp | null>(null);
 export const AuthContext = createContext<User | null>(null);
 
 export default function FirebaseContextProvider({
@@ -50,18 +49,19 @@ export default function FirebaseContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const auth = getAuth();
+  const [app, setApp] = useState<FirebaseApp | null>(null);
   const [user, setUser] = useState<User | null>();
 
   useOnMount(() => {
-    const app = getApp();
+    const newApp = initFirebase();
+    const auth = getAuth(newApp);
     let appCheckToken = "6LdXI6AoAAAAAEotzSSnDpzScjEkAWPCImJAx2x_";
 
     if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
       // use dev app check token
       // @ts-expect-error setting app check debug token enabled as global variable
       // eslint-disable-next-line no-restricted-globals
-      window!.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+      if (`window`) window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
       console.debug(
         "Using debug app check token: ",
         process.env.REACT_APP_CHECK_DEBUG_TOKEN
@@ -74,7 +74,7 @@ export default function FirebaseContextProvider({
       isTokenAutoRefreshEnabled: true,
     };
 
-    initializeAppCheck(app, appCheckConfig);
+    initializeAppCheck(newApp, appCheckConfig);
 
     // Listen to the Firebase Auth state and set the local state.
     // technically this means we don't even need the auth context since we aren't rendering until the current user is available through getAuth().currentUser
@@ -82,14 +82,19 @@ export default function FirebaseContextProvider({
       console.debug("User changed: ", newUser);
       setUser(newUser);
     });
+    setApp(newApp);
 
     return unregisterAuthObserver;
   });
 
-  if (user === undefined) {
-    // don't render until context is valid
+  if (app == null || user == null) {
+    // don't render until contexts are valid
     return <></>;
   }
 
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  return (
+    <AppContext.Provider value={app}>
+      <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+    </AppContext.Provider>
+  );
 }

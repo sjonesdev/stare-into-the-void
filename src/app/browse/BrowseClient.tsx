@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import ImageBrowser from "../../components/ImageBrowser";
 import { ImageQueryResults } from "../../lib-server/nasa-api";
 import useSWR from "swr";
-import { FunctionsService } from "../../lib-client/firebase-services";
+import useFunctions from "../../lib-client/useFunctions";
 
 const apis: {
   value: string;
@@ -31,6 +31,7 @@ interface BrowseClientProps {
 }
 
 export default function BrowseClient({ initialQueryImgs }: BrowseClientProps) {
+  const functions = useFunctions();
   const path = usePathname().split("/");
   const query = path.length > 2 ? path[path.length - 1] : "";
   const title = query ? (
@@ -43,7 +44,7 @@ export default function BrowseClient({ initialQueryImgs }: BrowseClientProps) {
 
   const { data: queryImgs } = useSWR(
     `/browse/${query}`,
-    () => FunctionsService.fetchImages(query),
+    () => functions?.fetchImages(query) ?? { images: [] },
     {
       fallbackData: initialQueryImgs,
     }

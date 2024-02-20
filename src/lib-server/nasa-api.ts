@@ -6,14 +6,12 @@ import {
 export async function getPictureOfTheDay(): Promise<ImageAsset> {
   const URL = `https://api.nasa.gov/planetary/apod?api_key=${process.env.NASA_API_KEY}`;
   const response = await fetch(URL);
-  console.log("response: ", response.status, response.statusText);
   if (response.status !== 200)
     throw new Error(
       `Failed to fetch APOD with status ${response.status} and message ${response.statusText}`
     );
   const data = await response.json();
 
-  console.log("data: ", data);
   return {
     title: data.title,
     urls: {

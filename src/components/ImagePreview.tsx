@@ -12,12 +12,13 @@ import {
 } from "react-icons/fa";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
-import { StorageService } from "../lib-client/firebase-services";
 import { AuthContext } from "../lib-client/FirebaseContextProvider";
 import { useRouter } from "next/navigation";
 import { imageToQueryParams } from "../lib-client/util";
 import Image from "next/image";
 import { deleteObject, ref } from "firebase/storage";
+import useStorage from "../lib-client/useStorage";
+import useFunctions from "../lib-client/useFunctions";
 
 interface ImagePreviewProps {
   img: ImageAsset;
@@ -41,25 +42,26 @@ export default function ImagePreview({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [done, setDone] = useState(false);
+  const storage = useStorage();
+  const functions = useFunctions();
 
   const save = async () => {
-    if (!user) {
-      console.warn("Save with no user");
+    if (!storage || !user || !functions) {
+      console.warn(
+        "Save with either no user or storage not ready or functions not ready"
+      );
       return <></>;
     }
     setLoading(true);
-    // const imgBuf = await getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
-    // console.debug("imgBuf");
-    // if (!imgBuf) {
-    //   console.error("Error getting image buffer");
-    //   setLoading(false);
-    //   setError(true);
-    //   setDone(true);
-    //   return;
-    // }
-    console.log("save");
-    await StorageService.saveImage(
-      img.urls.orig,
+    const blob = await functions.downloadImage(img.urls.orig);
+    if (!blob) {
+      console.error("Error downloading image");
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    await storage.saveImage(
+      blob,
       img.title,
       img.description,
       img.sourceAPI,
@@ -78,9 +80,9 @@ export default function ImagePreview({
   };
 
   const deleteImage = () => {
-    if (!user) return;
+    if (!storage || !user) return;
     setLoading(true);
-    const imgRef = ref(StorageService.imagesRef(user.uid), img.title);
+    const imgRef = ref(storage.imagesRef(user.uid), img.title);
     deleteObject(imgRef)
       .then(() => {
         console.debug("Image deleted successfully");

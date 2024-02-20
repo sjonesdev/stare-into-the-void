@@ -1,7 +1,6 @@
 "use client";
 
 import { type ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
-import { FunctionsService } from "./firebase-services";
 
 /**
  * Converts a base64 data URL or raw data string to a Blob
@@ -15,6 +14,8 @@ export const b64toBlob = (
   contentType = "",
   sliceSize = 512
 ) => {
+  if (!window) return null;
+
   if (b64Data.startsWith("data:")) {
     b64Data = b64Data.split(",")[1];
   }
@@ -41,22 +42,6 @@ export function imageToQueryParams(img: ImageAsset) {
   return `?title=${img.title}&orig=${img.urls.orig}&api=${img.sourceAPI}`;
 }
 
-export async function downloadImage(url: string) {
-  const response = await FunctionsService.downloadImageData({
-    url,
-  }).catch((reason) => {
-    console.error("Error downloading image: ", reason);
-  });
-  console.debug(
-    `Got image buffer of size ${response?.data.buffer.length} and type ${response?.data.type}`
-  );
-  if (!response?.data.buffer.length) return null;
-  const { data } = response;
-
-  const buffer = Uint8Array.from(data.buffer);
-  return new Blob([buffer], { type: data.type });
-}
-
 export function promisify(fn: (...args: unknown[]) => unknown) {
   return (...args: unknown[]) => {
     return new Promise((resolve, reject) => {
@@ -77,6 +62,7 @@ export function promisify(fn: (...args: unknown[]) => unknown) {
  * @param width
  */
 export async function resizeImage(image: Blob, width: number) {
+  if (!window) return null;
   const img = new Image();
   const imgLoadPromise = new Promise((resolve, reject) => {
     img.onload = resolve;
