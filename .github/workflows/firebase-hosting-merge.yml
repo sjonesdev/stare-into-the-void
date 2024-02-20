@@ -7,15 +7,18 @@ name: Deploy to Firebase Hosting on merge
     branches:
       - main
 jobs:
-  build_and_deploy:
+  setup_pnpm:
     runs-on: ubuntu-latest
     steps:
       - uses: pnpm/action-setup@v2
         with:
           version: 8.14.3 # Optional: specify a pnpm version
-
+  build_and_deploy_hosting:
+    needs: setup_pnpm
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v4
-      - run: pnpm ci && pnpm run build
+      - run: pnpm i --frozen-lockfile && pnpm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -23,6 +26,7 @@ jobs:
           channelId: live
           projectId: stare-into-the-void
   build_and_deploy_functions:
+    needs: setup_pnpm
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +36,7 @@ jobs:
       - name: Get functions submodule, install its packages, and build it
         run: |
           cd stare-into-the-void-functions
-          pnpm install
+          pnpm i --frozen-lockfile
           pnpm run build
           echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
       # Deploying the functions to firebase
