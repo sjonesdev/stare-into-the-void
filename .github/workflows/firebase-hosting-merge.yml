@@ -13,36 +13,22 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8.14.3 # Optional: specify a pnpm version
-  build_and_deploy_hosting:
+  build_and_deploy:
     needs: setup_pnpm
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pnpm i --frozen-lockfile && pnpm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}"
-          channelId: live
-          projectId: stare-into-the-void
-  build_and_deploy_functions:
-    needs: setup_pnpm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-      - name: Get functions submodule, install its packages, and build it
-        run: |
-          cd stare-into-the-void-functions
-          pnpm i --frozen-lockfile
-          pnpm run build
+      - run: pnpm i --frozen-lockfile
+      - run: |
           echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
-      # Deploying the functions to firebase
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only functions
-        env:
-          GCP_SA_KEY: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}"
+          pnpm i --frozen-lockfile
+          echo "Current dir:"
+          pwd
+          echo "Home: $HOME"
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' >> "$HOME/gac.json"
+          cat "$HOME/gac.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gac.json"
+          pnpm add -g firebase-tools
+          firebase use stare-into-the-void --debug
+          firebase experiments:enable webframeworks --debug
+          firebase deploy
