@@ -13,8 +13,10 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8.14.3 # Optional: specify a pnpm version
-      - run: pnpm i --frozen-lockfile && pnpm run build
-      - run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}" >> ./gac.json
-      - run: pnpm add -g firebase-tools
-      - run: firebase experiments:enable webframeworks
-      - run: firebase hosting:channel:deploy --expires "3d" --project "stare-into-the-void"
+      - run: |
+          echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
+          pnpm i --frozen-lockfile
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STARE_INTO_THE_VOID }}" >> ./gac.json
+          pnpm add -g firebase-tools
+          firebase experiments:enable webframeworks
+          firebase hosting:channel:deploy --expires "3d" --project "stare-into-the-void"
