@@ -76,28 +76,31 @@ export default function ImageBrowser({
   const [filteredImages, setFilteredImages] = useState<ImageAsset[]>([]);
 
   useEffect(() => {
-    console.debug("selectedAPIs", selectedAPIs);
-    const filtered = images.filter((img) => {
-      const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
-      const to = toDate?.valueOf() ?? new Date().valueOf();
-      console.debug("API", img.sourceAPI, selectedAPIs?.has(img.sourceAPI));
-      return (
-        img.date.valueOf() >= from &&
-        img.date.valueOf() <= to &&
-        selectedAPIs?.has(img.sourceAPI)
-      );
-    });
-    if (sortBy === "Recent") {
-      filtered.sort((a, b) => {
-        return b.date.valueOf() - a.date.valueOf();
-      });
-    } else if (sortBy === "Oldest") {
-      filtered.sort((a, b) => {
-        return a.date.valueOf() - b.date.valueOf();
+    let filtered = images;
+    if (!prefiltered) {
+      filtered = images.filter((img) => {
+        const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
+        const to = toDate?.valueOf() ?? new Date().valueOf();
+        return (
+          img.date.valueOf() >= from &&
+          img.date.valueOf() <= to &&
+          selectedAPIs?.has(img.sourceAPI)
+        );
       });
     }
+    if (!presorted) {
+      if (sortBy === "Recent") {
+        filtered.sort((a, b) => {
+          return b.date.valueOf() - a.date.valueOf();
+        });
+      } else if (sortBy === "Oldest") {
+        filtered.sort((a, b) => {
+          return a.date.valueOf() - b.date.valueOf();
+        });
+      }
+    }
     setFilteredImages(filtered);
-  }, [images, fromDate, toDate, sortBy, selectedAPIs]);
+  }, [images, fromDate, toDate, sortBy, selectedAPIs, prefiltered, presorted]);
 
   useEffect(() => {
     topElement?.scrollIntoView({
@@ -224,10 +227,6 @@ export default function ImageBrowser({
               <button
                 aria-label="Open image in editor"
                 onClick={() => {
-                  console.log(
-                    "queryparams",
-                    imageToQueryParams(filteredImages[selectedPreview])
-                  );
                   router.push(
                     `/edit${imageToQueryParams(
                       filteredImages[selectedPreview]
