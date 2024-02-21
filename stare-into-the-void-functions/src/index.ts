@@ -67,7 +67,7 @@ exports.nivl = onRequest(cors, (req, res) => {
   logger.log(`reqbody: ${JSON.stringify(req.body.data, null, 2)}`);
   const query = req.body.data.search;
   logger.log(`Got NIVL query ${query}`);
-  const reqUrl = `https://images-api.nasa.gov/search?q=${query}&api_key=${NASA_API_KEY.value()}`;
+  const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
   https
     .get(reqUrl, (resp) => {
       let rawData = "";
@@ -77,7 +77,16 @@ exports.nivl = onRequest(cors, (req, res) => {
       resp.on("end", () => {
         const resList = JSON.parse(rawData);
         const data: ImageAsset[] = [];
-        resList.collection.items?.forEach((element: NIVLResponse) => {
+        if (!resList?.collection?.items) {
+          logger.error("No items in response:", resList);
+          res.status(502).send({
+            data: {
+              error: "No items in response",
+            },
+          });
+          return;
+        }
+        resList?.collection?.items?.forEach((element: NIVLResponse) => {
           if (element.data[0].media_type === "image") {
             data.push({
               title: element.data[0].title,
@@ -130,7 +139,7 @@ exports.mrp = onRequest(cors, (req, res) => {
         const resList = JSON.parse(rawData);
 
         const data: ImageAsset[] = [];
-        resList.items.array.forEach((element: MRPResponse) => {
+        resList?.items?.array.forEach((element: MRPResponse) => {
           data.push({
             title: element.id.toString(),
             urls: {
