@@ -27,7 +27,7 @@ const NASA_API_KEY = defineString("NASA_API_KEY");
 //Astronomy Picture of the Day
 
 exports.apod = onRequest(cors, (req, res) => {
-  const reqUrl = "https://api.nasa.gov/planetary/apod";
+  const reqUrl = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY.value()}`;
   https
     .get(reqUrl, (resp) => {
       let rawData = "";
