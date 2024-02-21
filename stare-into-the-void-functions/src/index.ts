@@ -27,7 +27,7 @@ const NASA_API_KEY = defineString("NASA_API_KEY");
 //Astronomy Picture of the Day
 
 exports.apod = onRequest(cors, (req, res) => {
-  const reqUrl = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY.value()}`;
+  const reqUrl = "https://api.nasa.gov/planetary/apod";
   https
     .get(reqUrl, (resp) => {
       let rawData = "";
@@ -67,7 +67,7 @@ exports.nivl = onRequest(cors, (req, res) => {
   logger.log(`reqbody: ${JSON.stringify(req.body.data, null, 2)}`);
   const query = req.body.data.search;
   logger.log(`Got NIVL query ${query}`);
-  const reqUrl = `https://images-api.nasa.gov/search?q=${query}`;
+  const reqUrl = `https://images-api.nasa.gov/search?q=${query}&api_key=${NASA_API_KEY.value()}`;
   https
     .get(reqUrl, (resp) => {
       let rawData = "";
@@ -164,43 +164,40 @@ exports.mrp = onRequest(cors, (req, res) => {
     });
 });
 
-exports.downloadProxy = onRequest(
-  { cors: ["http://localhost:5001", "https://stareintothevoid.com"] },
-  (req, res) => {
-    logger.log("Download proxy call");
-    const url = req.body.data?.url;
-    logger.log(`Got request to download for URL ${url}`);
-    if (url) {
-      https
-        .get(url?.toString(), (resp) => {
-          logger.log(`Downloading for URL ${url}`);
-          logger.log(resp.headers);
-          // todo validate request domain
-          const chunks: Buffer[] = [];
-          resp.on("data", (chunk: Buffer) => {
-            logger.log(`chunk(${chunk.length}): `, chunk);
-            chunks.push(chunk);
-          });
-          resp.on("end", () => {
-            logger.log(
-              `Sending buffers of content type ${resp.headers["content-type"]}`
-            );
-            res.status(200).send({
-              data: {
-                buffer: Buffer.concat(chunks).toJSON().data,
-                type: resp.headers["content-type"],
-              },
-            });
-          });
-        })
-        .on("error", (error) => {
-          logger.error(`Error downloading image: ${error}`);
-          res.status(502).send({
+exports.downloadProxy = onRequest(cors, (req, res) => {
+  logger.log("Download proxy call");
+  const url = req.body.data?.url;
+  logger.log(`Got request to download for URL ${url}`);
+  if (url) {
+    https
+      .get(url?.toString(), (resp) => {
+        logger.log(`Downloading for URL ${url}`);
+        logger.log(resp.headers);
+        // todo validate request domain
+        const chunks: Buffer[] = [];
+        resp.on("data", (chunk: Buffer) => {
+          logger.log(`chunk(${chunk.length}): `, chunk);
+          chunks.push(chunk);
+        });
+        resp.on("end", () => {
+          logger.log(
+            `Sending buffers of content type ${resp.headers["content-type"]}`
+          );
+          res.status(200).send({
             data: {
-              error,
+              buffer: Buffer.concat(chunks).toJSON().data,
+              type: resp.headers["content-type"],
             },
           });
         });
-    }
+      })
+      .on("error", (error) => {
+        logger.error(`Error downloading image: ${error}`);
+        res.status(502).send({
+          data: {
+            error,
+          },
+        });
+      });
   }
-);
+});

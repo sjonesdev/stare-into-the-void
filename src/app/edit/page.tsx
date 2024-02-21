@@ -10,7 +10,6 @@ import {
 import { useSearchParams } from "next/navigation";
 import "firebase/compat/storage";
 import { FaSpinner } from "react-icons/fa";
-import useOnMount from "../../hooks/useOnMount";
 import { AuthContext } from "../../lib-client/FirebaseContextProvider";
 import useStorage from "../../lib-client/useStorage";
 import useFunctions from "../../lib-client/useFunctions";
@@ -19,10 +18,6 @@ export default function Edit() {
   const searchParams = useSearchParams();
   const [imagePassed, setImagePassed] = useState<ImageAsset | null>();
 
-  const [windowSize, setWindowSize] = useState({
-    innerHeight: 0,
-    innerWidth: 0,
-  });
   const editorRef = createRef<HTMLDivElement>();
   const user = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
@@ -30,7 +25,10 @@ export default function Edit() {
   const storage = useStorage();
   const functions = useFunctions();
 
-  useOnMount(() => {
+  useEffect(() => {
+    if (!functions || !editorRef.current)
+      return console.warn("No functions or editor ref");
+    console.log("Edit page mounted");
     const urlImage = {
       title: searchParams.get("title") ?? "Untitled",
       description: "User edited image",
@@ -47,9 +45,6 @@ export default function Edit() {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const TuiImageEditor = require("tui-image-editor");
 
-    // editorRef should never be null since component is mounted, but for typing
-    if (!editorRef.current) return;
-
     const ref = editorRef.current;
 
     const setImageEditorFromPath = (path: string) => {
@@ -64,8 +59,8 @@ export default function Edit() {
             //menu: ["shape", "filter"],
             initMenu: "filter",
             uiSize: {
-              width: `${windowSize.innerWidth - 100}px`,
-              height: `${windowSize.innerHeight - 100}px`,
+              width: 0,
+              height: 0,
             },
             menuBarPosition: "bottom",
           },
@@ -79,19 +74,21 @@ export default function Edit() {
     };
 
     if (urlImage?.urls.orig) {
-      functions?.downloadImage(urlImage?.urls.orig).then((blob) => {
+      console.debug("Downloading Image");
+      functions.downloadImage(urlImage?.urls.orig).then((blob) => {
         if (blob) {
+          console.debug("blob", blob);
           setImageEditorFromPath(URL.createObjectURL(blob));
-          return;
+        } else {
+          console.error("Blob was null");
+          setImageEditorFromPath("");
         }
       });
+    } else {
+      console.debug("No image URL provided");
+      setImageEditorFromPath("");
     }
-    setImageEditorFromPath("");
-  });
-
-  // useEffect(() => {
-  //   if (!user) router.push("/signin");
-  // }, [user, router]);
+  }, [functions, searchParams]);
 
   useEffect(() => {
     const handleWindowResize = () => {
@@ -99,17 +96,12 @@ export default function Edit() {
         innerHeight: window.innerHeight,
         innerWidth: window.innerWidth,
       };
-      setWindowSize((curWinSize) => ({ ...curWinSize, ...newWinSize }));
       imageEditor?.ui?.resizeEditor({
         uiSize: {
           width: `${newWinSize.innerWidth - 100}px`,
           height: `${newWinSize.innerHeight - 100}px`,
         },
       });
-      // editorRef.current?.resizeCanvasDimension({
-      //   width: newWinSize.innerWidth - 100,
-      //   height: newWinSize.innerHeight - 100,
-      // });
     };
     handleWindowResize();
     window.addEventListener("resize", handleWindowResize);

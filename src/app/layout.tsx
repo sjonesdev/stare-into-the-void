@@ -10,11 +10,15 @@ export const metadata: Metadata = {
 };
 
 async function App({ children }: { children: React.ReactNode }) {
+  let debugToken;
+  if (process.env.NODE_ENV === "development") {
+    debugToken = process.env.REACT_APP_CHECK_DEBUG_TOKEN ?? "";
+  }
   return (
     <html>
       <body>
         <div className="App">
-          <FirebaseContextProvider>
+          <FirebaseContextProvider debugAppCheckToken={debugToken}>
             <Navbar active={Pages.Home} />
             {children}
           </FirebaseContextProvider>
