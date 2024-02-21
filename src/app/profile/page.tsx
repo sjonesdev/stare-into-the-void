@@ -3,7 +3,6 @@
 import { useContext } from "react";
 import { useRouter } from "next/navigation";
 import { FaUser } from "react-icons/fa";
-import Image from "next/image";
 import { AuthContext } from "../../lib-client/FirebaseContextProvider";
 
 export default function Profile() {
@@ -21,7 +20,8 @@ export default function Profile() {
           <span className="font-bold">{user.displayName}</span>
         </h2>
         {user.photoURL ? (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             src={user.photoURL}
             alt={user.displayName ?? "User"}
             width={100}

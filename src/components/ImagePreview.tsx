@@ -15,7 +15,6 @@ import DownloadLink from "./DownloadLink";
 import { AuthContext } from "../lib-client/FirebaseContextProvider";
 import { useRouter } from "next/navigation";
 import { imageToQueryParams } from "../lib-client/util";
-import Image from "next/image";
 import { deleteObject, ref } from "firebase/storage";
 import useStorage from "../lib-client/useStorage";
 import useFunctions from "../lib-client/useFunctions";
@@ -177,7 +176,8 @@ export default function ImagePreview({
           </DownloadLink>
           {getStorageButton()}
         </div>
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"
           src={img.urls.thumb}
           alt={img.title}

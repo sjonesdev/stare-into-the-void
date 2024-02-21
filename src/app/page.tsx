@@ -1,13 +1,13 @@
 import { FaRegEye } from "react-icons/fa";
 import Apod from "../components/Apod";
 import SearchBar from "./SearchBar";
-import Image from "next/image";
 import { getPictureOfTheDay } from "../lib-server/nasa-api";
 
 export default async function Home() {
   const apod = await getPictureOfTheDay();
   const img = (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       className="h-48 w-60 3xl:h-56 3xl:w-64 rounded-lg"
       src={apod.urls.orig}
       alt={apod.title}

@@ -261,7 +261,8 @@ export default function ImageBrowser({
             </div>
             <div className="flex flex-col items-center 3xl:mt-12">
               <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   className="rounded-lg object-scale-down mx-auto"
                   src={filteredImages[selectedPreview].urls.thumb}
                   alt={filteredImages[selectedPreview].title}

@@ -27,7 +27,8 @@ export default async function About() {
       <div className="flex justify-center mt-5">
         <div className="pad-div"></div>
         <div className="flex flex-col md:flex-row md:max-w-xl rounded-lg bg-gray-800 text-white shadow-lg">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             className=" w-full h-96 md:h-auto object-cover md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg"
             src="/browser.jpg"
             alt="image browser example"
