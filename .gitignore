@@ -151,3 +151,5 @@ yarn-error.log*
 
 # service account keys
 stare-into-the-void*.json
+
+.firebase/

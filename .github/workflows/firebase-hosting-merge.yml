@@ -18,6 +18,7 @@ jobs:
       - run: |
           echo NASA_API_KEY=${{secrets.NASA_API_KEY}} >> .env
           pnpm i --frozen-lockfile
+          cd stare-into-the-void-functions && pnpm i --frozen-lockfile && cd ..
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' >> "$HOME/gac.json"
           export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gac.json"
           pnpm add -g firebase-tools
