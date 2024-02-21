@@ -1,14 +1,16 @@
+"use client";
+
 import { createRef, useContext, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import useCloseOnClickAway from "../hooks/useCloseOnClickAway";
-
-import { AuthContext } from "../lib/firebase-services";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import { Link } from "react-router-dom";
+import Link from "next/link";
+import Image from "next/image";
+import { getAuth } from "firebase/auth";
+import { AppContext, AuthContext } from "../lib-client/FirebaseContextProvider";
 
 export default function ProfileButton() {
   const user = useContext(AuthContext);
+  const app = useContext(AppContext);
   const [showUserOptions, setShowUserOptions] = useState(false);
   const profileDiv = createRef<HTMLDivElement>();
   useCloseOnClickAway(profileDiv, () => setShowUserOptions(false));
@@ -18,7 +20,7 @@ export default function ProfileButton() {
     let icon = <FaUser color="white" className={userIconClass} />;
     if (user.photoURL) {
       icon = (
-        <img
+        <Image
           src={user.photoURL}
           className={userIconClass}
           alt={`${user.displayName}`}
@@ -47,7 +49,9 @@ export default function ProfileButton() {
           <span className="w-full max-w-9/10 h-[2px] bg-gray-500 rounded-sm" />
           <button
             className="w-full text-gray-300 hover:text-white hover:bg-gray-800 p-2 text-left"
-            onClick={() => firebase.auth().signOut()}
+            onClick={() => {
+              if (app) getAuth(app).signOut();
+            }}
           >
             Sign Out
           </button>
@@ -57,7 +61,7 @@ export default function ProfileButton() {
   } else {
     return (
       <Link
-        to={"/signin"}
+        href={"/signin"}
         aria-label={user ? "Profile" : "Sign In"}
         className="bg-gray-700 rounded-md  px-2 py-2 text-gray-300 hidden sm:flex flex-no-wrap flex-shrink min-w-0"
       >

@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext, useState } from "react";
 import { RiImageEditLine } from "react-icons/ri";
 import { BiSolidErrorCircle } from "react-icons/bi";
@@ -8,16 +10,15 @@ import {
   FaSpinner,
   FaCheck,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
 import DownloadLink from "./DownloadLink";
-import firebase from "firebase/compat/app";
-import "firebase/compat/storage";
-import {
-  AuthContext,
-  FunctionsService,
-  StorageService,
-} from "../lib/firebase-services";
+import { AuthContext } from "../lib-client/FirebaseContextProvider";
+import { useRouter } from "next/navigation";
+import { imageToQueryParams } from "../lib-client/util";
+import Image from "next/image";
+import { deleteObject, ref } from "firebase/storage";
+import useStorage from "../lib-client/useStorage";
+import useFunctions from "../lib-client/useFunctions";
 
 interface ImagePreviewProps {
   img: ImageAsset;
@@ -36,49 +37,39 @@ export default function ImagePreview({
   onClick,
   onDelete,
 }: ImagePreviewProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const user = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [done, setDone] = useState(false);
+  const storage = useStorage();
+  const functions = useFunctions();
 
-  const saveImage = async () => {
-    if (!user) {
-      console.warn("Save with no user");
-      return;
+  const save = async () => {
+    if (!storage || !user || !functions) {
+      console.warn(
+        "Save with either no user or storage not ready or functions not ready"
+      );
+      return <></>;
     }
     setLoading(true);
-    const imgBuf = await FunctionsService.getImageBlob(img.urls.orig); //getImageBuffer(img.urls.orig);
-    if (!imgBuf || !imgBuf.size) {
-      //buffer.byteLength) {
-      console.error("Error getting image buffer");
+    const blob = await functions.downloadImage(img.urls.orig);
+    if (!blob) {
+      console.error("Error downloading image");
       setLoading(false);
       setError(true);
-      setDone(true);
       return;
     }
-    console.debug(`Uploading ${imgBuf.size} byte ${imgBuf.type}`);
-    const imgThumbBuf = await FunctionsService.getImageBlob(img.urls.thumb); //.getImageBuffer(img.urls.thumb);
-    const uploadTask = StorageService.imagesRef(user.uid) // upload main image
-      .child(img.title)
-      // .putString(img.urls.orig, "raw", { TODO: support storing original URL for unmodified files to save space
-      .put(imgBuf, {
-        //.buffer, {
-        contentType: imgBuf.type,
-        customMetadata: {
-          title: img.title,
-          description: img.description,
-          sourceAPI: img.sourceAPI,
-        },
-      });
-    uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
-      null,
-      (error) => {
-        console.error("Error uploading image", error);
+    await storage.saveImage(
+      blob,
+      img.title,
+      img.description,
+      img.sourceAPI,
+      user.uid,
+      () => {
+        console.error("Error saving image");
         setLoading(false);
         setError(true);
-        // todo: delete/cancel thumbnail here
       },
       () => {
         console.debug("Image uploaded successfully");
@@ -86,31 +77,13 @@ export default function ImagePreview({
         setDone(true);
       }
     );
-
-    // upload thumbnail, we don't really care if it fails
-    if (imgThumbBuf) {
-      StorageService.thumbnailsRef(user.uid)
-        .child(img.title)
-        .put(imgThumbBuf /*.buffer*/, { contentType: imgThumbBuf.type })
-        .on(
-          firebase.storage.TaskEvent.STATE_CHANGED,
-          null,
-          (error) => {
-            console.error("Error uploading thumbnail", error);
-          },
-          () => {
-            console.debug("Thumbnail uploaded successfully");
-          }
-        );
-    }
   };
 
   const deleteImage = () => {
-    if (!user) return;
+    if (!storage || !user) return;
     setLoading(true);
-    StorageService.imagesRef(user.uid)
-      .child(img.title)
-      .delete()
+    const imgRef = ref(storage.imagesRef(user.uid), img.title);
+    deleteObject(imgRef)
       .then(() => {
         console.debug("Image deleted successfully");
         setLoading(false);
@@ -152,7 +125,7 @@ export default function ImagePreview({
     } else {
       Icon = FaSave;
       disabled = false;
-      onClick = saveImage;
+      onClick = save;
       label = "Save image on account";
     }
     return (
@@ -185,11 +158,7 @@ export default function ImagePreview({
           <button
             className="block m-1 3xl:m-2"
             aria-label="Open image in editor"
-            onClick={() =>
-              navigate("/edit", {
-                state: img,
-              })
-            }
+            onClick={() => router.push(`/edit${imageToQueryParams(img)}`)}
           >
             <RiImageEditLine
               aria-hidden={true}
@@ -208,11 +177,13 @@ export default function ImagePreview({
           </DownloadLink>
           {getStorageButton()}
         </div>
-        <img
+        <Image
           className="rounded-md shadow-md shadow-black/40 object-cover md:w-48 md:h-40 lg:w-56 lg:h-48 3xl:w-[24rem] 3xl:h-80"
           src={img.urls.thumb}
           alt={img.title}
           loading="lazy"
+          width={224}
+          height={192}
         />
       </div>
       <span className="hidden md:block text-md 3xl:text-xl text-center">

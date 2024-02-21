@@ -1,17 +1,22 @@
+"use client";
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import * as React from "react";
 import CheckboxDropdown from "./CheckboxDropdown";
 import DatePicker from "./DatePicker";
 import ImagePreview from "./ImagePreview";
 import SelectDropdown from "./SelectDropdown";
-import { ApiInfo } from "../lib/apiInfo";
-import { type ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
-import { useNavigate } from "react-router-dom";
+import { ApiInfo } from "../lib-client/apiInfo";
+import type { ImageAsset } from "../../stare-into-the-void-functions/src/models/image-assets";
+import { useRouter } from "next/navigation";
 import { RiImageEditLine } from "react-icons/ri";
 import DownloadLink from "./DownloadLink";
 import { FaDownload, FaSave } from "react-icons/fa";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { imageToQueryParams } from "../lib-client/util";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { ImageQueryResults } from "../lib-server/nasa-api";
 
 const LOCAL_STORAGE_KEY = "recent";
 const MAX_RECENT_IMAGES = 50;
@@ -39,67 +44,71 @@ for (const key in ApiInfo) {
 const sortOpts = ["Relevant", "Recent", "Oldest"];
 
 export default function ImageBrowser({
-  images,
+  imgResults,
   title,
   presorted = false,
   prefiltered = false,
   saved = false,
   onDeleteImage = () => {},
 }: {
-  images: ImageAsset[];
+  imgResults: ImageQueryResults;
   title: React.ReactNode;
   presorted?: boolean;
   prefiltered?: boolean;
   saved?: boolean;
   onDeleteImage?: (img: ImageAsset) => void;
 }) {
+  const { images, loadMore } = imgResults;
   const [recent, setRecent] = useLocalStorage<ImageAsset[]>(
     LOCAL_STORAGE_KEY,
     [],
     (val) => Array.isArray(val)
   );
-  const navigate = useNavigate();
-  const [selectedAPIs, setSelectedAPIs] = React.useState<Set<string>>();
-  const [fromDate, setFromDate] = React.useState<Date>();
-  const [toDate, setToDate] = React.useState<Date>();
-  const [sortBy, setSortBy] = React.useState(sortOpts[0]);
-  const [selectedPreview, setSelectedPreview] = React.useState<number | null>();
-  const [topElement, setTopElement] = React.useState<HTMLElement>();
+  const router = useRouter();
+  const [selectedAPIs, setSelectedAPIs] = useState<Set<string>>();
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+  const [sortBy, setSortBy] = useState(sortOpts[0]);
+  const [selectedPreview, setSelectedPreview] = useState<number | null>();
+  const [topElement, setTopElement] = useState<HTMLElement>();
 
   // If image drawer is not open, will be null or undefined, else will be url of selected img
-  const [filteredImages, setFilteredImages] = React.useState<ImageAsset[]>([]);
+  const [filteredImages, setFilteredImages] = useState<ImageAsset[]>([]);
 
-  React.useEffect(() => {
-    console.log("selectedAPIs", selectedAPIs);
-    const filtered = images.filter((img) => {
-      const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
-      const to = toDate?.valueOf() ?? new Date().valueOf();
-      console.log("API", img.sourceAPI, selectedAPIs?.has(img.sourceAPI));
-      return (
-        img.date.valueOf() >= from &&
-        img.date.valueOf() <= to &&
-        selectedAPIs?.has(img.sourceAPI)
-      );
-    });
-    if (sortBy === "Recent") {
-      filtered.sort((a, b) => {
-        return b.date.valueOf() - a.date.valueOf();
-      });
-    } else if (sortBy === "Oldest") {
-      filtered.sort((a, b) => {
-        return a.date.valueOf() - b.date.valueOf();
+  useEffect(() => {
+    let filtered = images;
+    if (!prefiltered) {
+      filtered = images.filter((img) => {
+        const from = fromDate?.valueOf() ?? new Date("0001-01-01").valueOf();
+        const to = toDate?.valueOf() ?? new Date().valueOf();
+        return (
+          img.date.valueOf() >= from &&
+          img.date.valueOf() <= to &&
+          selectedAPIs?.has(img.sourceAPI)
+        );
       });
     }
+    if (!presorted) {
+      if (sortBy === "Recent") {
+        filtered.sort((a, b) => {
+          return b.date.valueOf() - a.date.valueOf();
+        });
+      } else if (sortBy === "Oldest") {
+        filtered.sort((a, b) => {
+          return a.date.valueOf() - b.date.valueOf();
+        });
+      }
+    }
     setFilteredImages(filtered);
-  }, [images, fromDate, toDate, sortBy, selectedAPIs]);
+  }, [images, fromDate, toDate, sortBy, selectedAPIs, prefiltered, presorted]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     topElement?.scrollIntoView({
       behavior: "smooth",
     });
   }, [selectedPreview, topElement]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedPreview != null) {
       const recentIdx = recent.findIndex(
         (val) => val.urls.orig === filteredImages[selectedPreview].urls.orig
@@ -217,9 +226,13 @@ export default function ImageBrowser({
               </button>
               <button
                 aria-label="Open image in editor"
-                onClick={() =>
-                  navigate("/edit", { state: filteredImages[selectedPreview] })
-                }
+                onClick={() => {
+                  router.push(
+                    `/edit${imageToQueryParams(
+                      filteredImages[selectedPreview]
+                    )}`
+                  );
+                }}
               >
                 <RiImageEditLine
                   aria-hidden={true}
@@ -248,10 +261,12 @@ export default function ImageBrowser({
             </div>
             <div className="flex flex-col items-center 3xl:mt-12">
               <div className="my-8 mx-auto w-10/12 bg-gray-700 rounded-lg shadow-black/40 shadow-md">
-                <img
+                <Image
                   className="rounded-lg object-scale-down mx-auto"
                   src={filteredImages[selectedPreview].urls.thumb}
                   alt={filteredImages[selectedPreview].title}
+                  width={600}
+                  height={200}
                 />
               </div>
               <div className="w-10/12 flex justify-between mb-4 items-end">

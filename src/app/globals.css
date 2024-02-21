@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: black;
+  scroll-behavior: smooth;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.scheme-dark {
+  color-scheme: dark;
+}
+
+/* 
+This is a hack to fix a bug in the react-image-editor package 
+where the svg it adds containing its icon library or whatever 
+doesn't have it's CSS configured correctly causing it to add 
+vertical space to the document
+*/
+body > svg {
+  display: none;
+}
+
+.max-h-screenminusnav {
+  max-height: calc(100vh - 4rem);
+}
+
+.App {
+  width: 100vw;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+  transition: background 500ms ease-in-out;
+  background-image: url('../../public/galaxy.jpg');
+}
