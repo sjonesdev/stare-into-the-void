@@ -3,8 +3,8 @@ import {
   getDownloadURL as firebaseGetDownloadURL,
 } from "firebase-admin/storage";
 import type { File } from "@google-cloud/storage";
-import fetch from "cross-fetch";
 import { FullMetadata } from "@firebase/storage-types";
+import { fetch } from "cross-fetch";
 
 export function imgNamePrefixLen(userId: string) {
   return `users/${userId}/saved/images/`.length;
