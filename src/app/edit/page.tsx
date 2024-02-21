@@ -88,6 +88,8 @@ export default function Edit() {
       console.debug("No image URL provided");
       setImageEditorFromPath("");
     }
+    // adding editorRef to dependencies causes infinite loop due to TuiImageEditor
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [functions, searchParams]);
 
   useEffect(() => {
